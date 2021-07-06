@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tn.essatin.erp.dao.*;
 import tn.essatin.erp.model.*;
-import tn.jihen.pfa.dao.*;
-import tn.jihen.pfa.model.*;
+
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

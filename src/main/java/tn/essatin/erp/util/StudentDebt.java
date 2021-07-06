@@ -7,7 +7,7 @@ import tn.essatin.erp.dao.EnregistrementDao;
 import tn.essatin.erp.dao.InsecriptionDao;
 import tn.essatin.erp.dao.PrixNiveauParSessionDao;
 import tn.essatin.erp.dao.TransactionDao;
-import tn.jihen.pfa.model.*;
+
 
 import java.util.Collection;
 import java.util.Optional;

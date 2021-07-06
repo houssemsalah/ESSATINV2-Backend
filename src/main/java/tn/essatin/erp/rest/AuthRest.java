@@ -19,8 +19,7 @@ import tn.essatin.erp.payload.response.JwtResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.security.jwt.JwtUtils;
 import tn.essatin.erp.security.service.CompteDetailsImpl;
-import tn.jihen.pfa.dao.*;
-import tn.jihen.pfa.model.*;
+
 
 import javax.validation.Valid;
 import java.time.LocalDate;
