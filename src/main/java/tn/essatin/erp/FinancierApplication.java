@@ -26,6 +26,6 @@ public class FinancierApplication {
         //    roleDao.save(role);
 
         Arrays.stream(values).forEach(eRole -> roleDao.save(new Role(eRole)));*/
-        System.out.println("hehe");
+        System.out.println("hehehehe");
     }
 }
