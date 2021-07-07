@@ -13,5 +13,6 @@ import java.util.List;
 public interface EnregistrementDao extends JpaRepository<Enregistrement, Integer> {
     Enregistrement findByIdInscriptionAndAndIdSession(Inscription idInscription, Session idSession);
     List<Enregistrement> findByIdNiveauAndAndIdSession(Niveau idNiveau, Session idSession);
+    List<Enregistrement> findByIdSession(Session idsession);
 
 }
