@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.essatin.erp.dao.SessionDao;
 import tn.essatin.erp.model.Etudiants;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
 import tn.essatin.erp.dao.EtudiantsDao;
 import tn.essatin.erp.dao.PersonneDao;
+import tn.essatin.erp.payload.request.SessionUnivRequest;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -24,6 +26,9 @@ public class EtudiantRest {
 
     @Autowired
     PersonneDao personneDao;
+
+    @Autowired
+    SessionDao sessionDao;
 
     @GetMapping("/getall")
     public ResponseEntity<?> getAll() {
@@ -42,6 +47,7 @@ public class EtudiantRest {
         }
         return new ResponseEntity<List>(cinE, HttpStatus.OK);
     }
+
 
 
 }
