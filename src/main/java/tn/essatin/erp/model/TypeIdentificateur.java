@@ -6,17 +6,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Identificateur {
+public class TypeIdentificateur {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idTypeidentificateur;
     private String typeIdentificateur;
 
-    public Identificateur(String typeIdentificateur) {
+    public TypeIdentificateur(String typeIdentificateur) {
         this.typeIdentificateur = typeIdentificateur;
     }
 
-    public Identificateur() {
+    public TypeIdentificateur() {
     }
 
     public Integer getIdTypeidentificateur() {

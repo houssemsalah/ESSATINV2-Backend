@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.model.Enregistrement;
-import tn.essatin.erp.model.Etudiants;
 import tn.essatin.erp.payload.request.NivSessRequest;
 import tn.essatin.erp.dao.EnregistrementDao;
 import tn.essatin.erp.dao.NiveauDao;
