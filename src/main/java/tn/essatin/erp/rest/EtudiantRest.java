@@ -14,6 +14,7 @@ import tn.essatin.erp.model.Etudiants;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.payload.request.CertificatRequest;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
+import tn.essatin.erp.payload.request.InfoRequest;
 import tn.essatin.erp.util.DocumentGenerators.CertificatDInscription;
 import tn.essatin.erp.util.DocumentGenerators.CertificateDePresence;
 import tn.essatin.erp.util.DocumentGenerators.FicheRenseignement;
@@ -34,7 +35,7 @@ public class EtudiantRest {
     @Autowired
     SessionDao sessionDao;
     @Autowired
-    IdentificateurDao typeIdentificateurDAO;
+    TypeIdentificateurDao typeIdentificateurDAO;
     @Autowired
     InscriptionDao inscriptionDao;
     @Autowired
@@ -88,10 +89,10 @@ public class EtudiantRest {
     }
 
     @PostMapping("/getficheinformation")
-    public ResponseEntity<?> getFicheRenseignement(@Valid @RequestBody CertificatRequest certificatRequest) {
-        List<DiplomeEtudiant> de = diplomeEtudiantDao.findByIdEtudiant(enregistrementDao.findById(certificatRequest.getIdEnregistrement()).get().getIdInscription().getIdEtudiant());
-        List<ContactEtudiant> ce = contactEtudiantDao.findByIdEtudiant(enregistrementDao.findById(certificatRequest.getIdEnregistrement()).get().getIdInscription().getIdEtudiant());
-        ByteArrayOutputStream os = FicheRenseignement.createDoc(enregistrementDao.findById(certificatRequest.getIdEnregistrement()).get().getIdInscription().getIdEtudiant(), ce,de);
+    public ResponseEntity<?> getFicheRenseignement(@Valid @RequestBody InfoRequest infoRequest) {
+        List<DiplomeEtudiant> de = diplomeEtudiantDao.findByIdEtudiant(enregistrementDao.findById(infoRequest.getIdEnregistrement()).get().getIdInscription().getIdEtudiant());
+        List<ContactEtudiant> ce = contactEtudiantDao.findByIdEtudiant(enregistrementDao.findById(infoRequest.getIdEnregistrement()).get().getIdInscription().getIdEtudiant());
+        ByteArrayOutputStream os = FicheRenseignement.createDoc(enregistrementDao.findById(infoRequest.getIdEnregistrement()).get().getIdInscription().getIdEtudiant(), ce,de);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());

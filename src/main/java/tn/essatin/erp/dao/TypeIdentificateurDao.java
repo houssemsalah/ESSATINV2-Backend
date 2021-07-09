@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import tn.essatin.erp.model.TypeIdentificateur;
 
 @Repository
-public interface IdentificateurDao extends JpaRepository<TypeIdentificateur, Integer> {
+public interface TypeIdentificateurDao extends JpaRepository<TypeIdentificateur, Integer> {
     TypeIdentificateur findByIdTypeidentificateur(String typeIdentificateur);
 }

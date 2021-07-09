@@ -21,8 +21,7 @@ public class FicheRenseignement {
     public static ByteArrayOutputStream createDoc(Etudiants etu, List<ContactEtudiant> ce, List<DiplomeEtudiant> de) {
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Personne etudiant = etu.getIdPersonne();
-        System.out.println(etudiant);
-        String identificateur = "";//+etudiant.getIdIdentificateur().getTypeIdentificateur();
+        String identificateur = etudiant.getIdIdentificateur().getTypeIdentificateur();
 
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
         Font fontSection = FontFactory.getFont(FontFactory.TIMES_BOLD, 18, BaseColor.BLUE);

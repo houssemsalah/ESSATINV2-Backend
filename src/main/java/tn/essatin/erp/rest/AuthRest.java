@@ -47,7 +47,7 @@ public class AuthRest {
     @Autowired
     PersonneDao personneDao;
     @Autowired
-    IdentificateurDao identificateurDao;
+    TypeIdentificateurDao typeIdentificateurDao;
     @Autowired
     NationaliteDao nationaliteDao;
     @Autowired
@@ -92,7 +92,7 @@ public class AuthRest {
             return ResponseEntity.badRequest().body(new MessageResponse("date de naissance invalide!!"));
 
         }
-        TypeIdentificateur typeIdentificateur = identificateurDao.findByIdTypeidentificateur(signupRequest.getTypeIdentificateur());
+        TypeIdentificateur typeIdentificateur = typeIdentificateurDao.findByIdTypeidentificateur(signupRequest.getTypeIdentificateur());
         //identificateurDao.save(identificateur);
         Nationalite nationalite = nationaliteDao.findByLibelle(signupRequest.getNationalite());
         //nationaliteDao.save(nationalite);
