@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tn.essatin.erp.model.*;
 import tn.essatin.erp.dao.EnregistrementDao;
-import tn.essatin.erp.dao.InsecriptionDao;
+import tn.essatin.erp.dao.InscriptionDao;
 import tn.essatin.erp.dao.PrixNiveauParSessionDao;
 import tn.essatin.erp.dao.TransactionDao;
 
@@ -19,14 +19,14 @@ public class StudentDebt {
     @Autowired
     TransactionDao transactionDao;
     @Autowired
-    InsecriptionDao insecriptionDao;
+    InscriptionDao inscriptionDao;
     @Autowired
     EnregistrementDao enregistrementDao;
 
     public double debt(Etudiants etudiants, Session session) {
         System.out.println("debt enter");
         Collection<Transaction> transactions = transactionDao.findAllByIdClientAndSession(etudiants.getIdPersonne(), session);
-        Inscription inscription = insecriptionDao.findByIdEtudiant(etudiants);
+        Inscription inscription = inscriptionDao.findByIdEtudiant(etudiants);
         System.out.println(session);
         Enregistrement enregistrement = enregistrementDao.findByIdInscriptionAndAndIdSession(inscription, session);
         System.out.println(enregistrement);

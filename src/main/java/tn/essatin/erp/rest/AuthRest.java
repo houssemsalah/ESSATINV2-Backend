@@ -47,7 +47,7 @@ public class AuthRest {
     @Autowired
     PersonneDao personneDao;
     @Autowired
-    IdentificateurDao identificateurDao;
+    TypeIdentificateurDao typeIdentificateurDao;
     @Autowired
     NationaliteDao nationaliteDao;
     @Autowired
@@ -55,7 +55,7 @@ public class AuthRest {
     @Autowired
     ContactEtudiantDao contactEtudiant;
     @Autowired
-    InsecriptionDao insecriptionDao;
+    InscriptionDao inscriptionDao;
     @Autowired
     DiplomeEtudiantDao diplomeEtudiantDao;
     @Autowired
@@ -92,7 +92,7 @@ public class AuthRest {
             return ResponseEntity.badRequest().body(new MessageResponse("date de naissance invalide!!"));
 
         }
-        Identificateur identificateur = identificateurDao.findByTypeIdentificateur(signupRequest.getTypeIdentificateur());
+        TypeIdentificateur typeIdentificateur = typeIdentificateurDao.findByIdTypeidentificateur(signupRequest.getTypeIdentificateur());
         //identificateurDao.save(identificateur);
         Nationalite nationalite = nationaliteDao.findByLibelle(signupRequest.getNationalite());
         //nationaliteDao.save(nationalite);
@@ -100,7 +100,7 @@ public class AuthRest {
             new Personne(signupRequest.getNom(), signupRequest.getPrenom(), signupRequest.getMail(),
                 signupRequest.getAdresse(), signupRequest.getTel(),
                 localDate, signupRequest.getLieuDeNaissance(),
-                identificateur,
+                    typeIdentificateur,
                 signupRequest.getNumeroIdentificateur(),
                 signupRequest.getSexe(),
                 nationalite));
@@ -166,7 +166,7 @@ public class AuthRest {
                 LocalDate date;
                 date = LocalDate.parse(studentRequest.getDate(), formatter);
                 EtatInscription etatInscription = etatInscriptionDao.findByNom(studentRequest.getEtatInscrit());
-                insecriptionDao.save(new Inscription(etudiants, studentRequest.getNumeroInscrit(), date, etatInscription));
+                inscriptionDao.save(new Inscription(etudiants, studentRequest.getNumeroInscrit(), date, etatInscription));
             }
 
         );

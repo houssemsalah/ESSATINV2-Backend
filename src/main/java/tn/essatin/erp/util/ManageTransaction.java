@@ -24,7 +24,7 @@ public class ManageTransaction {
     @Autowired
     PrixNiveauParSessionDao prixNiveauParSessionDao;
     @Autowired
-    InsecriptionDao insecriptionDao;
+    InscriptionDao inscriptionDao;
     @Autowired
     EnregistrementDao enregistrementDao;
     @Autowired

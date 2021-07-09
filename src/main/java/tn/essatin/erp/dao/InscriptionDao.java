@@ -6,6 +6,6 @@ import tn.essatin.erp.model.Etudiants;
 import tn.essatin.erp.model.Inscription;
 
 @Repository
-public interface InsecriptionDao extends JpaRepository<Inscription, Integer> {
+public interface InscriptionDao extends JpaRepository<Inscription, Integer> {
     Inscription findByIdEtudiant(Etudiants idEtudiant);
 }
