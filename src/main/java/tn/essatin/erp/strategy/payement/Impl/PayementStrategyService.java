@@ -12,12 +12,15 @@ import java.util.Set;
 @Component
 public class PayementStrategyService implements PayementStrategy {
     @Override
-    public void payer(Personne personne, float montant, Session session, String datePayement, int typeTransaction, int statusTransaction, int idFinancier, Set<ModaliteTransaction> modaliteTransactionSet) {
+    public void payer(Personne personne, float montant, Session session, String datePayement,
+                      int typeTransaction, int statusTransaction,
+                      int idFinancier, Set<ModaliteTransaction> modaliteTransactionSet) {
 
     }
 
     @Override
-    public PayementStrategyName getPayementStrategyName() {
+    public PayementStrategyName getPayementStrategyName()
+    {
         return PayementStrategyName.PAYEMENT_STRATEGY_SERVICE;
     }
 }
