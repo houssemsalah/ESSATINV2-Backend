@@ -8,4 +8,5 @@ import tn.essatin.erp.model.Inscription;
 @Repository
 public interface InscriptionDao extends JpaRepository<Inscription, Integer> {
     Inscription findByIdEtudiant(Etudiants idEtudiant);
+    int countAllByNumeroInscriptionEndsWith(String suffixInscription);
 }
