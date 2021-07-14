@@ -6,4 +6,5 @@ import tn.essatin.erp.model.Employer;
 
 @Repository
 public interface EmployerDao extends JpaRepository<Employer, Integer> {
+
 }

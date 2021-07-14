@@ -32,7 +32,7 @@ public class EtudiantRest {
 
     @GetMapping("/getall")
     public ResponseEntity<?> getAll() {
-        return new ResponseEntity<List>(etudiantsDao.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(etudiantsDao.findAll(), HttpStatus.OK);
     }
 
     @PostMapping("/getbynumid")
@@ -45,7 +45,7 @@ public class EtudiantRest {
             if (Identificateur.equalsIgnoreCase(identificateurRequest.getNumidentificateur()))
                 cinE.add(E);
         }
-        return new ResponseEntity<List>(cinE, HttpStatus.OK);
+        return new ResponseEntity<>(cinE, HttpStatus.OK);
     }
 
 
