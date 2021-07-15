@@ -10,6 +10,7 @@ import tn.essatin.erp.dao.EtudiantsDao;
 import tn.essatin.erp.model.DiplomeEtudiant;
 import tn.essatin.erp.payload.request.DiplomeEtudiantByIdEtudiantRequest;
 import tn.essatin.erp.payload.request.DiplomeEtudiantByIdRequest;
+import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,5 +33,10 @@ public class DiplomeEtudiantRest {
     @PostMapping("/getbyidetudiant")
     public ResponseEntity<?> getByIdEtudiant(@Valid @RequestBody DiplomeEtudiantByIdEtudiantRequest diplomeEtudiantByIdEtudiantRequest) {
         return new ResponseEntity<List>(diplomeEtudiantDao.findByIdEtudiant(etudiantsDao.findById(diplomeEtudiantByIdEtudiantRequest.getIdEtudiant()).get()), HttpStatus.OK);
+    }
+    @PostMapping("/supprimerbyid")
+    public ResponseEntity<?> supprimerById(@Valid @RequestBody DiplomeEtudiantByIdRequest diplomeEtudiantByIdRequest){
+        diplomeEtudiantDao.delete(diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).get());
+        return ResponseEntity.ok(new MessageResponse("Diplome Etudiant Supprimer avec succée!!"));
     }
 }
