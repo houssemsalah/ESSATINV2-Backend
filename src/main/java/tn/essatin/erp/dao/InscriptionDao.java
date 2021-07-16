@@ -5,8 +5,11 @@ import org.springframework.stereotype.Repository;
 import tn.essatin.erp.model.Etudiants;
 import tn.essatin.erp.model.Inscription;
 
+import java.util.List;
+
 @Repository
 public interface InscriptionDao extends JpaRepository<Inscription, Integer> {
-    Inscription findByIdEtudiant(Etudiants idEtudiant);
+    List<Inscription> findAllByIdEtudiant(Etudiants idEtudiant);
+    Inscription findByIdEtudiantAndTopByOrderByDateDesc(Etudiants idEtudiant);
     int countAllByNumeroInscriptionEndsWith(String suffixInscription);
 }
