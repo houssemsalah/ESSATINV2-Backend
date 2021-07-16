@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface InscriptionDao extends JpaRepository<Inscription, Integer> {
     List<Inscription> findAllByIdEtudiant(Etudiants idEtudiant);
-    Inscription findByIdEtudiantAndTopByOrderByDateDesc(Etudiants idEtudiant);
+    Inscription findTopByIdEtudiantOrderByDateDesc(Etudiants idEtudiant);
     int countAllByNumeroInscriptionEndsWith(String suffixInscription);
 }

@@ -14,8 +14,11 @@ import java.util.Set;
 
 @Service
 public class PaymentServiceImpl implements PayementService {
+    private final PayementStrategyFactory strategyFactory;
     @Autowired
-    private PayementStrategyFactory strategyFactory;
+    public PaymentServiceImpl(PayementStrategyFactory strategyFactory) {
+        this.strategyFactory = strategyFactory;
+    }
 
     @Override
     public void studentPay(Personne personne, float montant, Session session, String datePayement,
