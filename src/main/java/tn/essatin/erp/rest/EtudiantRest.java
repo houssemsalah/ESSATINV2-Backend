@@ -72,7 +72,7 @@ public class EtudiantRest {
         if (cinE.size()>0) {
             return new ResponseEntity<List>(cinE, HttpStatus.OK);
         }else
-            return new ResponseEntity<>(new MessageResponse("Personne introuvable",403),HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse("Personne introuvable",204),HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/getcertifpresence")
