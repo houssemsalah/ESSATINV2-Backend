@@ -4,13 +4,20 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class ModifierDiplomeEtudiantRequest {
-    @NotNull int idDiplomeEtudiant;
-    @NotNull int idDiplome;
-    @NotBlank String annee;
-    @NotBlank String specialite;
-    @NotNull int niveau;
-    @NotBlank String status;
-    @NotBlank String etablissement;
+    @NotNull
+    int idDiplomeEtudiant;
+    @NotNull
+    int idDiplome;
+    @NotBlank
+    String annee;
+    @NotBlank
+    String specialite;
+    @NotNull
+    int niveau;
+    @NotBlank
+    String status;
+    @NotBlank
+    String etablissement;
 
     public int getIdDiplomeEtudiant() {
         return idDiplomeEtudiant;

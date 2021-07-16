@@ -11,7 +11,7 @@ public class MessageResponse {
     }
     public MessageResponse(String message,int code) {
         this.message = message;
-        this.code = 200;
+        this.code = code;
     }
 
     public String getMessage() {

@@ -9,6 +9,7 @@ import tn.essatin.erp.dao.DiplomeDao;
 import tn.essatin.erp.dao.DiplomeEtudiantDao;
 import tn.essatin.erp.dao.EtudiantsDao;
 import tn.essatin.erp.model.DiplomeEtudiant;
+import tn.essatin.erp.model.Etudiants;
 import tn.essatin.erp.payload.request.DiplomeEtudiantByIdEtudiantRequest;
 import tn.essatin.erp.payload.request.DiplomeEtudiantByIdRequest;
 import tn.essatin.erp.payload.request.ModifierDiplomeEtudiantRequest;
@@ -22,21 +23,37 @@ import java.util.List;
 @RequestMapping("/api/diplomeetudiant/")
 public class DiplomeEtudiantRest {
 
-    @Autowired
+    final
     DiplomeEtudiantDao diplomeEtudiantDao;
-    @Autowired
+    final
     EtudiantsDao etudiantsDao;
-    @Autowired
+    final
     DiplomeDao diplomeDao;
+
+    @Autowired
+    public DiplomeEtudiantRest(DiplomeEtudiantDao diplomeEtudiantDao, EtudiantsDao etudiantsDao, DiplomeDao diplomeDao) {
+        this.diplomeEtudiantDao = diplomeEtudiantDao;
+        this.etudiantsDao = etudiantsDao;
+        this.diplomeDao = diplomeDao;
+    }
 
     @PostMapping("/getbyid")
     public ResponseEntity<?> getById(@Valid @RequestBody DiplomeEtudiantByIdRequest diplomeEtudiantByIdRequest) {
-        return new ResponseEntity<DiplomeEtudiant>(diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).get(), HttpStatus.OK);
+        return new ResponseEntity<>(diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).get(), HttpStatus.OK);
     }
 
     @PostMapping("/getbyidetudiant")
     public ResponseEntity<?> getByIdEtudiant(@Valid @RequestBody DiplomeEtudiantByIdEtudiantRequest diplomeEtudiantByIdEtudiantRequest) {
-        return new ResponseEntity<List>(diplomeEtudiantDao.findByIdEtudiant(etudiantsDao.findById(diplomeEtudiantByIdEtudiantRequest.getIdEtudiant()).get()), HttpStatus.OK);
+        Etudiants e = new Etudiants();
+        if (etudiantsDao.findById(diplomeEtudiantByIdEtudiantRequest.getIdEtudiant()).isPresent()) {
+            e = etudiantsDao.findById(diplomeEtudiantByIdEtudiantRequest.getIdEtudiant()).get();
+            List<DiplomeEtudiant> l = diplomeEtudiantDao.findByIdEtudiant(e);
+            if (l.size() > 0)
+                return new ResponseEntity<>(l, HttpStatus.OK);
+            else
+                return ResponseEntity.ok(new MessageResponse("Pas de diplome pour cet etudiant!", 204));
+        } else
+            return ResponseEntity.ok(new MessageResponse("Etudiant introuvable!", 204));
     }
 
     @PostMapping("/supprimerbyid")
@@ -54,7 +71,7 @@ public class DiplomeEtudiantRest {
         de.setNiveau(modifierDiplomeEtudiantRequest.getNiveau());
         de.setSpecialite(modifierDiplomeEtudiantRequest.getSpecialite());
         de.setStatus(modifierDiplomeEtudiantRequest.getStatus());
-
+        diplomeEtudiantDao.save(de);
 
         return ResponseEntity.ok(new MessageResponse("Diplome Etudiant modifier avec succée!!"));
     }
