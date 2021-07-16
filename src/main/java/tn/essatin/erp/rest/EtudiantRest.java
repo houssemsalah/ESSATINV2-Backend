@@ -15,6 +15,7 @@ import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.payload.request.CertificatRequest;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
 import tn.essatin.erp.payload.request.InfoRequest;
+import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.DocumentGenerators.CertificatDInscription;
 import tn.essatin.erp.util.DocumentGenerators.CertificateDePresence;
 import tn.essatin.erp.util.DocumentGenerators.FicheRenseignement;
@@ -68,7 +69,10 @@ public class EtudiantRest {
             if (Identificateur.equalsIgnoreCase(identificateurRequest.getNumidentificateur()))
                 cinE.add(E);
         }
-        return new ResponseEntity<List>(cinE, HttpStatus.OK);
+        if (cinE.size()>0) {
+            return new ResponseEntity<List>(cinE, HttpStatus.OK);
+        }else
+            return new ResponseEntity<>(new MessageResponse("Personne introuvable",403),HttpStatus.FORBIDDEN);
     }
 
     @PostMapping("/getcertifpresence")
