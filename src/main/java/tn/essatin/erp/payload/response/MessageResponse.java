@@ -3,11 +3,15 @@ package tn.essatin.erp.payload.response;
 public class MessageResponse {
 
     private String message;
-    private int Code;
+    private int code;
 
     public MessageResponse(String message) {
         this.message = message;
-        this.Code = 0;
+        this.code = 200;
+    }
+    public MessageResponse(String message,int code) {
+        this.message = message;
+        this.code = 200;
     }
 
     public String getMessage() {
@@ -16,5 +20,13 @@ public class MessageResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        code = code;
     }
 }
