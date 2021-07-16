@@ -108,6 +108,10 @@ public class InscriptionRest {
         LocalDate today = LocalDate.now();
 
         Personne p = personneDao.findById(inscriptionWithIdPersonneRequest.getIdPersonne()).get();
+        p.setAdresse(inscriptionWithIdPersonneRequest.getAdresse());
+        p.setMail(inscriptionWithIdPersonneRequest.getMail());
+        p.setTel(inscriptionWithIdPersonneRequest.getTel());
+        personneDao.save(p);
         Etudiants e = etudiantsDao.findByIdPersonne(p).get();
 
         Inscription i = new Inscription(e,numeroInscription,today,etatInscriptionDao.findById(2).get());
