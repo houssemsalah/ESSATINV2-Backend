@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.ContactEtudiantDao;
 import tn.essatin.erp.dao.EtudiantsDao;
 import tn.essatin.erp.model.ContactEtudiant;
+import tn.essatin.erp.model.Etudiants;
+import tn.essatin.erp.payload.request.AjouterContactEtudiantRequest;
 import tn.essatin.erp.payload.request.GetByIdRequest;
 import tn.essatin.erp.payload.request.ModifierContactEtudiantRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
@@ -62,6 +64,18 @@ public class ContacteEtudiantRest {
             return new ResponseEntity<>(new MessageResponse("Contacte Etudiant introuvable", 403), HttpStatus.FORBIDDEN);
         }
 
+        }
+        @PostMapping("/ajoutercontactetudiant")
+    public ResponseEntity<?> ajouterContactEtudiant(@Valid @RequestBody AjouterContactEtudiantRequest ajouterContactEtudiantRequest){
+
+        if (etudiantsDao.findById(ajouterContactEtudiantRequest.getIdEtudiant()).isPresent()){
+            Etudiants e =etudiantsDao.findById(ajouterContactEtudiantRequest.getIdEtudiant()).get();
+            ContactEtudiant ce = new ContactEtudiant(e,ajouterContactEtudiantRequest.getNumero(), ajouterContactEtudiantRequest.getNom(), ajouterContactEtudiantRequest.getDesignation());
+            contactEtudiantDao.save(ce);
+            return new ResponseEntity<>(new MessageResponse("Ajouter avec success", 204), HttpStatus.NO_CONTENT);
+        }else{
+            return new ResponseEntity<>(new MessageResponse("Etudiant introuvable", 403), HttpStatus.FORBIDDEN);
+        }
         }
 
 
