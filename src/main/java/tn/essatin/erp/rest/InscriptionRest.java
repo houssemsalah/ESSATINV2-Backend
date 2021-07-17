@@ -41,7 +41,12 @@ public class InscriptionRest {
     final RoleDao roleDao;
 
     @Autowired
-    public InscriptionRest(InscriptionDao inscriptionDao, SessionDao sessionDao, PersonneDao personneDao, ContactEtudiantDao contactEtudiantDao, CompteDao compteDao, DiplomeEtudiantDao diplomeEtudiantDao, EnregistrementDao enregistrementDao, TypeIdentificateurDao typeIdentificateurDao, NationaliteDao nationaliteDao, EtudiantsDao etudiantsDao, EtatInscriptionDao etatInscriptionDao, ParcoursDao parcoursDao, RoleDao roleDao, NiveauDao niveauDao, CycleDao cycleDao) {
+    public InscriptionRest(InscriptionDao inscriptionDao, SessionDao sessionDao, PersonneDao personneDao,
+                           ContactEtudiantDao contactEtudiantDao, CompteDao compteDao,
+                           DiplomeEtudiantDao diplomeEtudiantDao, EnregistrementDao enregistrementDao,
+                           TypeIdentificateurDao typeIdentificateurDao, NationaliteDao nationaliteDao,
+                           EtudiantsDao etudiantsDao, EtatInscriptionDao etatInscriptionDao, ParcoursDao parcoursDao,
+                           RoleDao roleDao, NiveauDao niveauDao, CycleDao cycleDao) {
         this.inscriptionDao = inscriptionDao;
         this.sessionDao = sessionDao;
         this.personneDao = personneDao;
@@ -70,7 +75,8 @@ public class InscriptionRest {
                         roleDao.findById(5).isPresent()
         ) {
             Session session = sessionDao.findTopByOrderByIdSessionDesc();
-            int numeroInscriptionInt = inscriptionDao.countAllByNumeroInscriptionEndsWith(session.getSession().substring(0, 4)) + 1;
+            int numeroInscriptionInt = inscriptionDao.countAllByNumeroInscriptionEndsWith(session.getSession()
+                    .substring(0, 4)) + 1;
             String numeroInscription = "" + numeroInscriptionInt + "/" + session.getSession().substring(0, 4);
             LocalDate today = LocalDate.now();
             String nom = inscriptionRequest.getNom();
@@ -80,13 +86,15 @@ public class InscriptionRest {
             String telephonne = inscriptionRequest.getTelephonne();
             LocalDate dateNaissance = inscriptionRequest.getDateNaissance();
             String lieuNaissance = inscriptionRequest.getLieuNaissance();
-            TypeIdentificateur idTypeIdentificateur = typeIdentificateurDao.findById(inscriptionRequest.getIdTypeIdentificateur()).get();
+            TypeIdentificateur idTypeIdentificateur = typeIdentificateurDao.findById(inscriptionRequest
+                    .getIdTypeIdentificateur()).get();
             String ididentif = inscriptionRequest.getIdidentif();
             String sexe = inscriptionRequest.getSexe();
             Nationalite idNationalite = nationaliteDao.findById(inscriptionRequest.getIdNationalite()).get();
             List<ContactEtudiant> contacts = inscriptionRequest.getContactEtudiantList();
             List<DiplomeEtudiant> diplomes = inscriptionRequest.getDiplomeEtudiantList();
-            Personne p = new Personne(nom, prenom, mail, adresse, telephonne, dateNaissance, lieuNaissance, idTypeIdentificateur, ididentif, sexe, idNationalite);
+            Personne p = new Personne(nom, prenom, mail, adresse, telephonne, dateNaissance,
+                    lieuNaissance, idTypeIdentificateur, ididentif, sexe, idNationalite);
             personneDao.save(p);
             Etudiants e = new Etudiants(p);
             etudiantsDao.save(e);
@@ -100,21 +108,24 @@ public class InscriptionRest {
             }
             Inscription i = new Inscription(e, numeroInscription, today, etatInscriptionDao.findById(2).get());
             inscriptionDao.save(i);
-            Enregistrement enr = new Enregistrement(i, niveauDao.findById(inscriptionRequest.getNiveauxInscrit()).get(), session, today, 0);
+            Enregistrement enr = new Enregistrement(i, niveauDao.findById(
+                    inscriptionRequest.getNiveauxInscrit()).get(), session, today, 0);
             enregistrementDao.save(enr);
             Compte c = new Compte(p.getNumeroIdentificateur(), RandomStringGenerator.generateRandomString(10), p);
             Set<Role> rl = new HashSet<>();
             rl.add(roleDao.findById(5).get());
             c.setRoles(rl);
             compteDao.save(c);
-            return ResponseEntity.ok(new MessageResponse("votre compte est crée avec succée!!"));
+            return new ResponseEntity<>(new MessageResponse("votre compte est crée avec succée!!"), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
         }
     }
 
     @PostMapping("/nouveauetudiantwithidp")
-    public ResponseEntity<?> nouveauEtudiantWithIdPersonne(@Valid @RequestBody InscriptionWithIdPersonneRequest inscriptionWithIdPersonneRequest) {
+    public ResponseEntity<?> nouveauEtudiantWithIdPersonne(
+            @Valid @RequestBody InscriptionWithIdPersonneRequest inscriptionWithIdPersonneRequest) {
         if (
                 etatInscriptionDao.findById(2).isPresent()
                         && niveauDao.findById(inscriptionWithIdPersonneRequest.getNiveauxInscrit()).isPresent()
@@ -122,7 +133,8 @@ public class InscriptionRest {
                         && personneDao.findById(inscriptionWithIdPersonneRequest.getIdPersonne()).isPresent()
         ) {
             Session session = sessionDao.findTopByOrderByIdSessionDesc();
-            int numeroInscriptionInt = inscriptionDao.countAllByNumeroInscriptionEndsWith(session.getSession().substring(0, 4)) + 1;
+            int numeroInscriptionInt = inscriptionDao.countAllByNumeroInscriptionEndsWith(
+                    session.getSession().substring(0, 4)) + 1;
             String numeroInscription = "" + numeroInscriptionInt + "/" + session.getSession().substring(0, 4);
             LocalDate today = LocalDate.now();
             Personne p = personneDao.findById(inscriptionWithIdPersonneRequest.getIdPersonne()).get();
@@ -134,39 +146,46 @@ public class InscriptionRest {
             if (etudiantsDao.findByIdPersonne(p).isPresent())
                 e = etudiantsDao.findByIdPersonne(p).get();
             else
-                return new ResponseEntity<>(new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
             Inscription i = new Inscription(e, numeroInscription, today, etatInscriptionDao.findById(2).get());
             inscriptionDao.save(i);
-            Enregistrement enr = new Enregistrement(i, niveauDao.findById(inscriptionWithIdPersonneRequest.getNiveauxInscrit()).get(), session, today, 0);
+            Enregistrement enr = new Enregistrement(i, niveauDao.findById(
+                    inscriptionWithIdPersonneRequest.getNiveauxInscrit()).get(), session, today, 0);
             enregistrementDao.save(enr);
             Compte c = new Compte(p.getNumeroIdentificateur(), RandomStringGenerator.generateRandomString(10), p);
             Set<Role> rl = new HashSet<>();
             rl.add(roleDao.findById(5).get());
             c.setRoles(rl);
             compteDao.save(c);
-            return ResponseEntity.ok(new MessageResponse("votre compte est crée avec succée!!"));
+            return new ResponseEntity<>(new MessageResponse("votre compte est crée avec succée!!"), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
         }
     }
+
     @PostMapping("/estdejainscritcettesessionbyidpersonne")
-    public ResponseEntity<?> estDejaIscritCetteSessionByIdPersonne(@Valid @RequestBody GetByIdRequest getByIdRequest){
-        Personne p;  Etudiants e; Inscription i; Enregistrement en;
+    public ResponseEntity<?> estDejaIscritCetteSessionByIdPersonne(@Valid @RequestBody GetByIdRequest getByIdRequest) {
+        Personne p;
+        Etudiants e;
+        Inscription i;
+        Enregistrement en;
         Session session = sessionDao.findTopByOrderByIdSessionDesc();
-        if(personneDao.findById(getByIdRequest.getId()).isPresent()){
-             p = personneDao.findById(getByIdRequest.getId()).get();
-            if (etudiantsDao.findByIdPersonne(p).isPresent()){
-                e=etudiantsDao.findByIdPersonne(p).get();
-                i=inscriptionDao.findTopByIdEtudiantOrderByDateDesc(e);
-                en = enregistrementDao.findByIdInscriptionAndIdSession(i,session);
+        if (personneDao.findById(getByIdRequest.getId()).isPresent()) {
+            p = personneDao.findById(getByIdRequest.getId()).get();
+            if (etudiantsDao.findByIdPersonne(p).isPresent()) {
+                e = etudiantsDao.findByIdPersonne(p).get();
+                i = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(e);
+                en = enregistrementDao.findByIdInscriptionAndIdSession(i, session);
                 if (en != null)
-                    return new ResponseEntity<>(en,HttpStatus.OK);
+                    return new ResponseEntity<>(en, HttpStatus.OK);
                 else
-                    return new ResponseEntity<>("",HttpStatus.NO_CONTENT);
-            }else
-                return new ResponseEntity<>("",HttpStatus.NO_CONTENT);
-        }else
-            return new ResponseEntity<>("",HttpStatus.NO_CONTENT);
+                    return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+            } else
+                return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        } else
+            return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 
 }

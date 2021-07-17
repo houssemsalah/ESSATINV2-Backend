@@ -10,17 +10,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tn.essatin.erp.dao.DiplomeDao;
 
-import java.util.List;
-
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/diplome/")
 public class DiplomeRest {
+    final DiplomeDao diplomeDao;
+
     @Autowired
-    DiplomeDao diplomeDao;
+    public DiplomeRest(DiplomeDao diplomeDao) {
+        this.diplomeDao = diplomeDao;
+    }
 
     @GetMapping("getall")
     public ResponseEntity<?> getAll() {
-        return new ResponseEntity<List>(diplomeDao.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(diplomeDao.findAll(), HttpStatus.OK);
     }
 }

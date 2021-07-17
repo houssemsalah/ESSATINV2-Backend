@@ -38,13 +38,15 @@ public class DiplomeEtudiantRest {
     @PostMapping("/getbyid")
     public ResponseEntity<?> getById(@Valid @RequestBody DiplomeEtudiantByIdRequest diplomeEtudiantByIdRequest) {
         if (diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).isPresent())
-            return new ResponseEntity<>(diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).get(), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).get(), HttpStatus.OK);
         else
             return ResponseEntity.ok(new MessageResponse("diplome introuvable!", 204));
     }
 
     @PostMapping("/getbyidetudiant")
-    public ResponseEntity<?> getByIdEtudiant(@Valid @RequestBody DiplomeEtudiantByIdEtudiantRequest diplomeEtudiantByIdEtudiantRequest) {
+    public ResponseEntity<?> getByIdEtudiant(
+            @Valid @RequestBody DiplomeEtudiantByIdEtudiantRequest diplomeEtudiantByIdEtudiantRequest) {
         Etudiants e;
         if (etudiantsDao.findById(diplomeEtudiantByIdEtudiantRequest.getIdEtudiant()).isPresent()) {
             e = etudiantsDao.findById(diplomeEtudiantByIdEtudiantRequest.getIdEtudiant()).get();
@@ -60,15 +62,18 @@ public class DiplomeEtudiantRest {
     @PostMapping("/supprimerbyid")
     public ResponseEntity<?> supprimerById(@Valid @RequestBody DiplomeEtudiantByIdRequest diplomeEtudiantByIdRequest) {
         if (diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).isPresent()) {
-            diplomeEtudiantDao.delete(diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).get());
-            return ResponseEntity.ok(new MessageResponse("Diplome Etudiant Supprimer avec succée!!"));
+            diplomeEtudiantDao.delete(
+                    diplomeEtudiantDao.findById(diplomeEtudiantByIdRequest.getIdDiplomeEtudiant()).get());
+            return new ResponseEntity<>(
+                    new MessageResponse("Diplome Etudiant Supprimer avec succée!!"), HttpStatus.OK);
         } else
-            return new ResponseEntity<>(new MessageResponse("Diplome introuvable", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new MessageResponse("Diplome introuvable", 403), HttpStatus.FORBIDDEN);
     }
 
-
     @PostMapping("/modifer")
-    public ResponseEntity<?> modiferById(@Valid @RequestBody ModifierDiplomeEtudiantRequest modifierDiplomeEtudiantRequest) {
+    public ResponseEntity<?> modiferById(
+            @Valid @RequestBody ModifierDiplomeEtudiantRequest modifierDiplomeEtudiantRequest) {
         if (
                 diplomeEtudiantDao.findById(modifierDiplomeEtudiantRequest.getIdDiplome()).isPresent()
                         && diplomeDao.findById(modifierDiplomeEtudiantRequest.getIdDiplome()).isPresent()
@@ -81,9 +86,10 @@ public class DiplomeEtudiantRest {
             de.setSpecialite(modifierDiplomeEtudiantRequest.getSpecialite());
             de.setStatus(modifierDiplomeEtudiantRequest.getStatus());
             diplomeEtudiantDao.save(de);
-            return ResponseEntity.ok(new MessageResponse("Diplome Etudiant modifier avec succée!!"));
+            return new ResponseEntity<>(new MessageResponse("Diplome Etudiant modifier avec succée!!"), HttpStatus.OK);
         } else
-            return new ResponseEntity<>(new MessageResponse("Ressources introuvable", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources introuvable", 403), HttpStatus.FORBIDDEN);
     }
 
     @PostMapping("/ajouter")
@@ -101,9 +107,10 @@ public class DiplomeEtudiantRest {
             de.setStatus(ajouterDiplomeEtudiantRequest.getStatus());
             de.setEtablissement(ajouterDiplomeEtudiantRequest.getEtablissement());
             diplomeEtudiantDao.save(de);
-            return ResponseEntity.ok(new MessageResponse("Diplome Etudiant Ajouter avec succée!!", 200));
+            return new ResponseEntity<>(
+                    new MessageResponse("Diplome Etudiant Ajouter avec succée!!", 200), HttpStatus.OK);
         } else
-            return new ResponseEntity<>(new MessageResponse("Ressources introuvable", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources introuvable", 403), HttpStatus.FORBIDDEN);
     }
-
 }

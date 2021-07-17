@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/enregistrement/")
@@ -31,7 +30,10 @@ public class EnregistrementRest {
     final NiveauSuivantDao niveauSuivantDao;
 
     @Autowired
-    public EnregistrementRest(EnregistrementDao enregistrementDao, SessionDao sessionDao, NiveauDao niveauDao, InscriptionDao inscriptionDao, EtatInscriptionDao etatInscriptionDao, EtudiantsDao etudiantsDao, NiveauSuivantDao niveauSuivantDao) {
+    public EnregistrementRest(EnregistrementDao enregistrementDao, SessionDao sessionDao,
+                              NiveauDao niveauDao, InscriptionDao inscriptionDao,
+                              EtatInscriptionDao etatInscriptionDao, EtudiantsDao etudiantsDao,
+                              NiveauSuivantDao niveauSuivantDao) {
         this.enregistrementDao = enregistrementDao;
         this.sessionDao = sessionDao;
         this.niveauDao = niveauDao;
@@ -43,7 +45,6 @@ public class EnregistrementRest {
 
     @GetMapping("/getall")
     public ResponseEntity<?> getAll() {
-
         return new ResponseEntity<>(enregistrementDao.findAll(), HttpStatus.OK);
     }
 
@@ -58,7 +59,8 @@ public class EnregistrementRest {
                     sessionDao.findById(nivSessRequest.getIdSession()).get())
                     , HttpStatus.OK);
         else
-            return new ResponseEntity<>(new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
     }
 
     @PostMapping("/getenregistrementbysession")
@@ -68,11 +70,13 @@ public class EnregistrementRest {
                     sessionDao.findById(sessionUnivRequest.getIdSession()).get()), HttpStatus.OK
             );
         else
-            return new ResponseEntity<>(new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
     }
 
     @PostMapping("/enregistrementniveauxsuivant")
-    public ResponseEntity<?> enregistrementNiveauxSuivant(@Valid @RequestBody NouvelEnregistrementRequest nouvelEnregistrementRequest) {
+    public ResponseEntity<?> enregistrementNiveauxSuivant(
+            @Valid @RequestBody NouvelEnregistrementRequest nouvelEnregistrementRequest) {
         if (
                 etudiantsDao.findById(nouvelEnregistrementRequest.getIdEtudiant()).isPresent()
                         && etatInscriptionDao.findById(2).isPresent()
@@ -97,16 +101,25 @@ public class EnregistrementRest {
                     Enregistrement enr = new Enregistrement(i, nouveauNiveau, session, today, 0);
                     enregistrementDao.save(enr);
                     i.setIdEtatInscription(etatInscriptionDao.findById(2).get());
-                    return new ResponseEntity<>(new MessageResponse("Enregistrement effectué avec succes pour la session: " + session.getSession(), 200), HttpStatus.OK);
+                    return new ResponseEntity<>(
+                            new MessageResponse("Enregistrement effectué avec succes pour la session: "
+                                    + session.getSession(), 200), HttpStatus.OK);
                 } else {
-                    return new ResponseEntity<>(new MessageResponse("L'étudiant " + etudiants.getIdPersonne().getPrenom() + " " + etudiants.getIdPersonne().getNom() + " est deja inscrit a la session " + session.getSession() + " Les inscrit a la session suivantes ne sont pas encor ouvertes", 403), HttpStatus.FORBIDDEN);
+                    return new ResponseEntity<>(
+                            new MessageResponse("L'étudiant " + etudiants.getIdPersonne().getPrenom()
+                                    + " " + etudiants.getIdPersonne().getNom() + " est deja inscrit a la session "
+                                    + session.getSession() + " Les inscrit a la session suivantes ne sont pas encor " +
+                                    "ouvertes", 403), HttpStatus.FORBIDDEN);
                 }
             } else {
-                return new ResponseEntity<>(new CombinedResponse(new MessageResponse("Le niveaux choisis ne correspond pas au niveaux possible pour cet etudiants ", 403),"Niveaux possibles",ln), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(new CombinedResponse(
+                        new MessageResponse("Le niveaux choisis ne correspond pas au niveaux possible " +
+                                "pour cet etudiants ", 403), "Niveaux possibles", ln),
+                        HttpStatus.FORBIDDEN);
             }
         } else {
-            return new ResponseEntity<>(new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
         }
-
     }
 }
