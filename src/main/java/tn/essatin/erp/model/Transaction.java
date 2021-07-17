@@ -113,15 +113,15 @@ public class Transaction {
     @Override
     public String toString() {
         return "Transaction{" +
-            "idTransaction=" + idTransaction +
-            ", type=" + type +
-            ", modalite=" + modalite +
-            ", datePayement=" + datePayement +
-            ", idFinancier=" + idFinancier +
-            ", idClient=" + idClient +
-            ", session=" + session +
-            ", status=" + status +
-            ", montant=" + montant +
-            '}';
+                "idTransaction=" + idTransaction +
+                ", type=" + type +
+                ", modalite=" + modalite +
+                ", datePayement=" + datePayement +
+                ", idFinancier=" + idFinancier +
+                ", idClient=" + idClient +
+                ", session=" + session +
+                ", status=" + status +
+                ", montant=" + montant +
+                '}';
     }
 }

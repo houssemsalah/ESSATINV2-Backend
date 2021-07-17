@@ -57,10 +57,10 @@ public class Parcours {
     @Override
     public String toString() {
         return "Parcours{" +
-            "idParcours=" + idParcours +
-            ", specialite=" + specialite +
-            ", designation='" + designation + '\'' +
-            ", description='" + description + '\'' +
-            '}';
+                "idParcours=" + idParcours +
+                ", specialite=" + specialite +
+                ", designation='" + designation + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

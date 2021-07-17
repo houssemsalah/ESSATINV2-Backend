@@ -1,16 +1,15 @@
 package tn.essatin.erp.payload.request;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 public class IdentificateurRequest {
-    @NotBlank
+    @Size(min = 8, max = 9, message = "Numero identificateur invalide")
     private String numidentificateur;
 
     public String getNumidentificateur() {
+
         return numidentificateur;
     }
 
-    public void setNumidentificateur(String numidentificateur) {
-        this.numidentificateur = numidentificateur;
-    }
+
 }

@@ -67,11 +67,11 @@ public class ContactEtudiant {
     @Override
     public String toString() {
         return "ContactEtudiant{" +
-            "idContact=" + idContact +
-            ", idEtudiant=" + idEtudiant +
-            ", numero='" + numero + '\'' +
-            ", nom='" + nom + '\'' +
-            ", designation='" + designation + '\'' +
-            '}';
+                "idContact=" + idContact +
+                ", idEtudiant=" + idEtudiant +
+                ", numero='" + numero + '\'' +
+                ", nom='" + nom + '\'' +
+                ", designation='" + designation + '\'' +
+                '}';
     }
 }

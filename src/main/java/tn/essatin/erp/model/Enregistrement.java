@@ -17,7 +17,8 @@ public class Enregistrement {
     private LocalDate dateEnregistrement;
     private int etatFinanciere;
 
-    public Enregistrement(Inscription idInscription, Niveau idNiveau, Session idSession, LocalDate dateEnregistrement, int etatFinanciere) {
+    public Enregistrement(Inscription idInscription, Niveau idNiveau, Session idSession,
+                          LocalDate dateEnregistrement, int etatFinanciere) {
         this.idInscription = idInscription;
         this.idNiveau = idNiveau;
         this.idSession = idSession;
@@ -79,12 +80,12 @@ public class Enregistrement {
     @Override
     public String toString() {
         return "Enregistrement{" +
-            "idEnregistrement=" + idEnregistrement +
-            ", idInscription=" + idInscription +
-            ", idNiveau=" + idNiveau +
-            ", idSession=" + idSession +
-            ", dateEnregistrement=" + dateEnregistrement +
-            ", etatFinanciere=" + etatFinanciere +
-            '}';
+                "idEnregistrement=" + idEnregistrement +
+                ", idInscription=" + idInscription +
+                ", idNiveau=" + idNiveau +
+                ", idSession=" + idSession +
+                ", dateEnregistrement=" + dateEnregistrement +
+                ", etatFinanciere=" + etatFinanciere +
+                '}';
     }
 }

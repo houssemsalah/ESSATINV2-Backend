@@ -38,8 +38,8 @@ public class Diplome {
     @Override
     public String toString() {
         return "Diplome{" +
-            "idDiplome=" + idDiplome +
-            ", nomDiplome='" + nomDiplome + '\'' +
-            '}';
+                "idDiplome=" + idDiplome +
+                ", nomDiplome='" + nomDiplome + '\'' +
+                '}';
     }
 }

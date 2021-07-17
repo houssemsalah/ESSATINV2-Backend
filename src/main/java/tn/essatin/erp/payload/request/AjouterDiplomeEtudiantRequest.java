@@ -6,19 +6,19 @@ import javax.validation.constraints.NotEmpty;
 
 public class AjouterDiplomeEtudiantRequest {
 
-    @Min(value = 1,message = "le champ 'idDiplome' est obligatoire et doit etre strictement supperieur a zero")
-     int idDiplome;
-    @Min(value = 1,message = "le champ 'idEtudiant' est obligatoire et doit etre strictement supperieur a zero")
+    @Min(value = 1, message = "le champ 'idDiplome' est obligatoire et doit etre strictement supperieur a zero")
+    int idDiplome;
+    @Min(value = 1, message = "le champ 'idEtudiant' est obligatoire et doit etre strictement supperieur a zero")
     int idEtudiant;
-    @NotEmpty(message="le champ 'annee' est obligatoire")
-     String annee;
-    @NotEmpty(message="le champ 'specialite' est obligatoire")
+    @NotEmpty(message = "le champ 'annee' est obligatoire")
+    String annee;
+    @NotEmpty(message = "le champ 'specialite' est obligatoire")
     String specialite;
-    @NotEmpty(message="le champ 'niveau' est obligatoire")
+    @NotEmpty(message = "le champ 'niveau' est obligatoire")
     Integer niveau;
-    @NotEmpty(message="le champ 'status' est obligatoire")
+    @NotEmpty(message = "le champ 'status' est obligatoire")
     String status;
-    @NotEmpty(message="le champ 'etablissement' est obligatoire")
+    @NotEmpty(message = "le champ 'etablissement' est obligatoire")
     String etablissement;
 
     public int getIdDiplome() {

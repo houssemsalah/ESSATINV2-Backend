@@ -14,7 +14,8 @@ public class Compte {
     @OneToOne(cascade = CascadeType.ALL)
     private Personne Id_Personne;
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "compte_role", joinColumns = @JoinColumn(name = "compte_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "compte_role", joinColumns = @JoinColumn(name = "compte_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     public Compte(String login, String password, Personne id_Personne) {
@@ -61,11 +62,11 @@ public class Compte {
     @Override
     public String toString() {
         return "Compte{" +
-            "ID_Compte=" + id +
-            ", login='" + login + '\'' +
-            ", password='" + password + '\'' +
-            ", Id_Personne=" + Id_Personne +
-            '}';
+                "ID_Compte=" + id +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", Id_Personne=" + Id_Personne +
+                '}';
     }
 
 

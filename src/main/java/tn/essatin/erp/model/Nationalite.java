@@ -39,8 +39,8 @@ public class Nationalite {
     @Override
     public String toString() {
         return "Nationalite{" +
-            "ID_Nationalite=" + ID_Nationalite +
-            ", libelle='" + libelle + '\'' +
-            '}';
+                "ID_Nationalite=" + ID_Nationalite +
+                ", libelle='" + libelle + '\'' +
+                '}';
     }
 }

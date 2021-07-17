@@ -69,11 +69,11 @@ public class ModaliteTransaction {
     @Override
     public String toString() {
         return "ModaliteTransaction{" +
-            "id=" + id +
-            ", numero='" + numero + '\'' +
-            ", montant=" + montant +
-            ", type='" + type + '\'' +
-            ", date=" + date +
-            '}';
+                "id=" + id +
+                ", numero='" + numero + '\'' +
+                ", montant=" + montant +
+                ", type='" + type + '\'' +
+                ", date=" + date +
+                '}';
     }
 }

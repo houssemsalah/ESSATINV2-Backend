@@ -25,7 +25,10 @@ public class Personne {
     private Nationalite idNationalite;
 
 
-    public Personne(String nom, String prenom, String mail, String adresse, String tel, LocalDate dateDeNaissance, String lieuDeNaissance, TypeIdentificateur id_Type_Identificateur, String numeroIdentificateur, String sexe, Nationalite ID_Nationalite) {
+    public Personne(String nom, String prenom, String mail, String adresse,
+                    String tel, LocalDate dateDeNaissance, String lieuDeNaissance,
+                    TypeIdentificateur id_Type_Identificateur, String numeroIdentificateur, String sexe,
+                    Nationalite ID_Nationalite) {
         this.nom = nom;
         this.prenom = prenom;
         this.mail = mail;
@@ -154,18 +157,18 @@ public class Personne {
     @Override
     public String toString() {
         return "Personne{" +
-            "ID_Personne=" + idPersonne +
-            ", nom='" + nom + '\'' +
-            ", prenom='" + prenom + '\'' +
-            ", mail='" + mail + '\'' +
-            ", adresse='" + adresse + '\'' +
-            ", tel='" + tel + '\'' +
-            ", DateDeNaissance=" + dateDeNaissance +
-            ", LieuDeNaissance='" + lieuDeNaissance + '\'' +
-            ", Id_Identificateur=" + idTypeIdentificateur +
-            ", numero_Identificateur='" + numeroIdentificateur + '\'' +
-            ", sexe='" + sexe + '\'' +
-            ", ID_Nationalite=" + idNationalite +
-            '}';
+                "ID_Personne=" + idPersonne +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", mail='" + mail + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", tel='" + tel + '\'' +
+                ", DateDeNaissance=" + dateDeNaissance +
+                ", LieuDeNaissance='" + lieuDeNaissance + '\'' +
+                ", Id_Identificateur=" + idTypeIdentificateur +
+                ", numero_Identificateur='" + numeroIdentificateur + '\'' +
+                ", sexe='" + sexe + '\'' +
+                ", ID_Nationalite=" + idNationalite +
+                '}';
     }
 }

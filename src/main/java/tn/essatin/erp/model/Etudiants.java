@@ -36,8 +36,8 @@ public class Etudiants {
     @Override
     public String toString() {
         return "Etudiants{" +
-            "idEtudiant=" + idEtudiant +
-            ", idPersonne=" + idPersonne +
-            '}';
+                "idEtudiant=" + idEtudiant +
+                ", idPersonne=" + idPersonne +
+                '}';
     }
 }
