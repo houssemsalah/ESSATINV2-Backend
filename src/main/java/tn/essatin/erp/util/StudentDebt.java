@@ -31,7 +31,7 @@ public class StudentDebt {
         Collection<Transaction> transactions = transactionDao.findAllByIdClientAndSession(etudiants.getIdPersonne(), session);
         Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants);
         System.out.println(session);
-        Enregistrement enregistrement = enregistrementDao.findByIdInscriptionAndAndIdSession(inscription, session);
+        Enregistrement enregistrement = enregistrementDao.findByIdInscriptionAndIdSession(inscription, session);
         System.out.println(enregistrement);
 
         Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(session, enregistrement.getIdNiveau());

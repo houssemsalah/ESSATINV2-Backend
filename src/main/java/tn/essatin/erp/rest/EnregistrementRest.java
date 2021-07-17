@@ -5,16 +5,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.*;
-import tn.essatin.erp.model.Enregistrement;
-import tn.essatin.erp.model.Inscription;
-import tn.essatin.erp.model.Session;
+import tn.essatin.erp.model.*;
 import tn.essatin.erp.payload.request.NivSessRequest;
 import tn.essatin.erp.payload.request.NouvelEnregistrementRequest;
 import tn.essatin.erp.payload.request.SessionUnivRequest;
+import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -27,15 +28,17 @@ public class EnregistrementRest {
     final InscriptionDao inscriptionDao;
     final EtatInscriptionDao etatInscriptionDao;
     final EtudiantsDao etudiantsDao;
+    final NiveauSuivantDao niveauSuivantDao;
 
     @Autowired
-    public EnregistrementRest(EnregistrementDao enregistrementDao, SessionDao sessionDao, NiveauDao niveauDao, InscriptionDao inscriptionDao, EtatInscriptionDao etatInscriptionDao, EtudiantsDao etudiantsDao) {
+    public EnregistrementRest(EnregistrementDao enregistrementDao, SessionDao sessionDao, NiveauDao niveauDao, InscriptionDao inscriptionDao, EtatInscriptionDao etatInscriptionDao, EtudiantsDao etudiantsDao, NiveauSuivantDao niveauSuivantDao) {
         this.enregistrementDao = enregistrementDao;
         this.sessionDao = sessionDao;
         this.niveauDao = niveauDao;
         this.inscriptionDao = inscriptionDao;
         this.etatInscriptionDao = etatInscriptionDao;
         this.etudiantsDao = etudiantsDao;
+        this.niveauSuivantDao = niveauSuivantDao;
     }
 
     @GetMapping("/getall")
@@ -50,7 +53,7 @@ public class EnregistrementRest {
                 niveauDao.findById(nivSessRequest.getIdNiveaux()).isPresent()
                         && sessionDao.findById(nivSessRequest.getIdSession()).isPresent()
         )
-            return new ResponseEntity<>(enregistrementDao.findByIdNiveauAndAndIdSession(
+            return new ResponseEntity<>(enregistrementDao.findByIdNiveauAndIdSession(
                     niveauDao.findById(nivSessRequest.getIdNiveaux()).get(),
                     sessionDao.findById(nivSessRequest.getIdSession()).get())
                     , HttpStatus.OK);
@@ -75,16 +78,35 @@ public class EnregistrementRest {
                         && etatInscriptionDao.findById(2).isPresent()
                         && niveauDao.findById(nouvelEnregistrementRequest.getNiveauxInscrit()).isPresent()
         ) {
+            Etudiants etudiants = etudiantsDao.findById(nouvelEnregistrementRequest.getIdEtudiant()).get();
+            Niveau nouveauNiveau = niveauDao.findById(nouvelEnregistrementRequest.getNiveauxInscrit()).get();
             LocalDate today = LocalDate.now();
             Session session = sessionDao.findTopByOrderByIdSessionDesc();
-            Inscription i = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiantsDao.findById(nouvelEnregistrementRequest.getIdEtudiant()).get());
-            i.setIdEtatInscription(etatInscriptionDao.findById(2).get());
+            Inscription i = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants);
             inscriptionDao.save(i);
-            Enregistrement enr = new Enregistrement(i, niveauDao.findById(nouvelEnregistrementRequest.getNiveauxInscrit()).get(), session, today, 0);
-            enregistrementDao.save(enr);
-            return new ResponseEntity<>(new MessageResponse("Enregistrement effectué avec succes pour la session: " + session.getSession(), 200), HttpStatus.OK);
-        } else
+            Enregistrement enregistrement = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(i);
+            Session ancienneSession = enregistrement.getIdSession();
+            List<Niveau> ln = new ArrayList<>();
+            ln.add(enregistrement.getIdNiveau());
+            List<NiveauSuivant> lns = niveauSuivantDao.findByIdNiveau(enregistrement.getIdNiveau());
+            for (NiveauSuivant ns : lns) {
+                ln.add(ns.getIdNiveauSuivant());
+            }
+            if (ln.contains(nouveauNiveau)) {
+                if (session.getIdSession() > ancienneSession.getIdSession()) {
+                    Enregistrement enr = new Enregistrement(i, nouveauNiveau, session, today, 0);
+                    enregistrementDao.save(enr);
+                    i.setIdEtatInscription(etatInscriptionDao.findById(2).get());
+                    return new ResponseEntity<>(new MessageResponse("Enregistrement effectué avec succes pour la session: " + session.getSession(), 200), HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(new MessageResponse("L'étudiant " + etudiants.getIdPersonne().getPrenom() + " " + etudiants.getIdPersonne().getNom() + " est deja inscrit a la session " + session.getSession() + " Les inscrit a la session suivantes ne sont pas encor ouvertes", 403), HttpStatus.FORBIDDEN);
+                }
+            } else {
+                return new ResponseEntity<>(new CombinedResponse(new MessageResponse("Le niveaux choisis ne correspond pas au niveaux possible pour cet etudiants ", 403),"Niveaux possibles",ln), HttpStatus.FORBIDDEN);
+            }
+        } else {
             return new ResponseEntity<>(new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
+        }
 
     }
 }

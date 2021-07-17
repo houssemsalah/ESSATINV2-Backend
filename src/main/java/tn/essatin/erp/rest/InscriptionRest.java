@@ -158,7 +158,7 @@ public class InscriptionRest {
             if (etudiantsDao.findByIdPersonne(p).isPresent()){
                 e=etudiantsDao.findByIdPersonne(p).get();
                 i=inscriptionDao.findTopByIdEtudiantOrderByDateDesc(e);
-                en = enregistrementDao.findByIdInscriptionAndAndIdSession(i,session);
+                en = enregistrementDao.findByIdInscriptionAndIdSession(i,session);
                 if (en != null)
                     return new ResponseEntity<>(en,HttpStatus.OK);
                 else

@@ -11,8 +11,9 @@ import java.util.List;
 
 @Repository
 public interface EnregistrementDao extends JpaRepository<Enregistrement, Integer> {
-    Enregistrement findByIdInscriptionAndAndIdSession(Inscription idInscription, Session idSession);
-    List<Enregistrement> findByIdNiveauAndAndIdSession(Niveau idNiveau, Session idSession);
+    Enregistrement findByIdInscriptionAndIdSession(Inscription idInscription, Session idSession);
+    List<Enregistrement> findByIdNiveauAndIdSession(Niveau idNiveau, Session idSession);
     List<Enregistrement> findByIdSession(Session idsession);
+    Enregistrement findTopByIdInscriptionOrderByIdEnregistrementDesc(Inscription idInscription);
 
 }
