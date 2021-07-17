@@ -1,50 +1,36 @@
 package tn.essatin.erp.payload.request;
 
-import tn.essatin.erp.model.Nationalite;
-import tn.essatin.erp.model.TypeIdentificateur;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 public class ModifierPersonne {
-    @NotNull
-    @Min(1)
+    @Min(value = 1, message = "le champ idPersonne est obligatoire")
     Integer idPersonne;
-    @NotBlank
+    @NotBlank(message = "Le nom est obligatoire")
     String nom;
-    @NotBlank
+    @NotBlank(message = "Le prenom est obligatoire")
     String prenom;
-    @NotBlank
+    @Email(message = "l'Email doit etre valid")
     String mail;
-    @NotBlank
+    @NotBlank(message = "L'addresse est obligatoire")
     String adresse;
-    @NotBlank
+    @Pattern(regexp = "(^$|[0-9]{15})", message = "Numero de telephonne invalide")
     String tel;
-    @NotNull
-    @Past
+    @Past(message = "la date de naissance doit etre au passe")
     LocalDate dateDeNaissance;
-    @NotBlank
+    @NotBlank(message = "lieux de naissance ne peut etre vide")
     String lieuDeNaissance;
-    @NotNull
-    @Min(1)
+    @Min(value = 1, message = "le champ idTypeIdentificateur est obligatoire")
     int idTypeIdentificateur;
-    @NotBlank
+    @Size(min = 8, max = 9, message = "champ numeroIdentificateur invalide")
     String numeroIdentificateur;
-    @NotBlank
+    @NotBlank(message = "le sexe ne peut etre vide")
     String sexe;
-    @NotNull
-    @Min(1)
+    @Min(value = 1, message = "le champ idNationalite est obligatoire")
     int idNationalite;
 
     public Integer getIdPersonne() {
         return idPersonne;
-    }
-
-    public void setIdPersonne(Integer idPersonne) {
-        this.idPersonne = idPersonne;
     }
 
     public String getNom() {
@@ -59,79 +45,39 @@ public class ModifierPersonne {
         return prenom;
     }
 
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
     public String getMail() {
         return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
     }
 
     public String getAdresse() {
         return adresse;
     }
 
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
-
     public String getTel() {
         return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
     }
 
     public LocalDate getDateDeNaissance() {
         return dateDeNaissance;
     }
 
-    public void setDateDeNaissance(LocalDate dateDeNaissance) {
-        this.dateDeNaissance = dateDeNaissance;
-    }
-
     public String getLieuDeNaissance() {
         return lieuDeNaissance;
-    }
-
-    public void setLieuDeNaissance(String lieuDeNaissance) {
-        this.lieuDeNaissance = lieuDeNaissance;
     }
 
     public int getIdTypeIdentificateur() {
         return idTypeIdentificateur;
     }
 
-    public void setIdTypeIdentificateur(int idTypeIdentificateur) {
-        this.idTypeIdentificateur = idTypeIdentificateur;
-    }
-
     public String getNumeroIdentificateur() {
         return numeroIdentificateur;
-    }
-
-    public void setNumeroIdentificateur(String numeroIdentificateur) {
-        this.numeroIdentificateur = numeroIdentificateur;
     }
 
     public String getSexe() {
         return sexe;
     }
 
-    public void setSexe(String sexe) {
-        this.sexe = sexe;
-    }
-
     public int getIdNationalite() {
         return idNationalite;
-    }
-
-    public void setIdNationalite(int idNationalite) {
-        this.idNationalite = idNationalite;
     }
 }

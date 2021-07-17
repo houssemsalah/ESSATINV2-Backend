@@ -2,11 +2,12 @@ package tn.essatin.erp.payload.request;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 public class AjouterContactEtudiantRequest {
     @Min(value = 1, message = "le champ idEtudiant doit etre present et strictement supperieur a zero")
     int idEtudiant;
-    @NotEmpty(message = "le numero ne peut pas etre vide")
+    @Pattern(regexp="(^$|[0-9]{15})",message = "Numero de telephonne invalide")
     String numero;
     @NotEmpty(message = "le nom ne peut pas etre vide")
     String nom;

@@ -1,46 +1,37 @@
 package tn.essatin.erp.payload.request;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 public class ModifierDiplomeEtudiantRequest {
-    @NotNull
+    @Min(value = 1, message = "le champ 'idDiplomeEtudiant' est obligatoire et doit etre strictement supperieur a 1")
     int idDiplomeEtudiant;
-    @NotNull
+    @Min(value = 1, message = "le champ 'idDiplome' est obligatoire et doit etre strictement supperieur a 1")
     int idDiplome;
-    @NotBlank
+    @Size(min = 4, max = 4, message = "annee invalide")
+    @Digits(fraction = 0, integer = 4, message = "annee invalide")
     String annee;
-    @NotBlank
+    @NotEmpty(message = "Le specialite ne doit pas etre vide")
     String specialite;
-    @NotNull
+    @Min(value = 1, message = "le champ 'niveau' est obligatoire et doit etre strictement supperieur a 1")
     int niveau;
-    @NotBlank
+    @NotEmpty(message = "Le status ne doit pas etre vide")
     String status;
-    @NotBlank
+    @NotEmpty(message = "L'etablissement ne doit pas etre vide")
     String etablissement;
 
     public int getIdDiplomeEtudiant() {
         return idDiplomeEtudiant;
     }
 
-    public void setIdDiplomeEtudiant(int idDiplomeEtudiant) {
-        this.idDiplomeEtudiant = idDiplomeEtudiant;
-    }
-
     public int getIdDiplome() {
         return idDiplome;
     }
 
-    public void setIdDiplome(int idDiplome) {
-        this.idDiplome = idDiplome;
-    }
-
     public String getAnnee() {
         return annee;
-    }
-
-    public void setAnnee(String annee) {
-        this.annee = annee;
     }
 
     public String getSpecialite() {
@@ -63,15 +54,7 @@ public class ModifierDiplomeEtudiantRequest {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getEtablissement() {
         return etablissement;
-    }
-
-    public void setEtablissement(String etablissement) {
-        this.etablissement = etablissement;
     }
 }

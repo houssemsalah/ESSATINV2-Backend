@@ -9,7 +9,8 @@ public class MessageResponse {
         this.message = message;
         this.code = 200;
     }
-    public MessageResponse(String message,int code) {
+
+    public MessageResponse(String message, int code) {
         this.message = message;
         this.code = code;
     }
@@ -27,6 +28,6 @@ public class MessageResponse {
     }
 
     public void setCode(int code) {
-        code = code;
+        this.code = code;
     }
 }

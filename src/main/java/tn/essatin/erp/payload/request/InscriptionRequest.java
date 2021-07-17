@@ -3,40 +3,38 @@ package tn.essatin.erp.payload.request;
 import tn.essatin.erp.model.ContactEtudiant;
 import tn.essatin.erp.model.DiplomeEtudiant;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.List;
 
 public class InscriptionRequest {
-    @NotBlank
+    @NotBlank(message = "Le nom est obligatoire")
     String nom;
-    @NotBlank
+    @NotBlank(message = "Le prenom est obligatoire")
     String prenom;
-    @NotBlank
+    @Email(message = "l'Email doit etre valid")
     String mail;
-    @NotBlank
+    @NotBlank(message = "L'addresse est obligatoire")
     String adresse;
-    @NotBlank
+    @Pattern(regexp="(^$|[0-9]{15})",message = "Numero de telephonne invalide")
     String telephonne;
-    @Past
+    @Past(message = "la date de naissance doit etre au passe")
     LocalDate dateNaissance;
-    @NotBlank
+    @NotBlank(message = "lieux de naissance ne peut etre vide")
     String lieuNaissance;
-    @NotNull
+    @Min(value = 1, message = "le champ idTypeIdentificateur est obligatoire")
     int idTypeIdentificateur;
-    @NotBlank
+    @Size(min = 8, max = 9, message = "Numero ididentif invalide")
     String ididentif;
-    @NotBlank
+    @NotBlank(message = "le sexe ne peut etre vide")
     String sexe;
-    @NotNull
+    @Min(value = 1, message = "le champ idNationalite est obligatoire")
     int idNationalite;
-    @NotNull
+    @NotNull(message = "une list de ContactEtudiant doit etre fourni ")
     List<ContactEtudiant> contactEtudiantList;
-    @NotNull
+    @NotNull(message = "une list de DiplomeEtudiant doit etre fourni ")
     List<DiplomeEtudiant> diplomeEtudiantList;
-    @NotNull
+    @Min(value = 1, message = "le champ niveauxInscrit est obligatoire")
     int niveauxInscrit;
 
     public String getNom() {
@@ -51,103 +49,51 @@ public class InscriptionRequest {
         return prenom;
     }
 
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
     public String getMail() {
         return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
     }
 
     public String getAdresse() {
         return adresse;
     }
 
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
-
     public String getTelephonne() {
         return telephonne;
-    }
-
-    public void setTelephonne(String telephonne) {
-        this.telephonne = telephonne;
     }
 
     public LocalDate getDateNaissance() {
         return dateNaissance;
     }
 
-    public void setDateNaissance(LocalDate dateNaissance) {
-        this.dateNaissance = dateNaissance;
-    }
-
     public String getLieuNaissance() {
         return lieuNaissance;
-    }
-
-    public void setLieuNaissance(String lieuNaissance) {
-        this.lieuNaissance = lieuNaissance;
     }
 
     public int getIdTypeIdentificateur() {
         return idTypeIdentificateur;
     }
 
-    public void setIdTypeIdentificateur(int idTypeIdentificateur) {
-        this.idTypeIdentificateur = idTypeIdentificateur;
-    }
-
     public String getIdidentif() {
         return ididentif;
-    }
-
-    public void setIdidentif(String ididentif) {
-        this.ididentif = ididentif;
     }
 
     public String getSexe() {
         return sexe;
     }
 
-    public void setSexe(String sexe) {
-        this.sexe = sexe;
-    }
-
     public int getIdNationalite() {
         return idNationalite;
-    }
-
-    public void setIdNationalite(int idNationalite) {
-        this.idNationalite = idNationalite;
     }
 
     public List<ContactEtudiant> getContactEtudiantList() {
         return contactEtudiantList;
     }
 
-    public void setContactEtudiantList(List<ContactEtudiant> contactEtudiantList) {
-        this.contactEtudiantList = contactEtudiantList;
-    }
-
     public List<DiplomeEtudiant> getDiplomeEtudiantList() {
         return diplomeEtudiantList;
     }
 
-    public void setDiplomeEtudiantList(List<DiplomeEtudiant> diplomeEtudiantList) {
-        this.diplomeEtudiantList = diplomeEtudiantList;
-    }
-
     public int getNiveauxInscrit() {
         return niveauxInscrit;
-    }
-
-    public void setNiveauxInscrit(int niveauxInscrit) {
-        this.niveauxInscrit = niveauxInscrit;
     }
 }

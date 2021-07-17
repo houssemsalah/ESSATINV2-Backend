@@ -1,34 +1,28 @@
 package tn.essatin.erp.payload.request;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 public class InscriptionWithIdPersonneRequest {
-    @NotNull
+    @Min(value = 1, message = "le champ niveauxInscrit est obligatoire")
     int niveauxInscrit;
-    @NotNull
+    @Min(value = 1, message = "le champ idPersonne est obligatoire")
     int idPersonne;
-    @NotEmpty
-     String mail;
-    @NotEmpty
-     String adresse;
-    @NotEmpty
-     String tel;
+    @Email(message = "l'Email doit etre valid")
+    String mail;
+    @NotBlank(message = "L'addresse est obligatoire")
+    String adresse;
+    @Pattern(regexp = "(^$|[0-9]{15})", message = "Numero de telephonne invalide")
+    String tel;
 
     public int getNiveauxInscrit() {
         return niveauxInscrit;
     }
 
-    public void setNiveauxInscrit(int niveauxInscrit) {
-        this.niveauxInscrit = niveauxInscrit;
-    }
-
     public int getIdPersonne() {
         return idPersonne;
-    }
-
-    public void setIdPersonne(int idPersonne) {
-        this.idPersonne = idPersonne;
     }
 
     public String getMail() {
