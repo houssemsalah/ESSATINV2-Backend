@@ -3,6 +3,7 @@ package tn.essatin.erp.payload.request;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class AjouterDiplomeEtudiantRequest {
 
@@ -14,7 +15,7 @@ public class AjouterDiplomeEtudiantRequest {
     String annee;
     @NotEmpty(message = "le champ 'specialite' est obligatoire")
     String specialite;
-    @NotEmpty(message = "le champ 'niveau' est obligatoire")
+    @NotNull(message = "le champ 'niveau' est obligatoire")
     int niveau;
     @NotEmpty(message = "le champ 'status' est obligatoire")
     String status;
