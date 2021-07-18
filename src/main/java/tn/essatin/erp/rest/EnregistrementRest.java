@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.*;
 import tn.essatin.erp.model.*;
-import tn.essatin.erp.payload.request.GetByIdRequest;
+import tn.essatin.erp.payload.request.ModifierEnregistrementRequest;
 import tn.essatin.erp.payload.request.NivSessRequest;
 import tn.essatin.erp.payload.request.NouvelEnregistrementRequest;
 import tn.essatin.erp.payload.request.SessionUnivRequest;
@@ -88,7 +88,6 @@ public class EnregistrementRest {
             LocalDate today = LocalDate.now();
             Session session = sessionDao.findTopByOrderByIdSessionDesc();
             Inscription i = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants);
-            inscriptionDao.save(i);
             Enregistrement enregistrement = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(i);
             Session ancienneSession = enregistrement.getIdSession();
             List<Niveau> ln = new ArrayList<>();
@@ -102,6 +101,7 @@ public class EnregistrementRest {
                     Enregistrement enr = new Enregistrement(i, nouveauNiveau, session, today, 0);
                     enregistrementDao.save(enr);
                     i.setIdEtatInscription(etatInscriptionDao.findById(2).get());
+                    inscriptionDao.save(i);
                     return new ResponseEntity<>(
                             new MessageResponse("Enregistrement effectué avec succes pour la session: "
                                     + session.getSession(), 200), HttpStatus.OK);
@@ -124,14 +124,55 @@ public class EnregistrementRest {
         }
     }
 
-/*
-    @PostMapping("/modiferenregistrement")
-    public ResponseEntity<?> modifierEnregistrement(@Valid @RequestBody GetByIdRequest getByIdRequest){
-        Enregistrement enregistrement;
-        if(enregistrementDao.findById(getByIdRequest.getId()).isPresent()){
-            enregistrement = enregistrementDao.findById(getByIdRequest.getId()).get();
-            List<Enregistrement> len = enregistrementDao.findByIdInscription(enregistrement.getIdInscription());
 
+    @PostMapping("/modiferenregistrement")
+    public ResponseEntity<?> modifierEnregistrement(
+            @Valid @RequestBody ModifierEnregistrementRequest modifierEnregistrementRequest) {
+        Enregistrement enregistrement;
+        Session session = sessionDao.findTopByOrderByIdSessionDesc();
+        Niveau nouveauNiveau;
+        if (
+                enregistrementDao.findById(modifierEnregistrementRequest.getIdEnregistrement()).isPresent()
+                        && niveauDao.findById(modifierEnregistrementRequest.getIdNiveaux()).isPresent()
+        ) {
+            nouveauNiveau = niveauDao.findById(modifierEnregistrementRequest.getIdNiveaux()).get();
+            enregistrement = enregistrementDao.findById(modifierEnregistrementRequest.getIdEnregistrement()).get();
+            List<Enregistrement> len = enregistrementDao.findByIdInscription(enregistrement.getIdInscription());
+            if (len.size() < 2) {
+                return new ResponseEntity<>(
+                        new MessageResponse("cet etudiant est nouveaux, vous devez modifier son " +
+                                "inscription pas son enregistrement!", 403), HttpStatus.FORBIDDEN);
+            } else {
+                if (!len.get(len.size() - 1).getIdEnregistrement().equals(enregistrement.getIdEnregistrement())) {
+                    return new ResponseEntity<>(new MessageResponse("impossible de modifier un enregistrment " +
+                            "si ce n'est pas le dernier pour cet inscription", 403), HttpStatus.FORBIDDEN);
+                } else if (!enregistrement.getIdSession().getIdSession().equals(session.getIdSession())) {
+                    return new ResponseEntity<>(new MessageResponse("impossible de modifier un enregistrment " +
+                            "si il n'appartien pas a la session en cour", 403), HttpStatus.FORBIDDEN);
+                } else {
+                    Enregistrement gdima = len.get(len.size() - 2);
+                    List<Niveau> ln = new ArrayList<>();
+                    ln.add(enregistrement.getIdNiveau());
+                    List<NiveauSuivant> lns = niveauSuivantDao.findByIdNiveau(gdima.getIdNiveau());
+                    for (NiveauSuivant ns : lns) {
+                        ln.add(ns.getIdNiveauSuivant());
+                    }
+                    if (ln.contains(nouveauNiveau)) {
+                        enregistrement.setIdNiveau(nouveauNiveau);
+                        enregistrementDao.save(enregistrement);
+                        return new ResponseEntity<>(
+                                new MessageResponse("Modification effectué avec succes", 200), HttpStatus.OK);
+                    }else{
+                        return new ResponseEntity<>(new CombinedResponse(
+                                new MessageResponse("Le niveaux choisis ne correspond pas au niveaux possible " +
+                                        "pour cet etudiants ", 403), "Niveau[]", ln),
+                                HttpStatus.FORBIDDEN);
+                    }
+                }
+            }
+        }else{
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
         }
-    }*/
+    }
 }
