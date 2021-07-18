@@ -114,7 +114,7 @@ public class EnregistrementRest {
             } else {
                 return new ResponseEntity<>(new CombinedResponse(
                         new MessageResponse("Le niveaux choisis ne correspond pas au niveaux possible " +
-                                "pour cet etudiants ", 403), "Niveaux possibles", ln),
+                                "pour cet etudiants ", 403), "Niveau[]", ln),
                         HttpStatus.FORBIDDEN);
             }
         } else {
