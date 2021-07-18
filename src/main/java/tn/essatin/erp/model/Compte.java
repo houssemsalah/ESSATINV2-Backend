@@ -12,16 +12,16 @@ public class Compte {
     private String login;
     private String password;
     @OneToOne(cascade = CascadeType.ALL)
-    private Personne Id_Personne;
+    private Personne idPersonne;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "compte_role", joinColumns = @JoinColumn(name = "compte_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public Compte(String login, String password, Personne id_Personne) {
+    public Compte(String login, String password, Personne idPersonne) {
         this.login = login;
         this.password = password;
-        Id_Personne = id_Personne;
+        this.idPersonne = idPersonne;
     }
 
     public Compte() {
@@ -51,12 +51,12 @@ public class Compte {
         this.password = password;
     }
 
-    public Personne getId_Personne() {
-        return Id_Personne;
+    public Personne getIdPersonne() {
+        return idPersonne;
     }
 
-    public void setId_Personne(Personne id_Personne) {
-        Id_Personne = id_Personne;
+    public void setIdPersonne(Personne idPersonne) {
+        this.idPersonne = idPersonne;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class Compte {
                 "ID_Compte=" + id +
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
-                ", Id_Personne=" + Id_Personne +
+                ", Id_Personne=" + idPersonne +
                 '}';
     }
 

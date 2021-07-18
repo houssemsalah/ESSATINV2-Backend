@@ -16,7 +16,8 @@ public class InscriptionRequest {
     String mail;
     @NotBlank(message = "L'addresse est obligatoire")
     String adresse;
-    @Pattern(regexp="(^$|[0-9]{15})",message = "Numero de telephonne invalide")
+    @Pattern(regexp = "([0-9]*)", message = "Numero de telephonne ne peut contenir que des chiffres")
+    @Size(min = 8, max = 15, message = "Numero de telephonne doit etre entre 8 et 15 chiffres")
     String telephonne;
     @Past(message = "la date de naissance doit etre au passe")
     LocalDate dateNaissance;

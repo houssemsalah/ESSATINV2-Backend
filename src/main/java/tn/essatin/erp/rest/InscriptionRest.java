@@ -10,6 +10,7 @@ import tn.essatin.erp.model.*;
 import tn.essatin.erp.payload.request.GetByIdRequest;
 import tn.essatin.erp.payload.request.InscriptionRequest;
 import tn.essatin.erp.payload.request.InscriptionWithIdPersonneRequest;
+import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.RandomStringGenerator;
 
@@ -64,9 +65,12 @@ public class InscriptionRest {
         this.cycleDao = cycleDao;
     }
 
-
     @PostMapping("/nouveauetudiant")
     public ResponseEntity<?> nouveauEtudiant(@Valid @RequestBody InscriptionRequest inscriptionRequest) {
+        Etudiants e;
+        Session session;
+        Role studentRole;
+        Personne p;
         if (
                 typeIdentificateurDao.findById(inscriptionRequest.getIdTypeIdentificateur()).isPresent() &&
                         nationaliteDao.findById(inscriptionRequest.getIdNationalite()).isPresent() &&
@@ -74,11 +78,8 @@ public class InscriptionRest {
                         niveauDao.findById(inscriptionRequest.getNiveauxInscrit()).isPresent() &&
                         roleDao.findById(5).isPresent()
         ) {
-            Session session = sessionDao.findTopByOrderByIdSessionDesc();
-            int numeroInscriptionInt = inscriptionDao.countAllByNumeroInscriptionEndsWith(session.getSession()
-                    .substring(0, 4)) + 1;
-            String numeroInscription = "" + numeroInscriptionInt + "/" + session.getSession().substring(0, 4);
-            LocalDate today = LocalDate.now();
+            studentRole = roleDao.findById(5).get();
+            session = sessionDao.findTopByOrderByIdSessionDesc();
             String nom = inscriptionRequest.getNom();
             String prenom = inscriptionRequest.getPrenom();
             String mail = inscriptionRequest.getMail();
@@ -93,10 +94,10 @@ public class InscriptionRest {
             Nationalite idNationalite = nationaliteDao.findById(inscriptionRequest.getIdNationalite()).get();
             List<ContactEtudiant> contacts = inscriptionRequest.getContactEtudiantList();
             List<DiplomeEtudiant> diplomes = inscriptionRequest.getDiplomeEtudiantList();
-            Personne p = new Personne(nom, prenom, mail, adresse, telephonne, dateNaissance,
+            p = new Personne(nom, prenom, mail, adresse, telephonne, dateNaissance,
                     lieuNaissance, idTypeIdentificateur, ididentif, sexe, idNationalite);
             personneDao.save(p);
-            Etudiants e = new Etudiants(p);
+            e = new Etudiants(p);
             etudiantsDao.save(e);
             for (ContactEtudiant ce : contacts) {
                 ce.setIdEtudiant(e);
@@ -106,16 +107,9 @@ public class InscriptionRest {
                 de.setIdEtudiant(e);
                 diplomeEtudiantDao.save(de);
             }
-            Inscription i = new Inscription(e, numeroInscription, today, etatInscriptionDao.findById(2).get());
-            inscriptionDao.save(i);
-            Enregistrement enr = new Enregistrement(i, niveauDao.findById(
-                    inscriptionRequest.getNiveauxInscrit()).get(), session, today, 0);
-            enregistrementDao.save(enr);
-            Compte c = new Compte(p.getNumeroIdentificateur(), RandomStringGenerator.generateRandomString(10), p);
-            Set<Role> rl = new HashSet<>();
-            rl.add(roleDao.findById(5).get());
-            c.setRoles(rl);
-            compteDao.save(c);
+            inscriptionCompteEtEnregistrement(
+                    e, session, niveauDao.findById(inscriptionRequest.getNiveauxInscrit()).get(), p,
+                    studentRole, etatInscriptionDao.findById(2).get());
             return new ResponseEntity<>(new MessageResponse("votre compte est crée avec succée!!"), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(
@@ -126,39 +120,65 @@ public class InscriptionRest {
     @PostMapping("/nouveauetudiantwithidp")
     public ResponseEntity<?> nouveauEtudiantWithIdPersonne(
             @Valid @RequestBody InscriptionWithIdPersonneRequest inscriptionWithIdPersonneRequest) {
+        Etudiants e;
+        Compte c;
+        Session session;
+        Role studentRole;
+        Personne p;
+        Set<Role> rl;
+        String numeroInscription;
+        int numeroInscriptionInt;
+        LocalDate today = LocalDate.now();
+        Inscription i;
+        Enregistrement enr;
         if (
                 etatInscriptionDao.findById(2).isPresent()
                         && niveauDao.findById(inscriptionWithIdPersonneRequest.getNiveauxInscrit()).isPresent()
                         && roleDao.findById(5).isPresent()
                         && personneDao.findById(inscriptionWithIdPersonneRequest.getIdPersonne()).isPresent()
         ) {
-            Session session = sessionDao.findTopByOrderByIdSessionDesc();
-            int numeroInscriptionInt = inscriptionDao.countAllByNumeroInscriptionEndsWith(
+            studentRole = roleDao.findById(5).get();
+            session = sessionDao.findTopByOrderByIdSessionDesc();
+            numeroInscriptionInt = inscriptionDao.countAllByNumeroInscriptionEndsWith(
                     session.getSession().substring(0, 4)) + 1;
-            String numeroInscription = "" + numeroInscriptionInt + "/" + session.getSession().substring(0, 4);
-            LocalDate today = LocalDate.now();
-            Personne p = personneDao.findById(inscriptionWithIdPersonneRequest.getIdPersonne()).get();
-            p.setAdresse(inscriptionWithIdPersonneRequest.getAdresse());
-            p.setMail(inscriptionWithIdPersonneRequest.getMail());
-            p.setTel(inscriptionWithIdPersonneRequest.getTel());
-            personneDao.save(p);
-            Etudiants e;
-            if (etudiantsDao.findByIdPersonne(p).isPresent())
-                e = etudiantsDao.findByIdPersonne(p).get();
-            else
+            numeroInscription = "" + numeroInscriptionInt + "/" + session.getSession().substring(0, 4);
+            p = personneDao.findById(inscriptionWithIdPersonneRequest.getIdPersonne()).get();
+            enr = estDejaInscritCetteSession(p);
+            if (enr == null) {
+                p.setAdresse(inscriptionWithIdPersonneRequest.getAdresse());
+                p.setMail(inscriptionWithIdPersonneRequest.getMail());
+                p.setTel(inscriptionWithIdPersonneRequest.getTel());
+                personneDao.save(p);
+                if (etudiantsDao.findByIdPersonne(p).isPresent()) {
+                    e = etudiantsDao.findByIdPersonne(p).get();
+                    i = new Inscription(e, numeroInscription, today, etatInscriptionDao.findById(2).get());
+                    inscriptionDao.save(i);
+                    enr = new Enregistrement(i, niveauDao.findById(
+                            inscriptionWithIdPersonneRequest.getNiveauxInscrit()).get(), session, today, 0);
+                    enregistrementDao.save(enr);
+                    if (compteDao.findByIdPersonne(p).isPresent()) {
+                        c = compteDao.findByIdPersonne(p).get();
+                        addStudentRoleIfNotPresent(c, studentRole);
+                    } else {
+                        c = new Compte(p.getNumeroIdentificateur(), RandomStringGenerator.generateRandomString(10), p);
+                        rl = new HashSet<>();
+                        rl.add(studentRole);
+                        c.setRoles(rl);
+                    }
+                    compteDao.save(c);
+                } else { //personne mais pas etudiant
+                    e = new Etudiants(p);
+                    etudiantsDao.save(e);
+                    inscriptionCompteEtEnregistrement(
+                            e, session, niveauDao.findById(inscriptionWithIdPersonneRequest.getNiveauxInscrit()).get(),
+                            p, studentRole, etatInscriptionDao.findById(2).get());
+                }
+                return new ResponseEntity<>(new MessageResponse("Inscription effectué avec succée!!"), HttpStatus.OK);
+            } else {
                 return new ResponseEntity<>(
-                        new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
-            Inscription i = new Inscription(e, numeroInscription, today, etatInscriptionDao.findById(2).get());
-            inscriptionDao.save(i);
-            Enregistrement enr = new Enregistrement(i, niveauDao.findById(
-                    inscriptionWithIdPersonneRequest.getNiveauxInscrit()).get(), session, today, 0);
-            enregistrementDao.save(enr);
-            Compte c = new Compte(p.getNumeroIdentificateur(), RandomStringGenerator.generateRandomString(10), p);
-            Set<Role> rl = new HashSet<>();
-            rl.add(roleDao.findById(5).get());
-            c.setRoles(rl);
-            compteDao.save(c);
-            return new ResponseEntity<>(new MessageResponse("votre compte est crée avec succée!!"), HttpStatus.OK);
+                        new CombinedResponse(new MessageResponse("l'etudiant est deja inscrit cet année", 403),
+                                "Enregistrement", enr), HttpStatus.FORBIDDEN);
+            }
         } else {
             return new ResponseEntity<>(
                     new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
@@ -168,24 +188,68 @@ public class InscriptionRest {
     @PostMapping("/estdejainscritcettesessionbyidpersonne")
     public ResponseEntity<?> estDejaIscritCetteSessionByIdPersonne(@Valid @RequestBody GetByIdRequest getByIdRequest) {
         Personne p;
-        Etudiants e;
-        Inscription i;
         Enregistrement en;
-        Session session = sessionDao.findTopByOrderByIdSessionDesc();
         if (personneDao.findById(getByIdRequest.getId()).isPresent()) {
             p = personneDao.findById(getByIdRequest.getId()).get();
-            if (etudiantsDao.findByIdPersonne(p).isPresent()) {
-                e = etudiantsDao.findByIdPersonne(p).get();
-                i = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(e);
-                en = enregistrementDao.findByIdInscriptionAndIdSession(i, session);
-                if (en != null)
-                    return new ResponseEntity<>(en, HttpStatus.OK);
-                else
-                    return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
-            } else
+            en = estDejaInscritCetteSession(p);
+            if (en != null) {
+                return new ResponseEntity<>(en, HttpStatus.OK);
+            } else {
                 return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
-        } else
-            return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+            }
+        }
+        return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
     }
 
+    private Enregistrement estDejaInscritCetteSession(Personne p) {
+        Etudiants e;
+        Inscription i;
+        Enregistrement en = null;
+        Session session = sessionDao.findTopByOrderByIdSessionDesc();
+        if (etudiantsDao.findByIdPersonne(p).isPresent()) {
+            e = etudiantsDao.findByIdPersonne(p).get();
+            i = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(e);
+            en = enregistrementDao.findByIdInscriptionAndIdSession(i, session);
+        }
+        return en;
+    }
+
+    private void inscriptionCompteEtEnregistrement(Etudiants e, Session session, Niveau niveauxInscrit, Personne p, Role studentRole, EtatInscription etatInscription) {
+        int numeroInscriptionInt = inscriptionDao.countAllByNumeroInscriptionEndsWith(
+                session.getSession().substring(0, 4)) + 1;
+        String numeroInscription = "" + numeroInscriptionInt + "/" + session.getSession().substring(0, 4);
+        LocalDate today = LocalDate.now();
+        Inscription i = new Inscription(e, numeroInscription, today, etatInscription);
+        inscriptionDao.save(i);
+        Enregistrement enr = new Enregistrement(i, niveauxInscrit, session, today, 0);
+        enregistrementDao.save(enr);
+        Compte c;
+        Set<Role> rl;
+        if (compteDao.findByIdPersonne(p).isPresent()) {
+            c = compteDao.findByIdPersonne(p).get();
+            addStudentRoleIfNotPresent(c, studentRole);
+        } else {
+            c = new Compte(p.getNumeroIdentificateur(), RandomStringGenerator.generateRandomString(10), p);
+            rl = new HashSet<>();
+            rl.add(studentRole);
+            c.setRoles(rl);
+        }
+        compteDao.save(c);
+    }
+
+    private void addStudentRoleIfNotPresent(Compte compte, Role studentRole) {
+        Set<Role> rl;
+        rl = compte.getRoles();
+        boolean isStudent = false;
+        for (Role r : rl) {
+            if (r.getId() == 5) {
+                isStudent = true;
+                break;
+            }
+        }
+        if (!isStudent) {
+            rl.add(studentRole);
+            compte.setRoles(rl);
+        }
+    }
 }

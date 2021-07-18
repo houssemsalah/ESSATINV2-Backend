@@ -38,7 +38,7 @@ public class CompteDetailsImpl implements UserDetails {
             compte.getPassword(),
             compte.getId(),
             compte.getLogin(),
-            authorities, compte.getId_Personne().getNom(), compte.getId_Personne().getPrenom());
+            authorities, compte.getIdPersonne().getNom(), compte.getIdPersonne().getPrenom());
     }
 
     public Integer getId() {
