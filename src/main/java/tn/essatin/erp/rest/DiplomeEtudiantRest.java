@@ -75,9 +75,8 @@ public class DiplomeEtudiantRest {
     public ResponseEntity<?> modiferById(
             @Valid @RequestBody ModifierDiplomeEtudiantRequest modifierDiplomeEtudiantRequest) {
         if (
-                diplomeEtudiantDao.findById(modifierDiplomeEtudiantRequest.getIdDiplome()).isPresent()
+                diplomeEtudiantDao.findById(modifierDiplomeEtudiantRequest.getIdDiplomeEtudiant()).isPresent()
                         && diplomeDao.findById(modifierDiplomeEtudiantRequest.getIdDiplome()).isPresent()
-                        && diplomeEtudiantDao.findById(modifierDiplomeEtudiantRequest.getIdDiplomeEtudiant()).isPresent()
         ) {
             DiplomeEtudiant de = diplomeEtudiantDao.findById(modifierDiplomeEtudiantRequest.getIdDiplomeEtudiant()).get();
             de.setIdDiplome(diplomeDao.findById(modifierDiplomeEtudiantRequest.getIdDiplome()).get());
