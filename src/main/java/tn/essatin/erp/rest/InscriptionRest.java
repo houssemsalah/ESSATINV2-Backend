@@ -194,9 +194,9 @@ public class InscriptionRest {
             p = personneDao.findById(getByIdRequest.getId()).get();
             en = estDejaInscritCetteSession(p);
             if (en != null) {
-                return new ResponseEntity<>(new CombinedResponse(new MessageResponse("true",200),"Enregistrement",en), HttpStatus.OK);
+                return new ResponseEntity<>(new CombinedResponse(new MessageResponse("true",1),"Enregistrement",en), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(new MessageResponse("false",200), HttpStatus.OK);
+                return new ResponseEntity<>(new MessageResponse("false",0), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
