@@ -15,7 +15,7 @@ public class AjouterDiplomeEtudiantRequest {
     @NotEmpty(message = "le champ 'specialite' est obligatoire")
     String specialite;
     @NotEmpty(message = "le champ 'niveau' est obligatoire")
-    Integer niveau;
+    int niveau;
     @NotEmpty(message = "le champ 'status' est obligatoire")
     String status;
     @NotEmpty(message = "le champ 'etablissement' est obligatoire")
