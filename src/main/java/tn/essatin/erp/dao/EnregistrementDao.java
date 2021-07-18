@@ -15,5 +15,6 @@ public interface EnregistrementDao extends JpaRepository<Enregistrement, Integer
     List<Enregistrement> findByIdNiveauAndIdSession(Niveau idNiveau, Session idSession);
     List<Enregistrement> findByIdSession(Session idsession);
     Enregistrement findTopByIdInscriptionOrderByIdEnregistrementDesc(Inscription idInscription);
+    List<Enregistrement> findByIdInscription(Inscription inscription);
 
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.*;
 import tn.essatin.erp.model.*;
+import tn.essatin.erp.payload.request.GetByIdRequest;
 import tn.essatin.erp.payload.request.NivSessRequest;
 import tn.essatin.erp.payload.request.NouvelEnregistrementRequest;
 import tn.essatin.erp.payload.request.SessionUnivRequest;
@@ -122,4 +123,15 @@ public class EnregistrementRest {
                     new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
         }
     }
+
+/*
+    @PostMapping("/modiferenregistrement")
+    public ResponseEntity<?> modifierEnregistrement(@Valid @RequestBody GetByIdRequest getByIdRequest){
+        Enregistrement enregistrement;
+        if(enregistrementDao.findById(getByIdRequest.getId()).isPresent()){
+            enregistrement = enregistrementDao.findById(getByIdRequest.getId()).get();
+            List<Enregistrement> len = enregistrementDao.findByIdInscription(enregistrement.getIdInscription());
+
+        }
+    }*/
 }

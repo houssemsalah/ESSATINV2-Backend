@@ -10,6 +10,7 @@ import tn.essatin.erp.model.*;
 import tn.essatin.erp.payload.request.GetByIdRequest;
 import tn.essatin.erp.payload.request.InscriptionRequest;
 import tn.essatin.erp.payload.request.InscriptionWithIdPersonneRequest;
+import tn.essatin.erp.payload.request.ModifierInscriptionRequest;
 import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.RandomStringGenerator;
@@ -193,13 +194,43 @@ public class InscriptionRest {
             p = personneDao.findById(getByIdRequest.getId()).get();
             en = estDejaInscritCetteSession(p);
             if (en != null) {
-                return new ResponseEntity<>(en, HttpStatus.OK);
+                return new ResponseEntity<>(new CombinedResponse(new MessageResponse("true",200),"Enregistrement",en), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new MessageResponse("false",200), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
     }
+
+    @PostMapping("/modifier")
+    public ResponseEntity<?> modifierInscription(@Valid @RequestBody ModifierInscriptionRequest modifierInscriptionRequest) {
+
+        if (
+                inscriptionDao.findById(modifierInscriptionRequest.getIdInscription()).isPresent()
+                        && niveauDao.findById(modifierInscriptionRequest.getIdNiveaux()).isPresent()
+        ) {
+            Inscription ins = inscriptionDao.findById(modifierInscriptionRequest.getIdInscription()).get();
+            Niveau niv = niveauDao.findById(modifierInscriptionRequest.getIdNiveaux()).get();
+            List<Enregistrement> len = enregistrementDao.findByIdInscription(ins);
+            if(len.size()>1){
+                return new ResponseEntity<>(
+                        new MessageResponse("Etudiant n'est plus a sa premiere année a l'école." +
+                                " Impossible de modifier son inscription", 403),
+                        HttpStatus.FORBIDDEN);
+            }else if(len.size() == 0){
+                return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403),
+                        HttpStatus.FORBIDDEN);
+            }else{
+                Enregistrement e = len.get(0);
+                e.setIdNiveau(niv);
+                enregistrementDao.save(e);
+                return new ResponseEntity<>(new MessageResponse("Inscription modifer avec succée!!"), HttpStatus.OK);
+            }
+        }else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressource Indisponible", 403),HttpStatus.FORBIDDEN);
+    }
+
 
     private Enregistrement estDejaInscritCetteSession(Personne p) {
         Etudiants e;
@@ -236,6 +267,7 @@ public class InscriptionRest {
         }
         compteDao.save(c);
     }
+
 
     private void addStudentRoleIfNotPresent(Compte compte, Role studentRole) {
         Set<Role> rl;
