@@ -16,10 +16,11 @@ public class Employer {
     private LocalDate dateEntree;
     @ManyToOne
     private Personne idPersonne;
+    @ManyToOne
+    private Salarie idSalarie;
 
 
-    public Employer(Integer idEmployer, String NCNSS, String observation, String situationM, Integer NBEnfant, String IMG, LocalDate dateEntree, Personne idPersonne) {
-        this.idEmployer = idEmployer;
+    public Employer(String NCNSS, String observation, String situationM, Integer NBEnfant, String IMG, LocalDate dateEntree, Personne idPersonne, Salarie idSalarie) {
         this.NCNSS = NCNSS;
         this.observation = observation;
         this.situationM = situationM;
@@ -27,6 +28,7 @@ public class Employer {
         this.IMG = IMG;
         this.dateEntree = dateEntree;
         this.idPersonne = idPersonne;
+        this.idSalarie= idSalarie;
     }
 
     public Employer() {
@@ -96,17 +98,26 @@ public class Employer {
         this.idPersonne = idPersonne;
     }
 
+    public Salarie getIdSalarie() {
+        return idSalarie;
+    }
+
+    public void setIdSalarie(Salarie idSalarie) {
+        this.idSalarie = idSalarie;
+    }
+
     @Override
     public String toString() {
         return "Employer{" +
-            "idEmployer=" + idEmployer +
-            ", NCNSS='" + NCNSS + '\'' +
-            ", observation='" + observation + '\'' +
-            ", situationM='" + situationM + '\'' +
-            ", NBEnfant=" + NBEnfant +
-            ", IMG='" + IMG + '\'' +
-            ", dateEntree=" + dateEntree +
-            ", idPersonne=" + idPersonne +
-            '}';
+                "idEmployer=" + idEmployer +
+                ", NCNSS='" + NCNSS + '\'' +
+                ", observation='" + observation + '\'' +
+                ", situationM='" + situationM + '\'' +
+                ", NBEnfant=" + NBEnfant +
+                ", IMG='" + IMG + '\'' +
+                ", dateEntree=" + dateEntree +
+                ", idPersonne=" + idPersonne +
+                ", idSalarie=" + idSalarie +
+                '}';
     }
 }

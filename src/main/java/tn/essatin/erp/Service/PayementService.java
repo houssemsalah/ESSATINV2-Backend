@@ -15,5 +15,6 @@ public interface PayementService {
    void vacatairPay();
    void avancePay();
    void rembourcementPay();
+   void formateurPay();
 
 }
