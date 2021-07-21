@@ -17,12 +17,16 @@ import java.util.Set;
 
 @Component
 public class PayementStrategyEtudiant implements PayementStrategy {
+    final EtudiantsDao etudiantsDao;
+    final StudentDebt studentDebt;
+    final ManageTransaction manageTransaction;
+
     @Autowired
-    EtudiantsDao etudiantsDao;
-    @Autowired
-    StudentDebt studentDebt;
-    @Autowired
-    ManageTransaction manageTransaction;
+    public PayementStrategyEtudiant(EtudiantsDao etudiantsDao, StudentDebt studentDebt, ManageTransaction manageTransaction) {
+        this.etudiantsDao = etudiantsDao;
+        this.studentDebt = studentDebt;
+        this.manageTransaction = manageTransaction;
+    }
 
     @Override
     public void payer(Personne personne, float montant, Session session, String datePayement,

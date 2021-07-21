@@ -1,23 +1,18 @@
 package tn.essatin.erp.payload.request;
 
-public class NivSessRequest {
-    private Integer idNiveaux;
+import javax.validation.constraints.Min;
 
-    private  Integer idSession;
+public class NivSessRequest {
+    @Min(value = 1, message = "le champ idNiveaux est obligatoire")
+    private int idNiveaux;
+    @Min(value = 1, message = "le champ idSession est obligatoire")
+    private int idSession;
 
     public Integer getIdNiveaux() {
         return idNiveaux;
     }
 
-    public void setIdNiveaux(Integer idNiveaux) {
-        this.idNiveaux = idNiveaux;
-    }
-
     public Integer getIdSession() {
         return idSession;
-    }
-
-    public void setIdSession(Integer idSession) {
-        this.idSession = idSession;
     }
 }

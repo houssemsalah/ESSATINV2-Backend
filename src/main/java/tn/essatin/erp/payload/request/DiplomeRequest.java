@@ -1,34 +1,32 @@
 package tn.essatin.erp.payload.request;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 public class DiplomeRequest {
 
-    @NotBlank
-    private String nomDiplome;
-    private String annee;
-    @NotBlank
-    private String specialite;
-    private int niveau;
-    @NotBlank
-    private String status;
-    @NotBlank
-    private String etablissement;
+    @NotBlank(message = "le nomDiplome ne peut etre vide")
+    String nomDiplome;
+    @Size(min = 4, max = 4, message = "annee invalide")
+    @Digits(fraction = 0, integer = 4, message = "annee invalide")
+    String annee;
+    @NotBlank(message = "la specialité ne peut etre vide")
+    String specialite;
+    @Min(value = 1, message = "niveaux doit etre supperieur a 1")
+    int niveau;
+    @NotBlank(message = "la statut ne peut etre vide")
+    String status;
+    @NotBlank(message = "l'etablissement ne peut etre vide")
+    String etablissement;
 
     public String getNomDiplome() {
         return nomDiplome;
     }
 
-    public void setNomDiplome(String nomDiplome) {
-        this.nomDiplome = nomDiplome;
-    }
-
     public String getAnnee() {
         return annee;
-    }
-
-    public void setAnnee(String annee) {
-        this.annee = annee;
     }
 
     public String getSpecialite() {
@@ -51,15 +49,8 @@ public class DiplomeRequest {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getEtablissement() {
         return etablissement;
     }
 
-    public void setEtablissement(String etablissement) {
-        this.etablissement = etablissement;
-    }
 }

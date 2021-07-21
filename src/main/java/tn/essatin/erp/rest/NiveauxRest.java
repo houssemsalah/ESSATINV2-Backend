@@ -4,29 +4,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tn.essatin.erp.payload.request.ParcoursRequest;
 import tn.essatin.erp.dao.NiveauDao;
 import tn.essatin.erp.dao.ParcoursDao;
+import tn.essatin.erp.payload.request.ParcoursRequest;
+import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
-import java.util.List;
+
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/niveaux/")
 public class NiveauxRest {
+    final NiveauDao niveauDao;
+    final ParcoursDao parcoursDao;
+
     @Autowired
-    NiveauDao niveauDao;
-    @Autowired
-    ParcoursDao parcoursDao;
-    @GetMapping("/getall")
-    public ResponseEntity<?> getAll(){
-        return new ResponseEntity<List>(niveauDao.findAll(), HttpStatus.OK);
+    public NiveauxRest(NiveauDao niveauDao, ParcoursDao parcoursDao) {
+        this.niveauDao = niveauDao;
+        this.parcoursDao = parcoursDao;
     }
+
+    @GetMapping("/getall")
+    public ResponseEntity<?> getAll() {
+
+        return new ResponseEntity<>(niveauDao.findAll(), HttpStatus.OK);
+    }
+
     @PostMapping("/getbyid")
-    public ResponseEntity<?> getById(@Valid @RequestBody ParcoursRequest parcoursRequest){
-        return new ResponseEntity<List>(niveauDao.findByParcours(
-                parcoursDao.findById(parcoursRequest.getIdparcours()).get())
-                , HttpStatus.OK);
+    public ResponseEntity<?> getById(@Valid @RequestBody ParcoursRequest parcoursRequest) {
+        if (parcoursDao.findById(parcoursRequest.getIdparcours()).isPresent()) {
+            return new ResponseEntity<>(niveauDao.findByParcours(
+                    parcoursDao.findById(parcoursRequest.getIdparcours()).get())
+                    , HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403)
+                    , HttpStatus.FORBIDDEN);
+        }
     }
 }

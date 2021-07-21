@@ -39,8 +39,8 @@ public class EtatInscription {
     @Override
     public String toString() {
         return "EtatInscription{" +
-            "idInscription=" + idEtatInscription +
-            ", nom='" + nom + '\'' +
-            '}';
+                "idInscription=" + idEtatInscription +
+                ", nom='" + nom + '\'' +
+                '}';
     }
 }

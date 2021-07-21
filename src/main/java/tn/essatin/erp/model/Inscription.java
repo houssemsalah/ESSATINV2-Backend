@@ -15,7 +15,8 @@ public class Inscription {
     @OneToOne
     private EtatInscription idEtatInscription;
 
-    public Inscription(Etudiants idEtudiant, String numeroInscription, LocalDate date, EtatInscription idEtatInscription) {
+    public Inscription(Etudiants idEtudiant, String numeroInscription, LocalDate date,
+                       EtatInscription idEtatInscription) {
         this.idEtudiant = idEtudiant;
         this.numeroInscription = numeroInscription;
         this.date = date;
@@ -68,11 +69,11 @@ public class Inscription {
     @Override
     public String toString() {
         return "Inscription{" +
-            "idInscription=" + idInscription +
-            ", idEtudiant=" + idEtudiant +
-            ", numeroInscription='" + numeroInscription + '\'' +
-            ", date=" + date +
-            ", idEtatInscription=" + idEtatInscription +
-            '}';
+                "idInscription=" + idInscription +
+                ", idEtudiant=" + idEtudiant +
+                ", numeroInscription='" + numeroInscription + '\'' +
+                ", date=" + date +
+                ", idEtatInscription=" + idEtatInscription +
+                '}';
     }
 }

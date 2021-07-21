@@ -57,10 +57,10 @@ public class Niveau {
     @Override
     public String toString() {
         return "Niveau{" +
-            "idNiveau=" + idNiveau +
-            ", parcours=" + parcours +
-            ", designation='" + designation + '\'' +
-            ", description='" + description + '\'' +
-            '}';
+                "idNiveau=" + idNiveau +
+                ", parcours=" + parcours +
+                ", designation='" + designation + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

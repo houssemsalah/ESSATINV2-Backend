@@ -57,10 +57,10 @@ public class Specialite {
     @Override
     public String toString() {
         return "Specialite{" +
-            "idSpecialite=" + idSpecialite +
-            ", cycle=" + cycle +
-            ", designation='" + designation + '\'' +
-            ", description='" + description + '\'' +
-            '}';
+                "idSpecialite=" + idSpecialite +
+                ", cycle=" + cycle +
+                ", designation='" + designation + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

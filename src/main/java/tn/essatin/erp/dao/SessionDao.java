@@ -8,4 +8,5 @@ import tn.essatin.erp.model.Session;
 @Repository
 public interface SessionDao extends JpaRepository<Session, Integer> {
     Session findBySession(String session);
+    Session findTopByOrderByIdSessionDesc();
 }

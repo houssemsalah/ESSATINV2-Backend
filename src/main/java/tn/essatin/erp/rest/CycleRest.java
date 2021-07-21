@@ -9,16 +9,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tn.essatin.erp.dao.CycleDao;
 
-import java.util.List;
-
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/cycle/")
 public class CycleRest {
+    final CycleDao cycleDao;
+
     @Autowired
-    CycleDao cycleDao;
+    public CycleRest(CycleDao cycleDao) {
+        this.cycleDao = cycleDao;
+    }
+
     @GetMapping("/getall")
     public ResponseEntity<?> getAll() {
-        return new ResponseEntity<List>(cycleDao.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(cycleDao.findAll(), HttpStatus.OK);
     }
 }

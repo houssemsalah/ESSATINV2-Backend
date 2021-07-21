@@ -47,9 +47,9 @@ public class NiveauSuivant {
     @Override
     public String toString() {
         return "NiveauSuivant{" +
-            "id=" + id +
-            ", idNiveau=" + idNiveau +
-            ", idNiveauSuivant=" + idNiveauSuivant +
-            '}';
+                "id=" + id +
+                ", idNiveau=" + idNiveau +
+                ", idNiveauSuivant=" + idNiveauSuivant +
+                '}';
     }
 }

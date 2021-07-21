@@ -49,9 +49,9 @@ public class Cycle {
     @Override
     public String toString() {
         return "Cycle{" +
-            "idCycle=" + idCycle +
-            ", designation='" + designation + '\'' +
-            ", description='" + description + '\'' +
-            '}';
+                "idCycle=" + idCycle +
+                ", designation='" + designation + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

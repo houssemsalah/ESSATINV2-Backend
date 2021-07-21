@@ -18,14 +18,17 @@ public class Personne {
     private LocalDate dateDeNaissance;
     private String lieuDeNaissance;
     @OneToOne(cascade = CascadeType.ALL)
-    private Identificateur idIdentificateur;
+    private TypeIdentificateur idTypeIdentificateur;
     private String numeroIdentificateur;
     private String sexe;
     @OneToOne(cascade = CascadeType.ALL)
     private Nationalite idNationalite;
 
 
-    public Personne(String nom, String prenom, String mail, String adresse, String tel, LocalDate dateDeNaissance, String lieuDeNaissance, Identificateur id_Identificateur, String numeroIdentificateur, String sexe, Nationalite ID_Nationalite) {
+    public Personne(String nom, String prenom, String mail, String adresse,
+                    String tel, LocalDate dateDeNaissance, String lieuDeNaissance,
+                    TypeIdentificateur id_Type_Identificateur, String numeroIdentificateur, String sexe,
+                    Nationalite ID_Nationalite) {
         this.nom = nom;
         this.prenom = prenom;
         this.mail = mail;
@@ -33,7 +36,7 @@ public class Personne {
         this.tel = tel;
         this.dateDeNaissance = dateDeNaissance;
         this.lieuDeNaissance = lieuDeNaissance;
-        this.idIdentificateur = id_Identificateur;
+        this.idTypeIdentificateur = id_Type_Identificateur;
         this.numeroIdentificateur = numeroIdentificateur;
         this.sexe = sexe;
         this.idNationalite = ID_Nationalite;
@@ -106,12 +109,12 @@ public class Personne {
         this.lieuDeNaissance = lieuDeNaissance;
     }
 
-    public Identificateur getIdIdentificateur() {
-        return idIdentificateur;
+    public TypeIdentificateur getIdIdentificateur() {
+        return idTypeIdentificateur;
     }
 
-    public void setIdIdentificateur(Identificateur idIdentificateur) {
-        this.idIdentificateur = idIdentificateur;
+    public void setIdIdentificateur(TypeIdentificateur idTypeIdentificateur) {
+        this.idTypeIdentificateur = idTypeIdentificateur;
     }
 
     public String getNumeroIdentificateur() {
@@ -154,18 +157,18 @@ public class Personne {
     @Override
     public String toString() {
         return "Personne{" +
-            "ID_Personne=" + idPersonne +
-            ", nom='" + nom + '\'' +
-            ", prenom='" + prenom + '\'' +
-            ", mail='" + mail + '\'' +
-            ", adresse='" + adresse + '\'' +
-            ", tel='" + tel + '\'' +
-            ", DateDeNaissance=" + dateDeNaissance +
-            ", LieuDeNaissance='" + lieuDeNaissance + '\'' +
-            ", Id_Identificateur=" + idIdentificateur +
-            ", numero_Identificateur='" + numeroIdentificateur + '\'' +
-            ", sexe='" + sexe + '\'' +
-            ", ID_Nationalite=" + idNationalite +
-            '}';
+                "ID_Personne=" + idPersonne +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", mail='" + mail + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", tel='" + tel + '\'' +
+                ", DateDeNaissance=" + dateDeNaissance +
+                ", LieuDeNaissance='" + lieuDeNaissance + '\'' +
+                ", Id_Identificateur=" + idTypeIdentificateur +
+                ", numero_Identificateur='" + numeroIdentificateur + '\'' +
+                ", sexe='" + sexe + '\'' +
+                ", ID_Nationalite=" + idNationalite +
+                '}';
     }
 }
