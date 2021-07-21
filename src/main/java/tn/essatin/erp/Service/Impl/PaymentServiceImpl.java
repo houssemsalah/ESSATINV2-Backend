@@ -53,4 +53,9 @@ public class PaymentServiceImpl implements PayementService {
     public void rembourcementPay() {
 
     }
+
+    @Override
+    public void formateurPay() {
+
+    }
 }
