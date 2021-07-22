@@ -6,13 +6,13 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-public class Reçus {
+public class Recus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long numero;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateReçu;
+    private LocalDate dateRecu;
     @ManyToOne
     private Etudiants idEtudiant;
     @ManyToOne
@@ -24,13 +24,13 @@ public class Reçus {
 
     private Double montant;
 
-    public Reçus() {
+    public Recus() {
     }
 
-    public Reçus(Long numero, LocalDate dateReçu, Etudiants idEtudiant,
+    public Recus(Long numero, LocalDate dateRecu, Etudiants idEtudiant,
                  Cycle idCycle, Parcours idParcours, Niveau idNiveau, Double montant) {
         this.numero = numero;
-        this.dateReçu = dateReçu;
+        this.dateRecu = dateRecu;
         this.idEtudiant = idEtudiant;
         this.idCycle = idCycle;
         this.idParcours = idParcours;
@@ -46,12 +46,12 @@ public class Reçus {
         this.numero = numero;
     }
 
-    public LocalDate getDateReçu() {
-        return dateReçu;
+    public LocalDate getDateRecu() {
+        return dateRecu;
     }
 
-    public void setDateReçu(LocalDate dateReçu) {
-        this.dateReçu = dateReçu;
+    public void setDateRecu(LocalDate dateRecu) {
+        this.dateRecu = dateRecu;
     }
 
     public Etudiants getIdEtudiant() {
@@ -98,7 +98,7 @@ public class Reçus {
     public String toString() {
         return "Reçus{" +
                 "numero=" + numero +
-                ", dateReçu=" + dateReçu +
+                ", dateReçu=" + dateRecu +
                 ", idEtudiant=" + idEtudiant +
                 ", idCycle=" + idCycle +
                 ", idParcours=" + idParcours +

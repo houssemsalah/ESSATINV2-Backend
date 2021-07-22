@@ -16,7 +16,6 @@ public class PrixNiveauParSession {
     private LocalDate date;
 
     public PrixNiveauParSession(Niveau niveau, Session session, float montantNiveau, LocalDate date) {
-        this.id = id;
         this.niveau = niveau;
         this.session = session;
         this.montantNiveau = montantNiveau;

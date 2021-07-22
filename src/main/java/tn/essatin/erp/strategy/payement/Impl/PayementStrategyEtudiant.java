@@ -34,7 +34,8 @@ public class PayementStrategyEtudiant implements PayementStrategy {
                       Set<ModaliteTransaction> modaliteTransactionSet) {
         Optional<Etudiants> etudiant = etudiantsDao.findByIdPersonne(personne);
         if (etudiant.isPresent()) {
-            System.out.println(etudiant.get()); System.out.println(session);
+            System.out.println(etudiant.get());
+            System.out.println(session);
             double debt = studentDebt.debt(etudiant.get(), session);
             System.out.println(debt);
             if (debt != 0 || debt <= montant) {

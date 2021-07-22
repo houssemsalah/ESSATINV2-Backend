@@ -6,7 +6,6 @@ import tn.essatin.erp.model.Compte;
 import tn.essatin.erp.model.Personne;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface CompteDao extends JpaRepository<Compte, Integer> {
