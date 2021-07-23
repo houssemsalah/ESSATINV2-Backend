@@ -14,6 +14,7 @@ import tn.essatin.erp.payload.request.scolarite.AjouterDiplomeEtudiantRequest;
 import tn.essatin.erp.payload.request.scolarite.DiplomeEtudiantByIdEtudiantRequest;
 import tn.essatin.erp.payload.request.scolarite.DiplomeEtudiantByIdRequest;
 import tn.essatin.erp.payload.request.scolarite.ModifierDiplomeEtudiantRequest;
+import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
@@ -108,7 +109,11 @@ public class DiplomeEtudiantRest {
             de.setEtablissement(ajouterDiplomeEtudiantRequest.getEtablissement());
             diplomeEtudiantDao.save(de);
             return new ResponseEntity<>(
-                    new MessageResponse("Diplome Etudiant Ajouter avec succée!!", 200), HttpStatus.OK);
+                    new CombinedResponse(
+                    new MessageResponse("Diplome Etudiant Ajouter avec succée!!", 200),
+                            "DiplomeEtudiant",
+                            de)
+                    , HttpStatus.OK);
         } else
             return new ResponseEntity<>(
                     new MessageResponse("Ressources introuvable", 403), HttpStatus.FORBIDDEN);
