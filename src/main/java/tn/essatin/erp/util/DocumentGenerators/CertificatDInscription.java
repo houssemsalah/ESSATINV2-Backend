@@ -6,6 +6,8 @@ import java.io.ByteArrayOutputStream;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import tn.essatin.erp.model.Scolarite.*;
+
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -29,10 +31,10 @@ public class CertificatDInscription {
         // BaseColor.BLACK);
         Font fontAttrib = FontFactory.getFont(FontFactory.TIMES_BOLD, 14, BaseColor.BLACK);
         Font fontText = FontFactory.getFont(FontFactory.TIMES_ROMAN, 14, BaseColor.BLACK);
-        Phrase attrib = null;
-        Chunk attribChunk = null;
-        Phrase text = null;
-        Chunk textChunk = null;
+        Phrase attrib;
+        Chunk attribChunk;
+        Phrase text;
+        Chunk textChunk;
         Phrase title;
         Chunk titleChunk;
         Phrase title2;
@@ -71,7 +73,7 @@ public class CertificatDInscription {
 
 
             // ajouter le texte initiale de l'attestation
-            text = new Phrase();
+            //text = new Phrase();
             if (directeur) {
                 if (etudiant.getSexe().equalsIgnoreCase("Femme"))
                     textChunk = new Chunk(

@@ -1,7 +1,7 @@
 package tn.essatin.erp.strategy.payement.Impl;
 
 import org.springframework.stereotype.Component;
-import tn.essatin.erp.model.ModaliteTransaction;
+import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Session;
 import tn.essatin.erp.strategy.payement.PayementStrategy;

@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import tn.essatin.erp.model.*;
+import tn.essatin.erp.model.Scolarite.*;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -31,10 +32,10 @@ public class CertificateDePresence {
         // BaseColor.BLACK);
         Font fontAttrib = FontFactory.getFont(FontFactory.TIMES_BOLD, 14, BaseColor.BLACK);
         Font fontText = FontFactory.getFont(FontFactory.TIMES_ROMAN, 14, BaseColor.BLACK);
-        Phrase attrib = null;
-        Chunk attribChunk = null;
-        Phrase text = null;
-        Chunk textChunk = null;
+        Phrase attrib;
+        Chunk attribChunk;
+        Phrase text;
+        Chunk textChunk;
         Phrase title;
         Chunk titleChunk;
         Phrase title2;
@@ -71,7 +72,7 @@ public class CertificateDePresence {
             document.add(new Paragraph(Chunk.NEWLINE));
 
             // ajouter le texte initiale de l'attestation
-            text = new Phrase();
+            //text = new Phrase();
             if (directeur) {
                 if (etudiant.getSexe().equalsIgnoreCase("Femme"))
                     textChunk = new Chunk(
@@ -181,7 +182,7 @@ public class CertificateDePresence {
             document.add(new Paragraph(Chunk.NEWLINE));
 
             // ajouter le texte finale de l'attestation
-            text = new Phrase();
+            //text = new Phrase();
             if (etudiant.getSexe().equalsIgnoreCase("Femme"))
                 textChunk = new Chunk("    Suit régulièrement les cours dispensés dans notre école"
                         + ".\nCette attestation est delivrée a l'intéressée pour servir et valoir ce que de droit.",

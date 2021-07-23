@@ -1,6 +1,7 @@
 package tn.essatin.erp.payload.request;
 
-import tn.essatin.erp.model.ContactEtudiant;
+import tn.essatin.erp.model.Scolarite.ContactEtudiant;
+import tn.essatin.erp.payload.request.scolarite.DiplomeRequest;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
