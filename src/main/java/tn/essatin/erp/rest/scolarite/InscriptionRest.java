@@ -10,6 +10,7 @@ import tn.essatin.erp.dao.scolarite.*;
 import tn.essatin.erp.model.*;
 import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.payload.request.GetByIdRequest;
+import tn.essatin.erp.payload.request.scolarite.FusionnerRequest;
 import tn.essatin.erp.payload.request.scolarite.InscriptionRequest;
 import tn.essatin.erp.payload.request.scolarite.InscriptionWithIdPersonneRequest;
 import tn.essatin.erp.payload.request.scolarite.ModifierInscriptionRequest;
@@ -196,9 +197,9 @@ public class InscriptionRest {
             p = personneDao.findById(getByIdRequest.getId()).get();
             en = estDejaInscritCetteSession(p);
             if (en != null) {
-                return new ResponseEntity<>(new CombinedResponse(new MessageResponse("true",1),"Enregistrement",en), HttpStatus.OK);
+                return new ResponseEntity<>(new CombinedResponse(new MessageResponse("true", 1), "Enregistrement", en), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(new MessageResponse("false",0), HttpStatus.OK);
+                return new ResponseEntity<>(new MessageResponse("false", 0), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
@@ -214,23 +215,81 @@ public class InscriptionRest {
             Inscription ins = inscriptionDao.findById(modifierInscriptionRequest.getIdInscription()).get();
             Niveau niv = niveauDao.findById(modifierInscriptionRequest.getIdNiveaux()).get();
             List<Enregistrement> len = enregistrementDao.findByIdInscription(ins);
-            if(len.size()>1){
+            if (len.size() > 1) {
                 return new ResponseEntity<>(
                         new MessageResponse("Etudiant n'est plus a sa premiere année a l'école." +
                                 " Impossible de modifier son inscription", 403),
                         HttpStatus.FORBIDDEN);
-            }else if(len.size() == 0){
+            } else if (len.size() == 0) {
                 return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403),
                         HttpStatus.FORBIDDEN);
-            }else{
+            } else {
                 Enregistrement e = len.get(0);
                 e.setIdNiveau(niv);
                 enregistrementDao.save(e);
                 return new ResponseEntity<>(new MessageResponse("Inscription modifer avec succée!!"), HttpStatus.OK);
             }
-        }else
+        } else
             return new ResponseEntity<>(
-                    new MessageResponse("Ressource Indisponible", 403),HttpStatus.FORBIDDEN);
+                    new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
+    }
+
+
+    @PostMapping("/fusionner")
+    public ResponseEntity<?> fusionnerEtudiant(@Valid @RequestBody FusionnerRequest fusionnerRequest) {
+        if (
+                personneDao.findById(fusionnerRequest.getIdOldPersonne()).isPresent()
+                        && personneDao.findById(fusionnerRequest.getIdNewPersonne()).isPresent()
+        ) {
+            //récuperer les personnes
+            Personne oldPersonne = personneDao.findById(fusionnerRequest.getIdOldPersonne()).get();
+            Personne newPersonne = personneDao.findById(fusionnerRequest.getIdNewPersonne()).get();
+            if(
+            etudiantsDao.findByIdPersonne(newPersonne).isPresent()
+           && etudiantsDao.findByIdPersonne(oldPersonne).isPresent()
+            ) {
+                //récupérer les étudiants
+                Etudiants newEtudiant = etudiantsDao.findByIdPersonne(newPersonne).get();
+                Etudiants oldEtudiant = etudiantsDao.findByIdPersonne(oldPersonne).get();
+
+                //récuperer la nouvelle inscription
+                Inscription newInscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(newEtudiant);
+
+                // modifier l'inscrit au nom de l'ancien étudiant
+                newInscription.setIdEtudiant(oldEtudiant);
+                inscriptionDao.save(newInscription);
+
+                // modifier les nouveaux contacte étudiant au nom de l'ancien étudiant
+                List<ContactEtudiant> ce = contactEtudiantDao.findByIdEtudiant(newEtudiant);
+                for (ContactEtudiant c :ce) {
+                    c.setIdEtudiant(oldEtudiant);
+                    contactEtudiantDao.save(c);
+                }
+
+                // modifier les nouveaux Diplomes étudiant au nom de l'ancien étudiant
+                List<DiplomeEtudiant> de = diplomeEtudiantDao.findByIdEtudiant(newEtudiant);
+                for (DiplomeEtudiant d :de) {
+                    d.setIdEtudiant(oldEtudiant);
+                    diplomeEtudiantDao.save(d);
+                }
+
+                //supprimer le nouvel étudiant
+                etudiantsDao.delete(newEtudiant);
+
+                //supprimer la nouvelle personne
+                personneDao.delete(newPersonne);
+                return new ResponseEntity<>(
+                        new MessageResponse("Fusion effectué avec succée!!"), HttpStatus.OK);
+            }else{
+                //pas d'étudiants
+                return new ResponseEntity<>(
+                        new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
+            }
+        }else{
+            //pas de personne
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
+        }
     }
 
 
