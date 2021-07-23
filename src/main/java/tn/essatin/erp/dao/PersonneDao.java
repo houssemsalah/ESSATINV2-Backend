@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface PersonneDao extends JpaRepository<Personne, Integer> {
     Boolean existsByNumeroIdentificateur(String numeroIdentificateur);
     Optional<Personne> findByNomAndPrenom(String nom, String prenom);
-    Optional<Personne> findByIdIdentificateur(String identificateur);
+    Optional<Personne> findByNumeroIdentificateur(String identificateur);
 
 }

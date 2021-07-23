@@ -55,7 +55,7 @@ public class PersonneRest {
 
     @PostMapping("/modifierpersonne")
     public ResponseEntity<?> modifierPersonne(@Valid @RequestBody ModifierPersonne modifierPersonne) {
-        if (personneDao.findByIdIdentificateur(modifierPersonne.getNumeroIdentificateur()).isEmpty()) {
+        if (personneDao.findByNumeroIdentificateur(modifierPersonne.getNumeroIdentificateur()).isEmpty()) {
             if (
                     personneDao.findById(modifierPersonne.getIdPersonne()).isPresent()
                             && typeIdentificateurDao.findById(modifierPersonne.getIdTypeIdentificateur()).isPresent()
@@ -84,7 +84,7 @@ public class PersonneRest {
                     new CombinedResponse(
                             new MessageResponse("Numero identificateur existe deja", 403),
                             "Personne",
-                            personneDao.findByIdIdentificateur(modifierPersonne.getNumeroIdentificateur()).get()
+                            personneDao.findByNumeroIdentificateur(modifierPersonne.getNumeroIdentificateur()).get()
                     ), HttpStatus.FORBIDDEN);
 
         }

@@ -11,6 +11,7 @@ import tn.essatin.erp.model.Scolarite.Etudiants;
 import tn.essatin.erp.payload.request.scolarite.AjouterContactEtudiantRequest;
 import tn.essatin.erp.payload.request.GetByIdRequest;
 import tn.essatin.erp.payload.request.scolarite.ModifierContactEtudiantRequest;
+import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 import javax.validation.Valid;
 import java.util.List;
@@ -72,7 +73,7 @@ public class ContacteEtudiantRest {
         }
     }
 
-    @PostMapping("/ajoutercontactetudiant")
+        @PostMapping("/ajoutercontactetudiant")
     public ResponseEntity<?> ajouterContactEtudiant(
             @Valid @RequestBody AjouterContactEtudiantRequest ajouterContactEtudiantRequest) {
         if (etudiantsDao.findById(ajouterContactEtudiantRequest.getIdEtudiant()).isPresent()) {
@@ -81,7 +82,11 @@ public class ContacteEtudiantRest {
                     ajouterContactEtudiantRequest.getNom(), ajouterContactEtudiantRequest.getDesignation());
             contactEtudiantDao.save(ce);
             return new ResponseEntity<>(
-                    new MessageResponse("Ajouter avec success", 204), HttpStatus.NO_CONTENT);
+                    new CombinedResponse(
+                        new MessageResponse("Ajouter avec success", 200),
+                            "ContacteEtudiant",
+                            ce)
+                    ,HttpStatus.OK);
         } else {
             return new ResponseEntity<>(
                     new MessageResponse("Etudiant introuvable", 403), HttpStatus.FORBIDDEN);
