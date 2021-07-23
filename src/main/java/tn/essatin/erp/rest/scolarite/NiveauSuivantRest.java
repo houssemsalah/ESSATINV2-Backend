@@ -64,14 +64,20 @@ public class NiveauSuivantRest {
         if (inscriptionDao.findById(getByIdRequest.getId()).isPresent()) {
             Inscription i = inscriptionDao.findById(getByIdRequest.getId()).get();
             List<Enregistrement> le = enregistrementDao.findByIdInscription(i);
-            Enregistrement e = le.get(le.size()-2);
-            List<Niveau> ln = new ArrayList<>();
-            ln.add(e.getIdNiveau());
-            List<NiveauSuivant> lns = niveauSuivantDao.findByIdNiveau(e.getIdNiveau());
-            for (NiveauSuivant ns : lns) {
-                ln.add(ns.getIdNiveauSuivant());
+            if(le.size()>1) {
+                Enregistrement e = le.get(le.size() - 2);
+                List<Niveau> ln = new ArrayList<>();
+                ln.add(e.getIdNiveau());
+                List<NiveauSuivant> lns = niveauSuivantDao.findByIdNiveau(e.getIdNiveau());
+                for (NiveauSuivant ns : lns) {
+                    ln.add(ns.getIdNiveauSuivant());
+                }
+                return new ResponseEntity<>(ln, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(
+                        new MessageResponse("Movaise API cet etudiant n'a pas plus d'un enregistrement"
+                                , 403), HttpStatus.FORBIDDEN);
             }
-            return new ResponseEntity<>(ln, HttpStatus.OK);
         } else
             return new ResponseEntity<>(
                     new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
