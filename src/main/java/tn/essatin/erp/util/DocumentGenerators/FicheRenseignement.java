@@ -3,9 +3,9 @@ package tn.essatin.erp.util.DocumentGenerators;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import tn.essatin.erp.model.ContactEtudiant;
-import tn.essatin.erp.model.DiplomeEtudiant;
-import tn.essatin.erp.model.Etudiants;
+import tn.essatin.erp.model.Scolarite.ContactEtudiant;
+import tn.essatin.erp.model.Scolarite.DiplomeEtudiant;
+import tn.essatin.erp.model.Scolarite.Etudiants;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.util.Global;
 
@@ -28,8 +28,8 @@ public class FicheRenseignement {
         Font fonttabHed = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, BaseColor.BLACK);
 
         Font fontattrib = FontFactory.getFont(FontFactory.TIMES_BOLD, 15, BaseColor.BLACK);
-        Phrase attrib = null;
-        Chunk attribChunk = null;
+        Phrase attrib;
+        Chunk attribChunk;
 
         Document document = new Document();
         try {

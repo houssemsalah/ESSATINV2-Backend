@@ -1,6 +1,6 @@
 package tn.essatin.erp.Service;
 
-import tn.essatin.erp.model.ModaliteTransaction;
+import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Session;
 

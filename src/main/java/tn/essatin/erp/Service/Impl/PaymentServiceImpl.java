@@ -6,7 +6,7 @@ import tn.essatin.erp.strategy.payement.PayementStrategy;
 import tn.essatin.erp.strategy.payement.PayementStrategyFactory;
 import tn.essatin.erp.strategy.payement.PayementStrategyName;
 import tn.essatin.erp.Service.PayementService;
-import tn.essatin.erp.model.ModaliteTransaction;
+import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Session;
 

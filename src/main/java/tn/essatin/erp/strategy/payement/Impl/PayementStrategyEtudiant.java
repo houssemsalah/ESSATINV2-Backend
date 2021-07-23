@@ -2,9 +2,9 @@ package tn.essatin.erp.strategy.payement.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tn.essatin.erp.dao.EtudiantsDao;
-import tn.essatin.erp.model.Etudiants;
-import tn.essatin.erp.model.ModaliteTransaction;
+import tn.essatin.erp.dao.scolarite.EtudiantsDao;
+import tn.essatin.erp.model.Scolarite.Etudiants;
+import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Session;
 import tn.essatin.erp.strategy.payement.PayementStrategy;
