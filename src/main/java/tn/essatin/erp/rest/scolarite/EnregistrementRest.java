@@ -8,6 +8,7 @@ import tn.essatin.erp.dao.*;
 import tn.essatin.erp.dao.scolarite.*;
 import tn.essatin.erp.model.*;
 import tn.essatin.erp.model.Scolarite.*;
+import tn.essatin.erp.payload.request.GetByIdRequest;
 import tn.essatin.erp.payload.request.scolarite.ModifierEnregistrementRequest;
 import tn.essatin.erp.payload.request.scolarite.NivSessRequest;
 import tn.essatin.erp.payload.request.scolarite.NouvelEnregistrementRequest;
@@ -73,6 +74,16 @@ public class EnregistrementRest {
                     sessionDao.findById(sessionUnivRequest.getIdSession()).get()), HttpStatus.OK
             );
         else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
+    }
+
+    @PostMapping("/getenregistrementbyidinscription")
+    public ResponseEntity<?> getEnregistrementByIdInscription(@Valid @RequestBody GetByIdRequest getByIdRequest) {
+        if(inscriptionDao.findById(getByIdRequest.getId()).isPresent()) {
+            List<Enregistrement> le = enregistrementDao.findByIdInscription(inscriptionDao.findById(getByIdRequest.getId()).get());
+            return new ResponseEntity<>(le, HttpStatus.OK);
+        }else
             return new ResponseEntity<>(
                     new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
     }

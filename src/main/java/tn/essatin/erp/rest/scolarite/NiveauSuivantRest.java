@@ -57,4 +57,24 @@ public class NiveauSuivantRest {
                     new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
 
     }
+
+
+    @PostMapping("/getautreniveauxpossiblebyidinscription")
+    public ResponseEntity<?> getAutreNiveauxPossibleByIdInscription(@Valid @RequestBody GetByIdRequest getByIdRequest) {
+        if (inscriptionDao.findById(getByIdRequest.getId()).isPresent()) {
+            Inscription i = inscriptionDao.findById(getByIdRequest.getId()).get();
+            List<Enregistrement> le = enregistrementDao.findByIdInscription(i);
+            Enregistrement e = le.get(le.size()-2);
+            List<Niveau> ln = new ArrayList<>();
+            ln.add(e.getIdNiveau());
+            List<NiveauSuivant> lns = niveauSuivantDao.findByIdNiveau(e.getIdNiveau());
+            for (NiveauSuivant ns : lns) {
+                ln.add(ns.getIdNiveauSuivant());
+            }
+            return new ResponseEntity<>(ln, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
+
+    }
 }
