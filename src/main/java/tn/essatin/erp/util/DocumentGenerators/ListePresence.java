@@ -6,12 +6,14 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.hibernate.bytecode.enhance.spi.interceptor.AbstractLazyLoadInterceptor;
+import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.model.Session;
 import tn.essatin.erp.util.Global;
 
 import javax.swing.*;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +26,13 @@ public class ListePresence {
         Parcours parcours=niveau.getParcours();
         Specialite specialite=parcours.getSpecialite();
         Cycle cycle=specialite.getCycle();
+
+        List<Personne> personneList = new ArrayList<Personne>();
+        for (Enregistrement e : enregistrementList) {
+            personneList.add(e.getIdInscription().getIdEtudiant().getIdPersonne());
+        }
+
+
         String designationNiveaux=niveau.getDesignation()+" "+cycle.getDescription()+" "+parcours.getDesignation();
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
