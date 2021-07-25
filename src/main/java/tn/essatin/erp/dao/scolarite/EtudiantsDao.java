@@ -5,10 +5,13 @@ import org.springframework.stereotype.Repository;
 import tn.essatin.erp.model.Scolarite.Etudiants;
 import tn.essatin.erp.model.Personne;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface EtudiantsDao extends JpaRepository<Etudiants, Integer> {
+
+
     Optional<Etudiants> findByIdPersonne(Personne personne);
 
 
