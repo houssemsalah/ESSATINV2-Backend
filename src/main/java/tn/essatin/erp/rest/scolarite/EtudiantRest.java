@@ -151,12 +151,16 @@ public class EtudiantRest {
             Niveau n=niveauDao.findById(presenceNiveauSession.getIdNiveau()).get();
             Session s=sessionDao.findById(presenceNiveauSession.getIdSession()).get();
             List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
-
-            ByteArrayOutputStream os = ListePresence.createDoc(enregistrementList);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
-            ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
-            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            if (enregistrementList.size()>0) {
+                ByteArrayOutputStream os = ListePresence.createDoc(enregistrementList);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+                ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(
+                        new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
+            }
         } else
             return new ResponseEntity<>(
                     new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);

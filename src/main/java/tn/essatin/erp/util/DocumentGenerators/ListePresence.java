@@ -14,6 +14,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class ListePresence {
+    public static Chunk exposant(String text) {
+        Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
+        Font supFont = new Font(f);
+        supFont.setSize(f.getSize() / 2f);
+        Chunk c = new Chunk(text, supFont);
+        c.setTextRise(7f);
+        return c;
+    }
     public static ByteArrayOutputStream createDoc(List<Enregistrement> enregistrementList) {
         Session session = enregistrementList.get(0).getIdSession();
         Niveau niveau = enregistrementList.get(0).getIdNiveau();
@@ -29,13 +37,14 @@ public class ListePresence {
             nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
         }
         Collections.sort(nomPrenom);
-        String designationNiveaux = niveau.getDesignation() + " " + cycle.getDescription() + " " + parcours.getDesignation();
+        String niveauxC = niveau.getDesignation();
+        String designationNiveaux =cycle.getDescription() + " " + parcours.getDesignation();
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
         Font fonttabHed = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, BaseColor.BLACK);
-        int nbpage = (nomPrenom.size() - 10) / 15;
+        int nbpage = (nomPrenom.size() - 10) / 13;
         nbpage++;
-        if (((nomPrenom.size() - 10) % 15) > 0)
+        if (((nomPrenom.size() - 10) % 13) > 0)
             nbpage++;
         Document document = new Document();
         try {
@@ -79,7 +88,17 @@ public class ListePresence {
                     head1.getDefaultCell().setBorder(Rectangle.NO_BORDER);
                     head1.getDefaultCell().setFixedHeight(20);
                     head1.setWidthPercentage(100);
-                    PdfPCell cell1 = new PdfPCell(new Phrase("  Section : " + designationNiveaux));
+                    Phrase niv = new Phrase("  Section : " + niveauxC);
+                    if (Integer.parseInt(niveauxC)==1) {
+                        niv.add(exposant("ère"));
+                        niv.add(" Année ");
+                    }
+                    else{
+                        niv.add(exposant("ème"));
+                        niv.add(" Années ");
+                    }
+                        niv.add(designationNiveaux);
+                    PdfPCell cell1 = new PdfPCell(niv);
                     cell1.setBorder(Rectangle.NO_BORDER);
                     cell1.setFixedHeight(20);
                     head1.addCell(cell1);
