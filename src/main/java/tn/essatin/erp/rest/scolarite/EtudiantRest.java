@@ -10,17 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.*;
 import tn.essatin.erp.dao.scolarite.*;
 import tn.essatin.erp.model.*;
-import tn.essatin.erp.model.Scolarite.ContactEtudiant;
-import tn.essatin.erp.model.Scolarite.DiplomeEtudiant;
-import tn.essatin.erp.model.Scolarite.Enregistrement;
-import tn.essatin.erp.model.Scolarite.Etudiants;
+import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.payload.request.scolarite.CertificatRequest;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
 import tn.essatin.erp.payload.request.scolarite.InfoRequest;
+import tn.essatin.erp.payload.request.scolarite.PresenceNiveauSession;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.DocumentGenerators.CertificatDInscription;
 import tn.essatin.erp.util.DocumentGenerators.CertificateDePresence;
 import tn.essatin.erp.util.DocumentGenerators.FicheRenseignement;
+import tn.essatin.erp.util.DocumentGenerators.ListePresence;
 
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
@@ -140,4 +139,27 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
     }
+
+
+
+    @PostMapping("/getfichepresencebyniveauetsession")
+    public ResponseEntity<?> getFichePresenceByNiveauEtSession(@Valid @RequestBody PresenceNiveauSession presenceNiveauSession) {
+        if (
+               niveauDao.findById(presenceNiveauSession.getIdNiveau()).isPresent()
+                && sessionDao.findById(presenceNiveauSession.getIdSession()).isPresent()
+        ) {
+            Niveau n=niveauDao.findById(presenceNiveauSession.getIdNiveau()).get();
+            Session s=sessionDao.findById(presenceNiveauSession.getIdSession()).get();
+            List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
+
+            ByteArrayOutputStream os = ListePresence.createDoc(enregistrementList);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+            ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
+    }
+
 }
