@@ -1,5 +1,6 @@
 package tn.essatin.erp.util.DocumentGenerators;
 
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -9,20 +10,24 @@ import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.model.Session;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ListePresence {
-    public static Chunk exposant(String text) {
-        Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
-        Font supFont = new Font(f);
-        supFont.setSize(f.getSize() / 2f);
-        Chunk c = new Chunk(text, supFont);
-        c.setTextRise(7f);
-        return c;
-    }
-    public static ByteArrayOutputStream createDoc(List<Enregistrement> enregistrementList) {
+public class FicheDeNote {
+
+        public static Chunk exposant(String text) {
+            Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
+            Font supFont = new Font(f);
+            supFont.setSize(f.getSize() / 2f);
+            Chunk c = new Chunk(text, supFont);
+            c.setTextRise(7f);
+            return c;
+        }
+
+    public static ByteArrayOutputStream createDoc(List<Enregistrement> enregistrementList, int colones) {
         Session session = enregistrementList.get(0).getIdSession();
         Niveau niveau = enregistrementList.get(0).getIdNiveau();
         Parcours parcours = niveau.getParcours();
@@ -49,7 +54,7 @@ public class ListePresence {
         Document document = new Document();
         try {
             PdfWriter.getInstance(document, response);
-            document.setPageSize(PageSize.A4.rotate());
+            document.setPageSize(PageSize.A4);
             document.setMargins(15f, 15f, 10f, 10f);
             document.open();
             Image img = Image.getInstance("logoEssat.png");
@@ -65,7 +70,7 @@ public class ListePresence {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setRowspan(4);
                 head.addCell(cell);
-                cell = new PdfPCell(new Phrase("FEUILLE DE PRÉSENCE  \n ( Année Universitaire " + session.getSession() + " )", fontTitle));
+                cell = new PdfPCell(new Phrase("FEUILLE DE NOTE  \n ( Année Universitaire " + session.getSession() + " )", fontTitle));
                 cell.setRowspan(4);
                 cell.setColspan(5);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -88,68 +93,100 @@ public class ListePresence {
                     head1.getDefaultCell().setBorder(Rectangle.NO_BORDER);
                     head1.getDefaultCell().setFixedHeight(20);
                     head1.setWidthPercentage(100);
-                    Phrase niv = new Phrase("  Section : " + niveauxC);
-                    if (Integer.parseInt(niveauxC)==1) {
+                    PdfPCell cel = new PdfPCell(new Phrase(" Département:.........................................."));
+                    head1.addCell(cel);
+                    cel = new PdfPCell(new Phrase(" Enseignant:...................................................."));
+                    head1.addCell(cel);
+                    cel = new PdfPCell(new Phrase(" Matiére:......................................................."));
+                    head1.addCell(cel);
+                    Phrase niv = new Phrase("  Classe : " + niveauxC);
+                    if (Integer.parseInt(niveauxC) == 1) {
                         niv.add(exposant("ère"));
                         niv.add(" Année ");
-                    }
-                    else{
+                    } else {
                         niv.add(exposant("ème"));
                         niv.add(" Années ");
                     }
-                        niv.add(designationNiveaux);
-                    PdfPCell cell1 = new PdfPCell(niv);
-                    cell1.setBorder(Rectangle.NO_BORDER);
-                    cell1.setFixedHeight(20);
-                    head1.addCell(cell1);
-                    cell1 = new PdfPCell(new Phrase(" "));
-                    cell1.setBorder(Rectangle.NO_BORDER);
-                    cell1.setFixedHeight(20);
-                    head1.addCell(cell1);
-                    cell1 = new PdfPCell(new Phrase("  Nature du module : ..................................................................................... \n   "));
-                    cell1.setBorder(Rectangle.NO_BORDER);
-                    cell1.setFixedHeight(20);
-                    head1.addCell(cell1);
-                    cell1 = new PdfPCell(new Phrase("  Nom de l'enseignant : .............................................................................. \n  "));
-                    cell1.setBorder(Rectangle.NO_BORDER);
-                    cell1.setFixedHeight(20);
-                    head1.addCell(cell1);
-                    cell1 = new PdfPCell(new Phrase("  Charge horaire : ......................................................................................... \n  "));
-                    cell1.setBorder(Rectangle.NO_BORDER);
-                    cell1.setFixedHeight(20);
-                    head1.addCell(cell1);
-                    cell1 = new PdfPCell(new Phrase("  Mois de : .................................................................................................. \n  "));
-                    cell1.setBorder(Rectangle.NO_BORDER);
-                    cell1.setFixedHeight(20);
-                    head1.addCell(cell1);
-                    document.add(head1);
+                    niv.add(designationNiveaux);
+
                     document.add(new Paragraph(Chunk.NEWLINE));
                 }
-                PdfPTable t = new PdfPTable(30);
+                PdfPTable t = new PdfPTable(colones);
                 t.getDefaultCell().setFixedHeight(20);
                 t.setWidthPercentage(100);
-                PdfPCell cel = new PdfPCell(new Phrase("   N° d'ordre"));
-                cel.setRowspan(2);
-                cel.setRotation(270);
+                PdfPCell cel = new PdfPCell(new Phrase("   N°"));
                 t.addCell(cel);
                 cel = new PdfPCell(new Phrase("Nom & Prénom", fonttabHed));
                 cel.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cel.setVerticalAlignment(Element.ALIGN_BOTTOM);
                 cel.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
-                cel.setColspan(7);
-                cel.setRowspan(2);
                 t.addCell(cel);
-                cel = new PdfPCell(new Phrase("Désignation"));
-                cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
-                cel.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cel.setRotation(90);
-                cel.setRowspan(2);
-                t.addCell(cel);
+                boolean ds = false, exam = false, tp = false, oral = false, controle = false;
+                while (colones > 0) {
+                    if (colones - 16 >= 0) {
+                        controle = true;
+                        colones -= 16;
+                    }
+                    if (colones - 8 >= 0) {
+                        oral = true;
+                        colones -= 8;
+                    }
+                    if (colones - 4 >= 0) {
+                        tp = true;
+                        colones -= 4;
+                    }
+                    if (colones - 2 >= 0) {
+                        exam = true;
+                        colones -= 2;
+                    }
+                    if (colones - 1 >= 0) {
+                        ds = true;
+                        colones -= 1;
+                    }
+                }
+                int col = 0;
+                if (ds) {
+                    cel = new PdfPCell(new Phrase("DS"));
+                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
+                    cel.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    t.addCell(cel);
+                    col++;
+                }
+                if (exam) {
+                    cel = new PdfPCell(new Phrase("Examen"));
+                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
+                    cel.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    t.addCell(cel);
+                    col++;
+                }
+                if (tp) {
+                    cel = new PdfPCell(new Phrase("TP"));
+                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
+                    cel.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    t.addCell(cel);
+                    col++;
+                }
+                if (oral) {
+                    cel = new PdfPCell(new Phrase("Orale"));
+                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
+                    cel.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    t.addCell(cel);
+                    col++;
+                }
+                if (controle) {
+                    cel = new PdfPCell(new Phrase("Controle"));
+                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
+                    cel.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    t.addCell(cel);
+                    col++;
+                }
                 PdfPCell vide = new PdfPCell(new Phrase(" "));
-                vide.setFixedHeight(90);
-                vide.setRowspan(2);
-                for (int j = 0; j < 21; j++)
+                for (int j = 0; j < col; j++)
                     t.addCell(vide);
                 int n = nomPrenom.size();
                 int fac = page < 2 ? 10 : 13;
@@ -163,7 +200,7 @@ public class ListePresence {
                     vide = new PdfPCell(new Phrase(" "));
                     vide.setFixedHeight(20);
                     t.addCell(NP);
-                    for (int j = 0; j < 21; j++)
+                    for (int j = 0; j < col; j++)
                         t.addCell(vide);
                     if (page == 0) {
                         if (i % fac1 == 0)
@@ -191,28 +228,36 @@ public class ListePresence {
                             tz.addCell(pc);
                     document.add(tz);
                 }
+                PdfPTable S = new PdfPTable(3);
+                S.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+                S.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
+                S.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+                S.setWidthPercentage(100);
+                vide.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
+                S.addCell(vide);
+                vide.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
+                S.addCell(vide);
+                S.addCell(" Date et Signature ");
+                vide.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
+                S.addCell(vide);
+                vide.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
+                S.addCell(vide);
+                S.addCell(vide);
                 PdfPTable tail = new PdfPTable(1);
                 tail.getDefaultCell().setBorder(Rectangle.NO_BORDER);
                 tail.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
                 tail.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
                 tail.setWidthPercentage(100);
-                tail.addCell("  NB: les enseignants sont priés de faire l'appel, de relever les absences de les communiquer à la fin de chaque module a l'administration ");
                 tail.addCell("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 tail.addCell("  ESSAT Privée de Gabés, BP:91,Bureau Postal Mtorrech 6014 Gabés  \n  Tel:75 294 660 - Fax : 75 294 690 \n  contact@essat-gabes.com // www.essat-gabes.com ");
                 document.add(tail);
                 document.newPage();
-            }
-            document.close();
 
-            } catch (Exception e) {
-                 e.printStackTrace(); }
+                document.close();
+            }    } catch (Exception e) {
+                     e.printStackTrace();
+                    }
         return response;
+
     }
-
-
 }
-
-
-
-
-
