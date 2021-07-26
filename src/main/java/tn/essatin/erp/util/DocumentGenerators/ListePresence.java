@@ -13,8 +13,7 @@ import tn.essatin.erp.util.Global;
 
 import javax.swing.*;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 
 public class ListePresence {
@@ -31,6 +30,11 @@ public class ListePresence {
         for (Enregistrement e : enregistrementList) {
             personneList.add(e.getIdInscription().getIdEtudiant().getIdPersonne());
         }
+        List<String> nomPrenom=new ArrayList<String>();
+        for(Personne personne : personneList){
+            nomPrenom.add(personne.getPrenom() + " " + personne.getNom());
+        }
+        Collections.sort(nomPrenom);
 
 
         String designationNiveaux=niveau.getDesignation()+" "+cycle.getDescription()+" "+parcours.getDesignation();
@@ -126,7 +130,7 @@ public class ListePresence {
             t.addCell(vide);
             t.addCell(vide);
             t.addCell(vide);
-            int n = enregistrementList.size();
+            int n = nomPrenom.size();
             for (int i = 1;i<=n;i++) {
                 String num=null;
                 if(i<10){
@@ -135,8 +139,8 @@ public class ListePresence {
                     num=""+i;}
                 PdfPCell cell2=new PdfPCell(new Phrase(num));
                 t.addCell(cell2);
-                String nomPrenom=" ";
-                PdfPCell NP=new PdfPCell(new Phrase(nomPrenom));
+
+                PdfPCell NP= new PdfPCell(new Phrase (nomPrenom.get(i)));
                 NP.setColspan(3);
                 t.addCell(NP);
                 t.addCell(vide);
