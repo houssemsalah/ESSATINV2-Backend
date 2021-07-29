@@ -41,15 +41,26 @@ public class FicheDeNote {
         for (Personne personne : personneList) {
             nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
         }
+
+        for (Personne personne : personneList) {
+            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
+        }
+        for (Personne personne : personneList) {
+            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
+        } for (Personne personne : personneList) {
+            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
+        }
+
+
         Collections.sort(nomPrenom);
         String niveauxC = niveau.getDesignation();
         String designationNiveaux =cycle.getDescription() + " " + parcours.getDesignation();
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
         Font fonttabHed = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, BaseColor.BLACK);
-        int nbpage = (nomPrenom.size() - 10) / 13;
+        int nbpage = (nomPrenom.size() - 23) / 25;
         nbpage++;
-        if (((nomPrenom.size() - 10) % 13) > 0)
+        if (((nomPrenom.size() - 23) % 25) > 0)
             nbpage++;
         Document document = new Document();
         try {
@@ -71,6 +82,9 @@ public class FicheDeNote {
                 cell.setRowspan(4);
                 head.addCell(cell);
                 cell = new PdfPCell(new Phrase("FEUILLE DE NOTE  \n ( Année Universitaire " + session.getSession() + " )", fontTitle));
+
+                //cell.se
+
                 cell.setRowspan(4);
                 cell.setColspan(5);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -90,16 +104,10 @@ public class FicheDeNote {
                 document.add(new Paragraph(Chunk.NEWLINE));
                 if (page == 0) {
                     PdfPTable head1 = new PdfPTable(2);
-                    head1.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+                    head1.getDefaultCell().setBorderWidth(15f);
                     head1.getDefaultCell().setFixedHeight(20);
                     head1.setWidthPercentage(100);
-                    PdfPCell cel = new PdfPCell(new Phrase(" Département:.........................................."));
-                    head1.addCell(cel);
-                    cel = new PdfPCell(new Phrase(" Enseignant:...................................................."));
-                    head1.addCell(cel);
-                    cel = new PdfPCell(new Phrase(" Matiére:......................................................."));
-                    head1.addCell(cel);
-                    Phrase niv = new Phrase("  Classe : " + niveauxC);
+                    Phrase niv = new Phrase("      Classe : " + niveauxC);
                     if (Integer.parseInt(niveauxC) == 1) {
                         niv.add(exposant("ère"));
                         niv.add(" Année ");
@@ -108,105 +116,124 @@ public class FicheDeNote {
                         niv.add(" Années ");
                     }
                     niv.add(designationNiveaux);
-
+                    PdfPCell cell1 = new PdfPCell(niv);
+                    cell1.setBorder(Rectangle.TOP | Rectangle.LEFT);
+                    cell1.setFixedHeight(20);
+                    head1.addCell(cell1);
+                    cell1 = new PdfPCell(new Phrase(" Département : ............................................... "));
+                    cell1.setBorder(Rectangle.TOP | Rectangle.RIGHT);
+                    cell1.setFixedHeight(20);
+                    head1.addCell(cell1);
+                    cell1 = new PdfPCell(new Phrase("      Enseignant : ................................................... "));
+                    cell1.setBorder(Rectangle.BOTTOM | Rectangle.LEFT);
+                    cell1.setFixedHeight(20);
+                    head1.addCell(cell1);
+                    cell1 = new PdfPCell(new Phrase(" Matiére : ........................................................  "));
+                    cell1.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT);
+                    cell1.setFixedHeight(20);
+                    head1.addCell(cell1);
+                    document.add(head1);
                     document.add(new Paragraph(Chunk.NEWLINE));
                 }
-                PdfPTable t = new PdfPTable(colones);
+
+
+                boolean ds = false, exam = false, tp = false, oral = false, controle = false;
+                int col = 4;
+                while (colones > 0) {
+                    if (colones - 16 >= 0) {
+                        controle = true;
+                        colones -= 16;
+                        col++;
+                    }
+                    if (colones - 8 >= 0) {
+                        oral = true;
+                        colones -= 8;
+                        col++;
+                    }
+                    if (colones - 4 >= 0) {
+                        tp = true;
+                        colones -= 4;
+                        col++;
+                    }
+                    if (colones - 2 >= 0) {
+                        exam = true;
+                        colones -= 2;
+                        col++;
+                    }
+                    if (colones - 1 >= 0) {
+                        ds = true;
+                        colones -= 1;
+                        col++;
+                    }
+                }
+                PdfPTable t = new PdfPTable(col);
                 t.getDefaultCell().setFixedHeight(20);
                 t.setWidthPercentage(100);
                 PdfPCell cel = new PdfPCell(new Phrase("   N°"));
                 t.addCell(cel);
                 cel = new PdfPCell(new Phrase("Nom & Prénom", fonttabHed));
+                cel.setColspan(3);
                 cel.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cel.setVerticalAlignment(Element.ALIGN_BOTTOM);
                 cel.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
                 t.addCell(cel);
-                boolean ds = false, exam = false, tp = false, oral = false, controle = false;
-                while (colones > 0) {
-                    if (colones - 16 >= 0) {
-                        controle = true;
-                        colones -= 16;
-                    }
-                    if (colones - 8 >= 0) {
-                        oral = true;
-                        colones -= 8;
-                    }
-                    if (colones - 4 >= 0) {
-                        tp = true;
-                        colones -= 4;
-                    }
-                    if (colones - 2 >= 0) {
-                        exam = true;
-                        colones -= 2;
-                    }
-                    if (colones - 1 >= 0) {
-                        ds = true;
-                        colones -= 1;
-                    }
-                }
-                int col = 0;
+
+
                 if (ds) {
                     cel = new PdfPCell(new Phrase("DS"));
-                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
                     cel.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     t.addCell(cel);
-                    col++;
+
                 }
                 if (exam) {
                     cel = new PdfPCell(new Phrase("Examen"));
-                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
                     cel.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     t.addCell(cel);
-                    col++;
+
                 }
                 if (tp) {
                     cel = new PdfPCell(new Phrase("TP"));
-                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
                     cel.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     t.addCell(cel);
-                    col++;
+
                 }
                 if (oral) {
                     cel = new PdfPCell(new Phrase("Orale"));
-                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
                     cel.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     t.addCell(cel);
-                    col++;
+
                 }
                 if (controle) {
                     cel = new PdfPCell(new Phrase("Controle"));
-                    cel.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT | Rectangle.TOP);
                     cel.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cel.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     t.addCell(cel);
-                    col++;
+
                 }
                 PdfPCell vide = new PdfPCell(new Phrase(" "));
-                for (int j = 0; j < col; j++)
-                    t.addCell(vide);
                 int n = nomPrenom.size();
-                int fac = page < 2 ? 10 : 13;
-                int fac1 = page == 0 ? 10 : 13;
+                int fac = page < 2 ? 23 : 25;
+                int fac1 = page == 0 ? 23 : 25;
                 for (int i = 1 + ((page) * fac); i <= n; i++) {
                     String num = i < 10 ? "0" + i : "" + i;
                     PdfPCell cell2 = new PdfPCell(new Phrase(num));
                     t.addCell(cell2);
                     PdfPCell NP = new PdfPCell(new Phrase(nomPrenom.get(i - 1)));
-                    NP.setColspan(8);
+                    NP.setColspan(3);
                     vide = new PdfPCell(new Phrase(" "));
                     vide.setFixedHeight(20);
                     t.addCell(NP);
-                    for (int j = 0; j < col; j++)
+                    for (int j = 0; j < (col - 4); j++)
                         t.addCell(vide);
                     if (page == 0) {
                         if (i % fac1 == 0)
                             break;
                     } else {
-                        if (i - 10 % fac1 == 0)
+                        if (i - 25 % fac1 == 0)
                             break;
                     }
                 }
@@ -218,7 +245,7 @@ public class FicheDeNote {
                     PdfPCell pc = new PdfPCell(new Phrase(""));
                     pc.setFixedHeight(20);
                     pc.setBorder(0);
-                    int b = (n - (page > 0 ? 10 : 0)) % fac1;
+                    int b = (n - (page > 0 ? 23 : 0)) % fac1;
                     int c = b == 0 ? b : fac1 - b;
                     if (nbpage > 1)
                         for (int z = c; z >= 0; z--)
@@ -229,32 +256,32 @@ public class FicheDeNote {
                     document.add(tz);
                 }
                 PdfPTable S = new PdfPTable(3);
-                S.getDefaultCell().setBorder(Rectangle.NO_BORDER);
                 S.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
                 S.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
                 S.setWidthPercentage(100);
-                vide.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
+                vide.setBorder(Rectangle.NO_BORDER);
                 S.addCell(vide);
-                vide.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
+                vide.setBorder(Rectangle.NO_BORDER);
                 S.addCell(vide);
                 S.addCell(" Date et Signature ");
-                vide.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
+                vide.setBorder(Rectangle.NO_BORDER);
                 S.addCell(vide);
-                vide.setBorder(Rectangle.BOTTOM | Rectangle.LEFT | Rectangle.TOP);
+                vide.setBorder(Rectangle.NO_BORDER);
                 S.addCell(vide);
-                S.addCell(vide);
+                S.addCell(" \n \n  \n \n");
+                document.add(S);
                 PdfPTable tail = new PdfPTable(1);
                 tail.getDefaultCell().setBorder(Rectangle.NO_BORDER);
                 tail.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
                 tail.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
                 tail.setWidthPercentage(100);
-                tail.addCell("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                tail.addCell("-------------------------------------------------------------------------------------------------------------------------------------");
                 tail.addCell("  ESSAT Privée de Gabés, BP:91,Bureau Postal Mtorrech 6014 Gabés  \n  Tel:75 294 660 - Fax : 75 294 690 \n  contact@essat-gabes.com // www.essat-gabes.com ");
                 document.add(tail);
                 document.newPage();
-
+            }
                 document.close();
-            }    } catch (Exception e) {
+              } catch (Exception e) {
                      e.printStackTrace();
                     }
         return response;
