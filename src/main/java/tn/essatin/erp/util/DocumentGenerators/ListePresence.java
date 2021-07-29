@@ -22,6 +22,7 @@ public class ListePresence {
         c.setTextRise(7f);
         return c;
     }
+
     public static ByteArrayOutputStream createDoc(List<Enregistrement> enregistrementList) {
         Session session = enregistrementList.get(0).getIdSession();
         Niveau niveau = enregistrementList.get(0).getIdNiveau();
@@ -47,7 +48,7 @@ public class ListePresence {
         }
         Collections.sort(nomPrenom);
         String niveauxC = niveau.getDesignation();
-        String designationNiveaux =cycle.getDescription() + " " + parcours.getDesignation();
+        String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
         Font fonttabHed = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, BaseColor.BLACK);
@@ -64,6 +65,8 @@ public class ListePresence {
             Image img = Image.getInstance("logoEssat.png");
             img.scaleAbsoluteHeight(50);
             img.scaleAbsoluteWidth(50);
+            int start = 1;
+
             for (int page = 0; page < nbpage; page++) {
                 PdfPTable head = new PdfPTable(7);
                 head.getDefaultCell().setFixedHeight(20);
@@ -98,15 +101,14 @@ public class ListePresence {
                     head1.getDefaultCell().setFixedHeight(20);
                     head1.setWidthPercentage(100);
                     Phrase niv = new Phrase("  Section : " + niveauxC);
-                    if (Integer.parseInt(niveauxC)==1) {
+                    if (Integer.parseInt(niveauxC) == 1) {
                         niv.add(exposant("ère"));
                         niv.add(" Année ");
-                    }
-                    else{
+                    } else {
                         niv.add(exposant("ème"));
                         niv.add(" Années ");
                     }
-                        niv.add(designationNiveaux);
+                    niv.add(designationNiveaux);
                     PdfPCell cell1 = new PdfPCell(niv);
                     cell1.setBorder(Rectangle.NO_BORDER);
                     cell1.setFixedHeight(20);
@@ -160,10 +162,12 @@ public class ListePresence {
                 vide.setRowspan(2);
                 for (int j = 0; j < 21; j++)
                     t.addCell(vide);
+
                 int n = nomPrenom.size();
                 int fac = page < 2 ? 10 : 13;
                 int fac1 = page == 0 ? 10 : 13;
-                for (int i = 1 + ((page) * fac); i <= n; i++) {
+
+                for (int i = start; i <= n; i++) {
                     String num = i < 10 ? "0" + i : "" + i;
                     PdfPCell cell2 = new PdfPCell(new Phrase(num));
                     t.addCell(cell2);
@@ -175,11 +179,15 @@ public class ListePresence {
                     for (int j = 0; j < 21; j++)
                         t.addCell(vide);
                     if (page == 0) {
-                        if (i % fac1 == 0)
+                        if (i % fac1 == 0) {
+                            start = i + 1;
                             break;
+                        }
                     } else {
-                        if (i - 10 % fac1 == 0)
+                        if (((i - 10) % fac1) == 0) {
+                            start = i + 1;
                             break;
+                        }
                     }
                 }
                 document.add(t);
@@ -213,8 +221,9 @@ public class ListePresence {
             }
             document.close();
 
-            } catch (Exception e) {
-                 e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return response;
     }
 
