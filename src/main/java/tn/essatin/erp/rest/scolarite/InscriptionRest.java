@@ -223,7 +223,10 @@ public class InscriptionRest {
             } else if (len.size() == 0) {
                 return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403),
                         HttpStatus.FORBIDDEN);
-            } else {
+            } else if(len.get(0).getIdSession().equals(sessionDao.findTopByOrderByIdSessionDesc().getIdSession())){
+                return new ResponseEntity<>(new MessageResponse("l'inscrit ne date pas de cette session, il ne peut plus etre modifier!", 403),
+                        HttpStatus.FORBIDDEN);
+            }else{
                 Enregistrement e = len.get(0);
                 e.setIdNiveau(niv);
                 enregistrementDao.save(e);
