@@ -195,7 +195,7 @@ public class EtudiantRest {
             Session s=sessionDao.findById(feuilleDEmargement.getIdSession()).get();
             List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
             if (enregistrementList.size()>0) {
-                ByteArrayOutputStream os = FicheDeNote.createDoc(enregistrementList,feuilleDEmargement.getColones());
+                ByteArrayOutputStream os = FicheDeNote.createDoc(enregistrementList,feuilleDEmargement.getNbrecolones());
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
                 ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
