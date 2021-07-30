@@ -165,7 +165,7 @@ public class EnregistrementRest {
                 } else {
                     Enregistrement gdima = len.get(len.size() - 2);
                     List<Niveau> ln = new ArrayList<>();
-                    ln.add(enregistrement.getIdNiveau());
+                    ln.add(gdima.getIdNiveau());
                     List<NiveauSuivant> lns = niveauSuivantDao.findByIdNiveau(gdima.getIdNiveau());
                     for (NiveauSuivant ns : lns) {
                         ln.add(ns.getIdNiveauSuivant());
