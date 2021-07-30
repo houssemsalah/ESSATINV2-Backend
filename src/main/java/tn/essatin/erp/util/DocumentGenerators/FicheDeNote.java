@@ -42,14 +42,6 @@ public class FicheDeNote {
             nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
         }
 
-        for (Personne personne : personneList) {
-            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
-        }
-        for (Personne personne : personneList) {
-            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
-        } for (Personne personne : personneList) {
-            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
-        }
 
 
         Collections.sort(nomPrenom);
@@ -58,9 +50,9 @@ public class FicheDeNote {
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
         Font fonttabHed = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, BaseColor.BLACK);
-        int nbpage = (nomPrenom.size() - 23) / 25;
+        int nbpage = (nomPrenom.size() - 23) / 26;
         nbpage++;
-        if (((nomPrenom.size() - 23) % 25) > 0)
+        if (((nomPrenom.size() - 23) % 26) > 0)
             nbpage++;
         Document document = new Document();
         try {
@@ -71,6 +63,8 @@ public class FicheDeNote {
             Image img = Image.getInstance("logoEssat.png");
             img.scaleAbsoluteHeight(50);
             img.scaleAbsoluteWidth(50);
+            int start = 1;
+            int col;
             for (int page = 0; page < nbpage; page++) {
                 PdfPTable head = new PdfPTable(7);
                 head.getDefaultCell().setFixedHeight(20);
@@ -138,7 +132,9 @@ public class FicheDeNote {
 
 
                 boolean ds = false, exam = false, tp = false, oral = false, controle = false;
-                int col = 4;
+                 col = 4;
+
+                 int col2=colones;
                 while (colones > 0) {
                     if (colones - 16 >= 0) {
                         controle = true;
@@ -166,6 +162,7 @@ public class FicheDeNote {
                         col++;
                     }
                 }
+                colones=col2;
                 PdfPTable t = new PdfPTable(col);
                 t.getDefaultCell().setFixedHeight(20);
                 t.setWidthPercentage(100);
@@ -216,25 +213,30 @@ public class FicheDeNote {
                 }
                 PdfPCell vide = new PdfPCell(new Phrase(" "));
                 int n = nomPrenom.size();
-                int fac = page < 2 ? 23 : 25;
-                int fac1 = page == 0 ? 23 : 25;
-                for (int i = 1 + ((page) * fac); i <= n; i++) {
+                int fac1 = page == 0 ? 23 : 26;
+
+                for (int i = start; i <= n; i++) {
                     String num = i < 10 ? "0" + i : "" + i;
                     PdfPCell cell2 = new PdfPCell(new Phrase(num));
                     t.addCell(cell2);
                     PdfPCell NP = new PdfPCell(new Phrase(nomPrenom.get(i - 1)));
                     NP.setColspan(3);
+                    t.addCell(NP);
+
                     vide = new PdfPCell(new Phrase(" "));
                     vide.setFixedHeight(20);
-                    t.addCell(NP);
                     for (int j = 0; j < (col - 4); j++)
                         t.addCell(vide);
+
+
                     if (page == 0) {
-                        if (i % fac1 == 0)
-                            break;
+                        if (i % fac1 == 0){
+                            start = i + 1 ;
+                            break;}
                     } else {
-                        if (i - 25 % fac1 == 0)
-                            break;
+                        if ((i - 23) % fac1 == 0){
+                            start = i + 1 ;
+                            break;}
                     }
                 }
                 document.add(t);
@@ -248,7 +250,7 @@ public class FicheDeNote {
                     int b = (n - (page > 0 ? 23 : 0)) % fac1;
                     int c = b == 0 ? b : fac1 - b;
                     if (nbpage > 1)
-                        for (int z = c; z >= 0; z--)
+                        for (int z = c-1; z >= 0; z--)
                             tz.addCell(pc);
                     else
                         for (int z = c - 1; z >= 0; z--)

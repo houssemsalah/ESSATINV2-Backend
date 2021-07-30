@@ -37,15 +37,6 @@ public class ListePresence {
         for (Personne personne : personneList) {
             nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
         }
-        for (Personne personne : personneList) {
-            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
-        }
-        for (Personne personne : personneList) {
-            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
-        }
-        for (Personne personne : personneList) {
-            nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
-        }
         Collections.sort(nomPrenom);
         String niveauxC = niveau.getDesignation();
         String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
@@ -164,7 +155,6 @@ public class ListePresence {
                     t.addCell(vide);
 
                 int n = nomPrenom.size();
-                int fac = page < 2 ? 10 : 13;
                 int fac1 = page == 0 ? 10 : 13;
 
                 for (int i = start; i <= n; i++) {
