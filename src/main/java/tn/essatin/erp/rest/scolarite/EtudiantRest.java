@@ -11,11 +11,8 @@ import tn.essatin.erp.dao.*;
 import tn.essatin.erp.dao.scolarite.*;
 import tn.essatin.erp.model.*;
 import tn.essatin.erp.model.Scolarite.*;
-import tn.essatin.erp.payload.request.scolarite.CertificatRequest;
+import tn.essatin.erp.payload.request.scolarite.*;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
-import tn.essatin.erp.payload.request.scolarite.FeuilleDeNote;
-import tn.essatin.erp.payload.request.scolarite.InfoRequest;
-import tn.essatin.erp.payload.request.scolarite.PresenceNiveauSession;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.DocumentGenerators.*;
 
@@ -187,4 +184,30 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
     }
+
+    @PostMapping("/getfeuilledemargement")
+    public ResponseEntity<?> getFeuilleDEmargement(@Valid @RequestBody FeuilleDEmargement feuilleDEmargement) {
+        if (
+                niveauDao.findById(feuilleDEmargement.getIdNiveau()).isPresent()
+                        && sessionDao.findById(feuilleDEmargement.getIdSession()).isPresent()
+        ) {
+            Niveau n=niveauDao.findById(feuilleDEmargement.getIdNiveau()).get();
+            Session s=sessionDao.findById(feuilleDEmargement.getIdSession()).get();
+            List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
+            if (enregistrementList.size()>0) {
+                ByteArrayOutputStream os = FicheDeNote.createDoc(enregistrementList,feuilleDEmargement.getColones());
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+                ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(
+                        new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
+            }
+        } else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
+    }
+
+
 }
