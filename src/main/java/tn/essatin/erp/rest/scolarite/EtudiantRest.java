@@ -186,16 +186,16 @@ public class EtudiantRest {
     }
 
     @PostMapping("/getfeuilledemargement")
-    public ResponseEntity<?> getFeuilleDEmargement(@Valid @RequestBody FeuilleDEmargement feuilleDEmargement) {
+    public ResponseEntity<?> getFeuilleDEmargement(@Valid @RequestBody FeuilleDEmargementRequest feuilleDEmargementRequest) {
         if (
-                niveauDao.findById(feuilleDEmargement.getIdNiveau()).isPresent()
-                        && sessionDao.findById(feuilleDEmargement.getIdSession()).isPresent()
+                niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).isPresent()
+                        && sessionDao.findById(feuilleDEmargementRequest.getIdSession()).isPresent()
         ) {
-            Niveau n=niveauDao.findById(feuilleDEmargement.getIdNiveau()).get();
-            Session s=sessionDao.findById(feuilleDEmargement.getIdSession()).get();
+            Niveau n=niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).get();
+            Session s=sessionDao.findById(feuilleDEmargementRequest.getIdSession()).get();
             List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
             if (enregistrementList.size()>0) {
-                ByteArrayOutputStream os = FicheDeNote.createDoc(enregistrementList,feuilleDEmargement.getNbrecolones());
+                ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList, feuilleDEmargementRequest.getNbrecolones(),feuilleDEmargementRequest.getNombrePlace());
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
                 ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
