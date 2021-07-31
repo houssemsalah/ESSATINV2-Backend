@@ -23,7 +23,6 @@ public class FeuilleDEmargement {
         c.setTextRise(7f);
         return c;
     }
-
     public static List<String> listeAleatoire(int colones, int nbPlaces,int nbEtudiant) {
         String col = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         List<String> place = new ArrayList<String>();
