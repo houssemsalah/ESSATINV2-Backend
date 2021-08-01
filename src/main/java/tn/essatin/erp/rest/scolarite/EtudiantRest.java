@@ -11,15 +11,10 @@ import tn.essatin.erp.dao.*;
 import tn.essatin.erp.dao.scolarite.*;
 import tn.essatin.erp.model.*;
 import tn.essatin.erp.model.Scolarite.*;
-import tn.essatin.erp.payload.request.scolarite.CertificatRequest;
+import tn.essatin.erp.payload.request.scolarite.*;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
-import tn.essatin.erp.payload.request.scolarite.InfoRequest;
-import tn.essatin.erp.payload.request.scolarite.PresenceNiveauSession;
 import tn.essatin.erp.payload.response.MessageResponse;
-import tn.essatin.erp.util.DocumentGenerators.CertificatDInscription;
-import tn.essatin.erp.util.DocumentGenerators.CertificateDePresence;
-import tn.essatin.erp.util.DocumentGenerators.FicheRenseignement;
-import tn.essatin.erp.util.DocumentGenerators.ListePresence;
+import tn.essatin.erp.util.DocumentGenerators.*;
 
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
@@ -165,5 +160,54 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
     }
+
+    @PostMapping("/getfeuilledenotebyniveauetsession")
+    public ResponseEntity<?> getFeuilleDeNoteByNiveauEtSession(@Valid @RequestBody FeuilleDeNote feuilleDeNote) {
+        if (
+                niveauDao.findById(feuilleDeNote.getIdNiveau()).isPresent()
+                        && sessionDao.findById(feuilleDeNote.getIdSession()).isPresent()
+        ) {
+            Niveau n=niveauDao.findById(feuilleDeNote.getIdNiveau()).get();
+            Session s=sessionDao.findById(feuilleDeNote.getIdSession()).get();
+            List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
+            if (enregistrementList.size()>0) {
+                ByteArrayOutputStream os = FicheDeNote.createDoc(enregistrementList,feuilleDeNote.getColones());
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+                ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(
+                        new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
+            }
+        } else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
+    }
+
+    @PostMapping("/getfeuilledemargement")
+    public ResponseEntity<?> getFeuilleDEmargement(@Valid @RequestBody FeuilleDEmargementRequest feuilleDEmargementRequest) {
+        if (
+                niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).isPresent()
+                        && sessionDao.findById(feuilleDEmargementRequest.getIdSession()).isPresent()
+        ) {
+            Niveau n=niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).get();
+            Session s=sessionDao.findById(feuilleDEmargementRequest.getIdSession()).get();
+            List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
+            if (enregistrementList.size()>0) {
+                ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList, feuilleDEmargementRequest.getNbrecolones(),feuilleDEmargementRequest.getNombrePlace());
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+                ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(
+                        new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
+            }
+        } else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
+    }
+
 
 }
