@@ -15,46 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FeuilleDEmargement {
-    public static Chunk exposant(String text) {
-        Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
-        Font supFont = new Font(f);
-        supFont.setSize(f.getSize() / 2f);
-        Chunk c = new Chunk(text, supFont);
-        c.setTextRise(7f);
-        return c;
-    }
-    public static List<String> listeAleatoire(int colones, int nbPlaces,int nbEtudiant) {
-        String col = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        List<String> place = new ArrayList<String>();
-        List<String> l1 = new ArrayList<String>();
-        List<String> l2 = new ArrayList<String>();
-        List<String> l3 = new ArrayList<String>();
-        int ligne = nbPlaces / colones;
-        ligne = ((nbPlaces % colones) > 0) ? ligne+1 : ligne;
 
-        for (int i = 1; i < ligne; i += 2) {
-            for (int j = 0; j < colones; j++) {
-                l1.add("" + col.charAt(j) + (i + 1));
-            }
-        }
-        for (int i = 2; i < ligne; i += 2) {
-            for (int j = 0; j < colones; j++) {
-                l2.add("" + col.charAt(j) + (i + 1));
-            }
-        }
-        for (int j = 0; j < colones; j++) {
-            l3.add("" + col.charAt(j) + (1));
-        }
-        Collections.shuffle(l1);
-        Collections.shuffle(l2);
-        Collections.shuffle(l3);
-        place.addAll(l1);
-        place.addAll(l2);
-        place.addAll(l3);
-        place = place.subList(0,nbEtudiant);
-        Collections.shuffle(place);
-        return place;
-    }
 
     public static ByteArrayOutputStream createDoc(List<Enregistrement> enregistrementList, int nbrecolones, int nombrePlace) {
         Session session = enregistrementList.get(0).getIdSession();
@@ -71,7 +32,7 @@ public class FeuilleDEmargement {
             nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
         }
 
-        List<String> places = listeAleatoire(nbrecolones, nombrePlace,nomPrenom.size());
+        List<String> places = DocumentFunction.listeAleatoire(nbrecolones, nombrePlace,nomPrenom.size());
         Collections.sort(nomPrenom);
         String niveauxC = niveau.getDesignation();
         String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
@@ -94,39 +55,9 @@ public class FeuilleDEmargement {
             document.setPageSize(PageSize.A4);
             document.setMargins(15f, 15f, 10f, 10f);
             document.open();
-            Image img = Image.getInstance("logoEssat.png");
-            img.scaleAbsoluteHeight(50);
-            img.scaleAbsoluteWidth(50);
             int start = 1;
             for (int page = 0; page < nbpage; page++) {
-                PdfPTable head = new PdfPTable(6);
-                head.getDefaultCell().setFixedHeight(20);
-                head.setWidthPercentage(100f);
-                head.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell = new PdfPCell(img);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setRowspan(4);
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("FEUILLE D'EMARGEMENT \n ( Année Universitaire "
-                        + session.getSession() + " )", fontTitle));
-                cell.setRowspan(4);
-                cell.setColspan(4);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Ref:GES-IMP-08"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Indice:01"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Date:18/07/2019"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Page:" + (page + 1) + "/" + nbpage));
-                head.addCell(cell);
-                head.addCell("  \n \n  ");
-                document.add(new Paragraph(Chunk.NEWLINE));
-                document.add(head);
-                document.add(new Paragraph(Chunk.NEWLINE));
+                DocumentFunction.ajouterEntete(document, "FEUILLE D'EMARGEMENT", "GES-IMP-08", "01", "18/07/2019", session,  page,  nbpage);
                 if (page == 0) {
                     PdfPTable head1 = new PdfPTable(2);
                     head1.getDefaultCell().setBorderWidth(15f);
@@ -152,10 +83,10 @@ public class FeuilleDEmargement {
                     head1.addCell(cell1);
                     Phrase niv = new Phrase(" Classe : " + niveauxC);
                     if (Integer.parseInt(niveauxC) == 1) {
-                        niv.add(exposant("ère"));
+                        niv.add(DocumentFunction.exposant("ère"));
                         niv.add(" Année ");
                     } else {
-                        niv.add(exposant("ème"));
+                        niv.add(DocumentFunction.exposant("ème"));
                         niv.add(" Années ");
                     }
                     niv.add(designationNiveaux);
@@ -331,15 +262,7 @@ public class FeuilleDEmargement {
                     document.add(sig);
                 }
 
-                PdfPTable tail = new PdfPTable(1);
-                tail.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-                tail.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
-                tail.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-                tail.setWidthPercentage(100);
-
-                tail.addCell("  ESSAT Privée de Gabés, BP:91,Bureau Postal Mtorrech 6014 Gabés  \n  Tel:75 294 660 - Fax : 75 294 690 \n  contact@essat-gabes.com // www.essat-gabes.com ");
-                document.add(ligneHorizentale);
-                document.add(tail);
+                DocumentFunction.ajouterPiedDePage(document);
                 document.newPage();
             }
             document.close();

@@ -16,16 +16,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FicheDeNote {
+import static tn.essatin.erp.util.DocumentGenerators.DocumentFunction.exposant;
 
-        public static Chunk exposant(String text) {
-            Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
-            Font supFont = new Font(f);
-            supFont.setSize(f.getSize() / 2f);
-            Chunk c = new Chunk(text, supFont);
-            c.setTextRise(7f);
-            return c;
-        }
+public class FicheDeNote {
 
     public static ByteArrayOutputStream createDoc(List<Enregistrement> enregistrementList, int colones) {
         Session session = enregistrementList.get(0).getIdSession();
@@ -60,42 +53,12 @@ public class FicheDeNote {
             document.setPageSize(PageSize.A4);
             document.setMargins(15f, 15f, 10f, 10f);
             document.open();
-            Image img = Image.getInstance("logoEssat.png");
-            img.scaleAbsoluteHeight(50);
-            img.scaleAbsoluteWidth(50);
             int start = 1;
             int col;
             for (int page = 0; page < nbpage; page++) {
-                PdfPTable head = new PdfPTable(7);
-                head.getDefaultCell().setFixedHeight(20);
-                head.setWidthPercentage(100f);
-                //head.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell = new PdfPCell(img);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setRowspan(4);
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("FEUILLE DE NOTE  \n ( Année Universitaire " + session.getSession() + " )", fontTitle));
+                DocumentFunction.ajouterEntete(document, "FEUILLE DE NOTE", "GES-IMP-13", "01", "18/07/2019", session,  page,  nbpage);
 
-                //cell.se
 
-                cell.setRowspan(4);
-                cell.setColspan(5);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Ref:AFE-IMP-04"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Indice:01"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Date:11/04/2019"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Page:" + (page + 1) + "/" + nbpage));
-                head.addCell(cell);
-                head.addCell("  \n \n  ");
-                document.add(new Paragraph(Chunk.NEWLINE));
-                document.add(head);
-                document.add(new Paragraph(Chunk.NEWLINE));
                 if (page == 0) {
                     PdfPTable head1 = new PdfPTable(2);
                     head1.getDefaultCell().setBorderWidth(15f);
@@ -272,14 +235,7 @@ public class FicheDeNote {
                 S.addCell(vide);
                 S.addCell(" \n \n  \n \n");
                 document.add(S);
-                PdfPTable tail = new PdfPTable(1);
-                tail.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-                tail.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
-                tail.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-                tail.setWidthPercentage(100);
-                tail.addCell("-------------------------------------------------------------------------------------------------------------------------------------");
-                tail.addCell("  ESSAT Privée de Gabés, BP:91,Bureau Postal Mtorrech 6014 Gabés  \n  Tel:75 294 660 - Fax : 75 294 690 \n  contact@essat-gabes.com // www.essat-gabes.com ");
-                document.add(tail);
+                DocumentFunction.ajouterPiedDePage(document);
                 document.newPage();
             }
                 document.close();

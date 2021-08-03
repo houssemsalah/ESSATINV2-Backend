@@ -13,15 +13,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static tn.essatin.erp.util.DocumentGenerators.DocumentFunction.exposant;
+
 public class ListePresence {
-    public static Chunk exposant(String text) {
-        Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
-        Font supFont = new Font(f);
-        supFont.setSize(f.getSize() / 2f);
-        Chunk c = new Chunk(text, supFont);
-        c.setTextRise(7f);
-        return c;
-    }
+
 
     public static ByteArrayOutputStream createDoc(List<Enregistrement> enregistrementList) {
         Session session = enregistrementList.get(0).getIdSession();
@@ -53,39 +48,10 @@ public class ListePresence {
             document.setPageSize(PageSize.A4.rotate());
             document.setMargins(15f, 15f, 10f, 10f);
             document.open();
-            Image img = Image.getInstance("logoEssat.png");
-            img.scaleAbsoluteHeight(50);
-            img.scaleAbsoluteWidth(50);
             int start = 1;
 
             for (int page = 0; page < nbpage; page++) {
-                PdfPTable head = new PdfPTable(7);
-                head.getDefaultCell().setFixedHeight(20);
-                head.setWidthPercentage(100f);
-                //head.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell = new PdfPCell(img);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setRowspan(4);
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("FEUILLE DE PRÉSENCE  \n ( Année Universitaire " + session.getSession() + " )", fontTitle));
-                cell.setRowspan(4);
-                cell.setColspan(5);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Ref:AFE-IMP-04"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Indice:01"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Date:11/04/2019"));
-                head.addCell(cell);
-                cell = new PdfPCell(new Phrase("Page:" + (page + 1) + "/" + nbpage));
-                head.addCell(cell);
-                head.addCell("  \n \n  ");
-                document.add(new Paragraph(Chunk.NEWLINE));
-                document.add(head);
-                document.add(new Paragraph(Chunk.NEWLINE));
+                DocumentFunction.ajouterEntete(document, "FEUILLE DE PRESENCE", "AFE-IMP-04", "01", "11/04/2019", session,  page,  nbpage);
                 if (page == 0) {
                     PdfPTable head1 = new PdfPTable(2);
                     head1.getDefaultCell().setBorder(Rectangle.NO_BORDER);
@@ -204,9 +170,9 @@ public class ListePresence {
                 tail.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
                 tail.setWidthPercentage(100);
                 tail.addCell("  NB: les enseignants sont priés de faire l'appel, de relever les absences de les communiquer à la fin de chaque module a l'administration ");
-                tail.addCell("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                tail.addCell("  ESSAT Privée de Gabés, BP:91,Bureau Postal Mtorrech 6014 Gabés  \n  Tel:75 294 660 - Fax : 75 294 690 \n  contact@essat-gabes.com // www.essat-gabes.com ");
                 document.add(tail);
+                DocumentFunction.ajouterPiedDePage(document);
+
                 document.newPage();
             }
             document.close();
