@@ -7,13 +7,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tn.essatin.erp.dao.*;
+import tn.essatin.erp.dao.PersonneDao;
+import tn.essatin.erp.dao.SalleDao;
+import tn.essatin.erp.dao.SessionDao;
+import tn.essatin.erp.dao.TypeIdentificateurDao;
 import tn.essatin.erp.dao.scolarite.*;
-import tn.essatin.erp.model.*;
+import tn.essatin.erp.model.Personne;
+import tn.essatin.erp.model.Salle;
 import tn.essatin.erp.model.Scolarite.*;
+import tn.essatin.erp.model.Session;
 import tn.essatin.erp.payload.request.FeuilleEmergementPersonnaliserRequest;
-import tn.essatin.erp.payload.request.scolarite.*;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
+import tn.essatin.erp.payload.request.scolarite.*;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.DocumentGenerators.*;
 
@@ -47,7 +52,7 @@ public class EtudiantRest {
                         SessionDao sessionDao, TypeIdentificateurDao typeIdentificateurDAO,
                         ContactEtudiantDao contactEtudiantDao, InscriptionDao inscriptionDao,
                         EnregistrementDao enregistrementDao, NiveauDao niveauDao, ParcoursDao parcoursDao,
-                        SpecialiteDao specialiteDao, CycleDao cycleDao, DiplomeEtudiantDao diplomeEtudiantDao,SalleDao salleDao) {
+                        SpecialiteDao specialiteDao, CycleDao cycleDao, DiplomeEtudiantDao diplomeEtudiantDao, SalleDao salleDao) {
         this.personneDao = personneDao;
         this.etudiantsDao = etudiantsDao;
         this.sessionDao = sessionDao;
@@ -167,81 +172,113 @@ public class EtudiantRest {
 
     @PostMapping("/getfeuilledenotebyniveauetsession")
     public ResponseEntity<?> getFeuilleDeNoteByNiveauEtSession(@Valid @RequestBody FeuilleDeNote feuilleDeNote) {
-        if (
-                niveauDao.findById(feuilleDeNote.getIdNiveau()).isPresent()
-                        && sessionDao.findById(feuilleDeNote.getIdSession()).isPresent()
-        ) {
-            Niveau n = niveauDao.findById(feuilleDeNote.getIdNiveau()).get();
-            Session s = sessionDao.findById(feuilleDeNote.getIdSession()).get();
-            List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
-            if (enregistrementList.size() > 0) {
-                ByteArrayOutputStream os = FicheDeNote.createDoc(enregistrementList, feuilleDeNote.getColones());
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
-                ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
-                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(
-                        new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
-            }
-        } else
+        Optional<Niveau> ni = niveauDao.findById(feuilleDeNote.getIdNiveau());
+        if (ni.isEmpty()) {
             return new ResponseEntity<>(
-                    new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
+                    new MessageResponse("Niveau est introvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Optional<Session> se = sessionDao.findById(feuilleDeNote.getIdSession());
+        if (se.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Session est introvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Niveau n = ni.get();
+        Session s = se.get();
+        List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
+        if (!enregistrementList.isEmpty()) {
+            ByteArrayOutputStream os = FicheDeNote.createDoc(enregistrementList, feuilleDeNote.getColones());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+            ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(
+                    new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
+        }
+
     }
 
     @PostMapping("/getfeuilledemargement")
     public ResponseEntity<?> getFeuilleDEmargement(@Valid @RequestBody FeuilleDEmargementRequest feuilleDEmargementRequest) {
-        if (
-                niveauDao.existsById(feuilleDEmargementRequest.getIdNiveau())
-                        && sessionDao.existsById(feuilleDEmargementRequest.getIdSession())
-                && salleDao.existsById(feuilleDEmargementRequest.getIdSalle())
-        ) {
-            Salle salle = salleDao.findById(feuilleDEmargementRequest.getIdSalle()).get();
-            Niveau n=niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).get();
-            Session s=sessionDao.findById(feuilleDEmargementRequest.getIdSession()).get();
-            List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
-            if (enregistrementList.size()>0) {
-                ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList,
-                        salle.getNombreDeRangee(),salle.getNombreDePlace());
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
-                ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
-                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(
-                        new MessageResponse("Classe vide!!!", 204), HttpStatus.FORBIDDEN);
-            }
+        Optional<Niveau> ni = niveauDao.findById(feuilleDEmargementRequest.getIdNiveau());
+        if (ni.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Niveau est introvable", 403), HttpStatus.FORBIDDEN);
         }
+        Niveau n = ni.get();
+
+        Optional<Session> se = sessionDao.findById(feuilleDEmargementRequest.getIdSession());
+        if (se.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Session est introvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Session s = se.get();
+
+        Optional<Salle> sa = salleDao.findById(feuilleDEmargementRequest.getIdSalle());
+        if (sa.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Salle est introvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Salle salle = sa.get();
+
+        List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
+        if (!enregistrementList.isEmpty()) {
+            ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList,
+                    salle.getNombreDeRangee(), salle.getNombreDePlace());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+            ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(
+                    new MessageResponse("liste d'etudiants vide", 403), HttpStatus.FORBIDDEN);
+        }
+    }
 
     @PostMapping("/getfeuilledemargementpersonnalise")
-    public ResponseEntity<?> getFeuilleDEmargementPersonnalise(@Valid @RequestBody FeuilleEmergementPersonnaliserRequest feuilleEmergementPersonnaliserRequest) {
-            List<Integer[]> listIdInt = feuilleEmergementPersonnaliserRequest.getIdEnregistrements();
-            List<List<Enregistrement>> listListEnregistrements = new ArrayList<List<Enregistrement>>();
-            int nbEtudiant = 0;
-            for (int i = 0; i < listIdInt.size(); i++) {
-                List<Enregistrement> le = new ArrayList<Enregistrement>();
-                for (int j = 0; j < listIdInt.get(i).length; j++) {
-                    Optional<Enregistrement> oe = enregistrementDao.findById(listIdInt.get(i)[j]);
-                    if (oe.isPresent()) {
-                        le.add(oe.get());
-                        nbEtudiant++;
-                    }
+    public ResponseEntity<?> getFeuilleDEmargementPersonnalise
+            (@Valid @RequestBody FeuilleEmergementPersonnaliserRequest feuilleEmergementPersonnaliserRequest) {
+        List<Integer[]> listIdInt = feuilleEmergementPersonnaliserRequest.getIdEnregistrements();
+        if (listIdInt.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("liste d'etudiants vide", 403), HttpStatus.FORBIDDEN);
+        }
+        Optional<Salle> sa = salleDao.findById(feuilleEmergementPersonnaliserRequest.getIdSalle());
+        if (sa.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Salle est introvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Salle salle = sa.get();
+        List<List<Enregistrement>> listListEnregistrements = new ArrayList<>();
+        int nbEtudiant = 0;
+        for (Integer[] listIdEnregistrement : listIdInt) {
+            List<Enregistrement> le = new ArrayList<>();
+            for (Integer idEnrtegistrement : listIdEnregistrement) {
+                Optional<Enregistrement> oe = enregistrementDao.findById(idEnrtegistrement);
+                if (oe.isPresent()) {
+                    le.add(oe.get());
+                    nbEtudiant++;
                 }
-                if (le.size() > 0)
-                    listListEnregistrements.add(le);
             }
-            List<String> places = DocumentFunction.listeAleatoire(feuilleEmergementPersonnaliserRequest.getNbrecolones(),
-                    feuilleEmergementPersonnaliserRequest.getNombrePlace(), nbEtudiant);
-            if (listListEnregistrements.size() > 0) {
-                ByteArrayOutputStream os = FeuilleDEmargementPersonnalise.createDoc(listListEnregistrements, places);
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
-                ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
-                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(
-                        new MessageResponse("listes vide!!!", 403), HttpStatus.FORBIDDEN);
-            }
+            if (!le.isEmpty())
+                listListEnregistrements.add(le);
+        }
+        if (nbEtudiant > salle.getNombreDePlaceExamen()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("nombre de place insuffisant sans cette salle", 403), HttpStatus.FORBIDDEN);
+        }
+        List<String> places = DocumentFunction.listeAleatoire(salle.getNombreDeRangee(),
+                salle.getNombreDePlaceExamen(), nbEtudiant);
+        if (listListEnregistrements.size() > 0) {
+            ByteArrayOutputStream os = FeuilleDEmargementPersonnalise.createDoc(listListEnregistrements, places);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+            ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(
+                    new MessageResponse("listes vide!!!", 403), HttpStatus.FORBIDDEN);
+        }
 
     }
 }
