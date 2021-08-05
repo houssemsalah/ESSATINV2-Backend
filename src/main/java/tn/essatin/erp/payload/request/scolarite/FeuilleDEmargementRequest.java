@@ -25,4 +25,14 @@ public class FeuilleDEmargementRequest {
     }
 
     public int getNombrePlace() { return nombrePlace; }
+
+    @Override
+    public String toString() {
+        return "FeuilleDEmargementRequest{" +
+                "idNiveau=" + idNiveau +
+                ", idSession=" + idSession +
+                ", nbrecolones=" + nbrecolones +
+                ", nombrePlace=" + nombrePlace +
+                '}';
+    }
 }
