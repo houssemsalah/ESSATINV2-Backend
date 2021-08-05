@@ -38,6 +38,7 @@ public class EtudiantRest {
     final DiplomeEtudiantDao diplomeEtudiantDao;
     final ContactEtudiantDao contactEtudiantDao;
 
+
     @Autowired
     public EtudiantRest(PersonneDao personneDao, EtudiantsDao etudiantsDao,
                         SessionDao sessionDao, TypeIdentificateurDao typeIdentificateurDAO,
@@ -190,6 +191,7 @@ public class EtudiantRest {
         if (
                 niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).isPresent()
                         && sessionDao.findById(feuilleDEmargementRequest.getIdSession()).isPresent()
+
         ) {
             Niveau n=niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).get();
             Session s=sessionDao.findById(feuilleDEmargementRequest.getIdSession()).get();
