@@ -37,6 +37,7 @@ public class EtudiantRest {
     final CycleDao cycleDao;
     final DiplomeEtudiantDao diplomeEtudiantDao;
     final ContactEtudiantDao contactEtudiantDao;
+    final SalleDao salleDao;
 
 
     @Autowired
@@ -44,7 +45,7 @@ public class EtudiantRest {
                         SessionDao sessionDao, TypeIdentificateurDao typeIdentificateurDAO,
                         ContactEtudiantDao contactEtudiantDao, InscriptionDao inscriptionDao,
                         EnregistrementDao enregistrementDao, NiveauDao niveauDao, ParcoursDao parcoursDao,
-                        SpecialiteDao specialiteDao, CycleDao cycleDao, DiplomeEtudiantDao diplomeEtudiantDao) {
+                        SpecialiteDao specialiteDao, CycleDao cycleDao, DiplomeEtudiantDao diplomeEtudiantDao,SalleDao salleDao) {
         this.personneDao = personneDao;
         this.etudiantsDao = etudiantsDao;
         this.sessionDao = sessionDao;
@@ -57,6 +58,7 @@ public class EtudiantRest {
         this.specialiteDao = specialiteDao;
         this.cycleDao = cycleDao;
         this.diplomeEtudiantDao = diplomeEtudiantDao;
+        this.salleDao = salleDao;
     }
 
     @GetMapping("/getall")
@@ -189,15 +191,17 @@ public class EtudiantRest {
     @PostMapping("/getfeuilledemargement")
     public ResponseEntity<?> getFeuilleDEmargement(@Valid @RequestBody FeuilleDEmargementRequest feuilleDEmargementRequest) {
         if (
-                niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).isPresent()
-                        && sessionDao.findById(feuilleDEmargementRequest.getIdSession()).isPresent()
-
+                niveauDao.existsById(feuilleDEmargementRequest.getIdNiveau())
+                        && sessionDao.existsById(feuilleDEmargementRequest.getIdSession())
+                && salleDao.existsById(feuilleDEmargementRequest.getIdSalle())
         ) {
+            Salle salle = salleDao.findById(feuilleDEmargementRequest.getIdSalle()).get();
             Niveau n=niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).get();
             Session s=sessionDao.findById(feuilleDEmargementRequest.getIdSession()).get();
             List<Enregistrement>  enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n,s);
             if (enregistrementList.size()>0) {
-                ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList, feuilleDEmargementRequest.getNbrecolones(),feuilleDEmargementRequest.getNombrePlace());
+                ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList,
+                        salle.getNombreDeRangee(),salle.getNombreDePlace());
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
                 ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
