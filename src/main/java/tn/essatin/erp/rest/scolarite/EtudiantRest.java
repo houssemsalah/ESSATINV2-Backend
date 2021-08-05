@@ -188,14 +188,18 @@ public class EtudiantRest {
 
     @PostMapping("/getfeuilledemargement")
     public ResponseEntity<?> getFeuilleDEmargement(@Valid @RequestBody FeuilleDEmargementRequest feuilleDEmargementRequest) {
-        if (
-                niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).isPresent()
-                        && sessionDao.findById(feuilleDEmargementRequest.getIdSession()).isPresent()
-        ) {
-            Niveau n = niveauDao.findById(feuilleDEmargementRequest.getIdNiveau()).get();
-            Session s = sessionDao.findById(feuilleDEmargementRequest.getIdSession()).get();
-            List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
-            if (enregistrementList.size() > 0) {
+            Optional<Niveau> n = niveauDao.findById(feuilleDEmargementRequest.getIdNiveau());
+            if (n.isEmpty()) {
+                return new ResponseEntity<>(
+                        new MessageResponse("Niveau est introvable", 204), HttpStatus.FORBIDDEN);
+            }
+            Optional<Session> s = sessionDao.findById(feuilleDEmargementRequest.getIdSession());
+        if (s.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Session est introvable", 204), HttpStatus.FORBIDDEN);
+        }
+            List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n.get(), s.get());
+            if (!enregistrementList.isEmpty()) {
                 ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList, feuilleDEmargementRequest.getNbrecolones(), feuilleDEmargementRequest.getNombrePlace());
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
@@ -203,12 +207,9 @@ public class EtudiantRest {
                 return new ResponseEntity<>(resource, headers, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(
-                        new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
+                        new MessageResponse("Classe vide!!!", 204), HttpStatus.FORBIDDEN);
             }
-        } else
-            return new ResponseEntity<>(
-                    new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
-    }
+        }
 
     @PostMapping("/getfeuilledemargementpersonnalise")
     public ResponseEntity<?> getFeuilleDEmargementPersonnalise(@Valid @RequestBody FeuilleEmergementPersonnaliserRequest feuilleEmergementPersonnaliserRequest) {
