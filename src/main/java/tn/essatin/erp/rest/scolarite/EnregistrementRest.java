@@ -13,6 +13,7 @@ import tn.essatin.erp.payload.request.scolarite.ModifierEnregistrementRequest;
 import tn.essatin.erp.payload.request.scolarite.NivSessRequest;
 import tn.essatin.erp.payload.request.scolarite.NouvelEnregistrementRequest;
 import tn.essatin.erp.payload.request.SessionUnivRequest;
+import tn.essatin.erp.payload.request.scolarite.NumeroInscriptionRequest;
 import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -188,4 +190,16 @@ public class EnregistrementRest {
                     new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
         }
     }
+    @PostMapping("/getenregistrementbynumeroinscription")
+    public ResponseEntity<?> getEnregistrementByNumeroInscription(@Valid @RequestBody NumeroInscriptionRequest numeroInscriptionRequest) {
+        Optional<Inscription> oi = inscriptionDao.findByNumeroInscription(numeroInscriptionRequest.getNumeroInscription());
+        if (oi.isPresent()) {
+            Enregistrement en = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(oi.get());
+            return new ResponseEntity<>(en, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
+        }
+    }
+
 }
