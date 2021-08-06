@@ -11,20 +11,15 @@ public class PrestataireService {
     private Integer idPrestataire;
     @ManyToOne
     private Personne idPersonne;
+    @Enumerated(EnumType.STRING)
+    private ETypePrestataire typePrestataire;
 
-    public PrestataireService(Personne idPersonne) {
+    public PrestataireService(Personne idPersonne, ETypePrestataire typePrestataire) {
         this.idPersonne = idPersonne;
+        this.typePrestataire = typePrestataire;
     }
 
     public PrestataireService() {
-    }
-
-    public Integer getIdPrestataire() {
-        return idPrestataire;
-    }
-
-    public void setIdPrestataire(Integer idPrestataire) {
-        this.idPrestataire = idPrestataire;
     }
 
     public Personne getIdPersonne() {
@@ -35,11 +30,20 @@ public class PrestataireService {
         this.idPersonne = idPersonne;
     }
 
+    public ETypePrestataire getTypePrestataire() {
+        return typePrestataire;
+    }
+
+    public void setTypePrestataire(ETypePrestataire typePrestataire) {
+        this.typePrestataire = typePrestataire;
+    }
+
     @Override
     public String toString() {
         return "PrestataireService{" +
                 "idPrestataire=" + idPrestataire +
                 ", idPersonne=" + idPersonne +
+                ", typePrestataire=" + typePrestataire +
                 '}';
     }
 }
