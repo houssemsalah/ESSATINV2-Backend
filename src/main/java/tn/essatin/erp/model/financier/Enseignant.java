@@ -1,7 +1,6 @@
 package tn.essatin.erp.model.financier;
 
 import tn.essatin.erp.model.Personne;
-import tn.essatin.erp.model.financier.Salarie;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,15 +22,14 @@ public class Enseignant {
     private String poste;
     private String etablissementOrigine;
     @ManyToOne
-    private Personne idPersonne;
-    @ManyToOne
-    private Salarie idSalarie;
+    private Personne personne;
+
 
     public Enseignant(String CNSS, String CNRPS,
                       LocalDate dateEntree, String observation, String situationM,
                       int nbrEnfants, String diplome, String ripIBAN, String img,
-                      String poste, String etablissementOrigine, Personne idPersonne,
-                      Salarie idSalarie) {
+                      String poste, String etablissementOrigine, Personne personne
+                       ) {
 
         this.CNSS = CNSS;
         this.CNRPS = CNRPS;
@@ -44,8 +42,8 @@ public class Enseignant {
         this.img = img;
         this.poste = poste;
         this.etablissementOrigine = etablissementOrigine;
-        this.idPersonne = idPersonne;
-        this.idSalarie = idSalarie;
+        this.personne = personne;
+
     }
 
     public Enseignant() {
@@ -147,21 +145,15 @@ public class Enseignant {
         this.etablissementOrigine = etablissementOrigine;
     }
 
-    public Personne getIdPersonne() {
-        return idPersonne;
+    public Personne getPersonne() {
+        return personne;
     }
 
-    public void setIdPersonne(Personne idPersonne) {
-        this.idPersonne = idPersonne;
+    public void setPersonne(Personne idPersonne) {
+        this.personne = idPersonne;
     }
 
-    public Salarie getIdSalarie() {
-        return idSalarie;
-    }
 
-    public void setIdSalarie(Salarie idSalarie) {
-        this.idSalarie = idSalarie;
-    }
 
     @Override
     public String toString() {
@@ -178,8 +170,7 @@ public class Enseignant {
                 ", img='" + img + '\'' +
                 ", poste='" + poste + '\'' +
                 ", etablissementOrigine='" + etablissementOrigine + '\'' +
-                ", idPersonne=" + idPersonne +
-                ", idSalarie=" + idSalarie +
+                ", idPersonne=" + personne +
                 '}';
     }
 }

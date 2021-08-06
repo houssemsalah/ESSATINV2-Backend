@@ -11,12 +11,10 @@ public class Vacataire {
     private Integer idVacataire;
     @ManyToOne
     private Personne idPersonne;
-    @ManyToOne
-    private Salarie idSalarie;
 
-    public Vacataire(Personne idPersonne, Salarie idSalarie) {
+    public Vacataire(Personne idPersonne ) {
         this.idPersonne = idPersonne;
-        this.idSalarie = idSalarie;
+
     }
 
     public Vacataire() {
@@ -38,20 +36,12 @@ public class Vacataire {
         this.idPersonne = idPersonne;
     }
 
-    public Salarie getIdSalarie() {
-        return idSalarie;
-    }
-
-    public void setIdSalarie(Salarie idSalarie) {
-        this.idSalarie = idSalarie;
-    }
-
     @Override
     public String toString() {
         return "Vacataire{" +
                 "idVacataire=" + idVacataire +
                 ", idPersonne=" + idPersonne +
-                ", idSalarie=" + idSalarie +
+
                 '}';
     }
 }

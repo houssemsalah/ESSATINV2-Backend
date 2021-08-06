@@ -7,25 +7,23 @@ import java.time.LocalDate;
 public class Contrat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idContrat;
-    @ManyToOne
-    private Salarie idSalarie;
-    @ManyToOne
-    private ModeleContrat idModeleContrat;
-    @ManyToOne
-    private TypeContrat idtypeContrat;
+    private Integer id;
+    @Enumerated(EnumType.STRING)
+    private ETypeContrat typeContrat;
+    @Enumerated(EnumType.STRING)
+    private EUniteSalaire uniteSalaire;
+    private Double prixUnite;
     private LocalDate dateDebutContrat;
     private LocalDate dateFinContrat;
     private LocalDate dateSignatureContrat;
     private LocalDate dateResiliationContrat;
     private String observationContrat;
 
-    public Contrat(Salarie idSalarie, ModeleContrat idModeleContrat, TypeContrat idtypeContrat,
-                   LocalDate dateDebutContrat, LocalDate dateFinContrat, LocalDate dateSignatureContrat,
-                   LocalDate dateResiliationContrat, String observationContrat) {
-        this.idSalarie = idSalarie;
-        this.idModeleContrat = idModeleContrat;
-        this.idtypeContrat = idtypeContrat;
+    public Contrat(ETypeContrat typeContrat, EUniteSalaire uniteSalaire, Double prixUnite,
+                   LocalDate dateDebutContrat, LocalDate dateFinContrat, LocalDate dateSignatureContrat, LocalDate dateResiliationContrat, String observationContrat) {
+        this.typeContrat = typeContrat;
+        this.uniteSalaire = uniteSalaire;
+        this.prixUnite = prixUnite;
         this.dateDebutContrat = dateDebutContrat;
         this.dateFinContrat = dateFinContrat;
         this.dateSignatureContrat = dateSignatureContrat;
@@ -36,36 +34,36 @@ public class Contrat {
     public Contrat() {
     }
 
-    public Integer getIdContrat() {
-        return idContrat;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdContrat(Integer idContrat) {
-        this.idContrat = idContrat;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Salarie getIdSalarie() {
-        return idSalarie;
+    public ETypeContrat getTypeContrat() {
+        return typeContrat;
     }
 
-    public void setIdSalarie(Salarie idSalarie) {
-        this.idSalarie = idSalarie;
+    public void setTypeContrat(ETypeContrat typeContrat) {
+        this.typeContrat = typeContrat;
     }
 
-    public ModeleContrat getIdModeleContrat() {
-        return idModeleContrat;
+    public EUniteSalaire getUniteSalaire() {
+        return uniteSalaire;
     }
 
-    public void setIdModeleContrat(ModeleContrat idModeleContrat) {
-        this.idModeleContrat = idModeleContrat;
+    public void setUniteSalaire(EUniteSalaire uniteSalaire) {
+        this.uniteSalaire = uniteSalaire;
     }
 
-    public TypeContrat getIdtypeContrat() {
-        return idtypeContrat;
+    public Double getPrixUnite() {
+        return prixUnite;
     }
 
-    public void setIdtypeContrat(TypeContrat idtypeContrat) {
-        this.idtypeContrat = idtypeContrat;
+    public void setPrixUnite(Double prixUnite) {
+        this.prixUnite = prixUnite;
     }
 
     public LocalDate getDateDebutContrat() {
@@ -111,10 +109,10 @@ public class Contrat {
     @Override
     public String toString() {
         return "Contrat{" +
-                "idContrat=" + idContrat +
-                ", idSalarie=" + idSalarie +
-                ", idModeleContrat=" + idModeleContrat +
-                ", idtypeContrat=" + idtypeContrat +
+                "id=" + id +
+                ", typeContrat=" + typeContrat +
+                ", uniteSalaire=" + uniteSalaire +
+                ", prixUnite=" + prixUnite +
                 ", dateDebutContrat=" + dateDebutContrat +
                 ", dateFinContrat=" + dateFinContrat +
                 ", dateSignatureContrat=" + dateSignatureContrat +

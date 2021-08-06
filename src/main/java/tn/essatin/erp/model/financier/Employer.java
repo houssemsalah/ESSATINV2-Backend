@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class Employer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idEmployer;
+    private Integer id;
     private String NCNSS;
     private String observation;
     private String situationM;
@@ -17,31 +17,33 @@ public class Employer {
     private String IMG;
     private LocalDate dateEntree;
     @ManyToOne
-    private Personne idPersonne;
-    @ManyToOne
-    private Salarie idSalarie;
+    private Personne personne;
+    @Enumerated(EnumType.STRING)
+    private ETypeEmployer typeEmployer;
 
 
-    public Employer(String NCNSS, String observation, String situationM, Integer NBEnfant, String IMG, LocalDate dateEntree, Personne idPersonne, Salarie idSalarie) {
+    public Employer(String NCNSS, String observation, String situationM,
+                    Integer NBEnfant, String IMG, LocalDate dateEntree, Personne personne,
+                    ETypeEmployer typeEmployer) {
         this.NCNSS = NCNSS;
         this.observation = observation;
         this.situationM = situationM;
         this.NBEnfant = NBEnfant;
         this.IMG = IMG;
         this.dateEntree = dateEntree;
-        this.idPersonne = idPersonne;
-        this.idSalarie= idSalarie;
+        this.personne = personne;
+        this.typeEmployer = typeEmployer;
     }
 
     public Employer() {
     }
 
-    public Integer getIdEmployer() {
-        return idEmployer;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdEmployer(Integer idEmployer) {
-        this.idEmployer = idEmployer;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNCNSS() {
@@ -92,34 +94,34 @@ public class Employer {
         this.dateEntree = dateEntree;
     }
 
-    public Personne getIdPersonne() {
-        return idPersonne;
+    public Personne getPersonne() {
+        return personne;
     }
 
-    public void setIdPersonne(Personne idPersonne) {
-        this.idPersonne = idPersonne;
+    public void setPersonne(Personne personne) {
+        this.personne = personne;
     }
 
-    public Salarie getIdSalarie() {
-        return idSalarie;
+    public ETypeEmployer getTypeEmployer() {
+        return typeEmployer;
     }
 
-    public void setIdSalarie(Salarie idSalarie) {
-        this.idSalarie = idSalarie;
+    public void setTypeEmployer(ETypeEmployer typeEmployer) {
+        this.typeEmployer = typeEmployer;
     }
 
     @Override
     public String toString() {
         return "Employer{" +
-                "idEmployer=" + idEmployer +
+                "id=" + id +
                 ", NCNSS='" + NCNSS + '\'' +
                 ", observation='" + observation + '\'' +
                 ", situationM='" + situationM + '\'' +
                 ", NBEnfant=" + NBEnfant +
                 ", IMG='" + IMG + '\'' +
                 ", dateEntree=" + dateEntree +
-                ", idPersonne=" + idPersonne +
-                ", idSalarie=" + idSalarie +
+                ", personne=" + personne +
+                ", typeEmployer=" + typeEmployer +
                 '}';
     }
 }

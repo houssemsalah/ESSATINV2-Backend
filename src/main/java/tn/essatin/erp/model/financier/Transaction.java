@@ -17,22 +17,22 @@ public class Transaction {
     private Collection<ModaliteTransaction> modalite;
     private LocalDate datePayement;
     @OneToOne
-    private Employer idFinancier;
+    private Employer financier;
     @OneToOne
-    private Personne idClient;
+    private Personne client;
     @OneToOne
     private Session session;
     private String status;
     private float montant;
 
     public Transaction(String type, Collection<ModaliteTransaction> modalite,
-                       LocalDate datePayement, Employer idFinancier, Personne idClient,
+                       LocalDate datePayement, Employer financier, Personne client,
                        Session session, String status, Float montant) {
         this.type = type;
         this.modalite = modalite;
         this.datePayement = datePayement;
-        this.idFinancier = idFinancier;
-        this.idClient = idClient;
+        this.financier = financier;
+        this.client = client;
         this.session = session;
         this.status = status;
         this.montant = montant;
@@ -73,20 +73,20 @@ public class Transaction {
         this.datePayement = datePayement;
     }
 
-    public Employer getIdFinancier() {
-        return idFinancier;
+    public Employer getFinancier() {
+        return financier;
     }
 
-    public void setIdFinancier(Employer idFinancier) {
-        this.idFinancier = idFinancier;
+    public void setFinancier(Employer idFinancier) {
+        this.financier = idFinancier;
     }
 
-    public Personne getIdClient() {
-        return idClient;
+    public Personne getClient() {
+        return client;
     }
 
-    public void setIdClient(Personne idClient) {
-        this.idClient = idClient;
+    public void setClient(Personne idClient) {
+        this.client = idClient;
     }
 
     public Session getSession() {
@@ -120,8 +120,8 @@ public class Transaction {
                 ", type=" + type +
                 ", modalite=" + modalite +
                 ", datePayement=" + datePayement +
-                ", idFinancier=" + idFinancier +
-                ", idClient=" + idClient +
+                ", idFinancier=" + financier +
+                ", idClient=" + client +
                 ", session=" + session +
                 ", status=" + status +
                 ", montant=" + montant +

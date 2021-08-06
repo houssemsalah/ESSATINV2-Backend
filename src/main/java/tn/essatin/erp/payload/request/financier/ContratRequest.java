@@ -1,9 +1,5 @@
 package tn.essatin.erp.payload.request.financier;
 
-import tn.essatin.erp.model.financier.ModeleContrat;
-import tn.essatin.erp.model.financier.Salarie;
-import tn.essatin.erp.model.financier.TypeContrat;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;

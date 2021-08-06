@@ -11,12 +11,11 @@ public class Formateur {
     private Integer idFormateur;
     @ManyToOne
     private Personne idPersonne;
-    @ManyToOne
-    private Salarie idSalarie;
 
-    public Formateur(Personne idPersonne, Salarie idSalarie) {
+
+    public Formateur(Personne idPersonne) {
         this.idPersonne = idPersonne;
-        this.idSalarie = idSalarie;
+
     }
 
     public Formateur() {
@@ -38,20 +37,12 @@ public class Formateur {
         this.idPersonne = idPersonne;
     }
 
-    public Salarie getIdSalarie() {
-        return idSalarie;
-    }
-
-    public void setIdSalarie(Salarie idSalarie) {
-        this.idSalarie = idSalarie;
-    }
 
     @Override
     public String toString() {
         return "Formateur{" +
                 "idFormateur=" + idFormateur +
                 ", idPersonne=" + idPersonne +
-                ", idSalarie=" + idSalarie +
                 '}';
     }
 }
