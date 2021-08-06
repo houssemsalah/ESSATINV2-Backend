@@ -224,7 +224,7 @@ public class EtudiantRest {
         List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
         if (!enregistrementList.isEmpty()) {
             ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList,
-                    salle.getNombreDeRangee(), salle.getNombreDePlace());
+                    salle.getNombreDeRangee(), salle.getNombreDePlaceExamen());
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
             ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
