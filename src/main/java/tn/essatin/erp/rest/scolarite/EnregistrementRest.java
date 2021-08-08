@@ -1,7 +1,10 @@
 package tn.essatin.erp.rest.scolarite;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.PersonneDao;
@@ -19,8 +22,12 @@ import tn.essatin.erp.payload.request.scolarite.NouvelEnregistrementRequest;
 import tn.essatin.erp.payload.request.scolarite.NumeroInscriptionRequest;
 import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
+import tn.essatin.erp.util.DocumentGenerators.CertificateDeReussite;
+import tn.essatin.erp.util.DocumentGenerators.FeuilleDEmargementPersonnalise;
+import tn.essatin.erp.util.DocumentGenerators.FicheDeNote;
 
 import javax.validation.Valid;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -225,5 +232,23 @@ public class EnregistrementRest {
         Inscription inscri = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(cinE.get(0));
         Enregistrement en = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(inscri);
         return new ResponseEntity<>(en, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/getcertificatreussite")
+    public ResponseEntity<?> getCertificatReussite(@Valid @RequestBody GetByIdRequest getByIdEnregistrementRequest) {
+        Optional<Enregistrement> oe = enregistrementDao.findById(getByIdEnregistrementRequest.getId());
+        if (oe.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Enregistrement Etudiant introvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Enregistrement enregistrement = oe.get();
+
+
+        ByteArrayOutputStream os = CertificateDeReussite.createDoc(enregistrement);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+        ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 }
