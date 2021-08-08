@@ -6,27 +6,27 @@ import javax.persistence.*;
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idService;
+    private Integer id;
     private String designation;
     private String description;
-    @ManyToOne
-    private PrestataireService idPrestataire;
+    @OneToOne
+    private PrestataireService Prestataire;
 
-    public Service(String designation, String description, PrestataireService idPrestataire) {
+    public Service(String designation, String description, PrestataireService Prestataire) {
         this.designation = designation;
         this.description = description;
-        this.idPrestataire = idPrestataire;
+        this.Prestataire = Prestataire;
     }
 
     public Service() {
     }
 
     public Integer getIdService() {
-        return idService;
+        return id;
     }
 
-    public void setIdService(Integer idService) {
-        this.idService = idService;
+    public void setIdService(Integer id) {
+        this.id = id;
     }
 
     public String getDesignation() {
@@ -46,20 +46,20 @@ public class Service {
     }
 
     public PrestataireService getIdPrestataire() {
-        return idPrestataire;
+        return Prestataire;
     }
 
-    public void setIdPrestataire(PrestataireService idPrestataire) {
-        this.idPrestataire = idPrestataire;
+    public void setIdPrestataire(PrestataireService Prestataire) {
+        this.Prestataire = Prestataire;
     }
 
     @Override
     public String toString() {
         return "Service{" +
-                "idService=" + idService +
+                "id=" + id +
                 ", designation='" + designation + '\'' +
                 ", description='" + description + '\'' +
-                ", idPrestataire=" + idPrestataire +
+                ", Prestataire=" + Prestataire +
                 '}';
     }
 }

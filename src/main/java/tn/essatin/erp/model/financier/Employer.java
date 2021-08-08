@@ -4,38 +4,52 @@ import tn.essatin.erp.model.Personne;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 public class Employer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String NCNSS;
+    private String numeroCNSS;
     private String observation;
-    private String situationM;
-    private Integer NBEnfant;
-    private String IMG;
+    private String situationMaritale;
+    private Integer nbEnfant;
+    private String image;
     private LocalDate dateEntree;
+    private String ripIBAN;
+    private String img;
+    private String poste;
+
     @ManyToOne
     private Personne personne;
     @Enumerated(EnumType.STRING)
     private ETypeEmployer typeEmployer;
 
+    public Employer() {
+    }
 
-    public Employer(String NCNSS, String observation, String situationM,
-                    Integer NBEnfant, String IMG, LocalDate dateEntree, Personne personne,
-                    ETypeEmployer typeEmployer) {
-        this.NCNSS = NCNSS;
+    public Employer(String numeroCNSS, String observation, String situationMaritale, Integer nbEnfant, String image, LocalDate dateEntree, Personne personne, ETypeEmployer typeEmployer) {
+        this.numeroCNSS = numeroCNSS;
         this.observation = observation;
-        this.situationM = situationM;
-        this.NBEnfant = NBEnfant;
-        this.IMG = IMG;
+        this.situationMaritale = situationMaritale;
+        this.nbEnfant = nbEnfant;
+        this.image = image;
         this.dateEntree = dateEntree;
         this.personne = personne;
         this.typeEmployer = typeEmployer;
     }
 
-    public Employer() {
+    public Employer(Integer id, String numeroCNSS, String observation, String situationMaritale, Integer nbEnfant, String image, LocalDate dateEntree, Personne personne, ETypeEmployer typeEmployer) {
+        this.id = id;
+        this.numeroCNSS = numeroCNSS;
+        this.observation = observation;
+        this.situationMaritale = situationMaritale;
+        this.nbEnfant = nbEnfant;
+        this.image = image;
+        this.dateEntree = dateEntree;
+        this.personne = personne;
+        this.typeEmployer = typeEmployer;
     }
 
     public Integer getId() {
@@ -46,12 +60,12 @@ public class Employer {
         this.id = id;
     }
 
-    public String getNCNSS() {
-        return NCNSS;
+    public String getNumeroCNSS() {
+        return numeroCNSS;
     }
 
-    public void setNCNSS(String NCNSS) {
-        this.NCNSS = NCNSS;
+    public void setNumeroCNSS(String numeroCNSS) {
+        this.numeroCNSS = numeroCNSS;
     }
 
     public String getObservation() {
@@ -62,28 +76,28 @@ public class Employer {
         this.observation = observation;
     }
 
-    public String getSituationM() {
-        return situationM;
+    public String getSituationMaritale() {
+        return situationMaritale;
     }
 
-    public void setSituationM(String situationM) {
-        this.situationM = situationM;
+    public void setSituationMaritale(String situationMaritale) {
+        this.situationMaritale = situationMaritale;
     }
 
-    public Integer getNBEnfant() {
-        return NBEnfant;
+    public Integer getNbEnfant() {
+        return nbEnfant;
     }
 
-    public void setNBEnfant(Integer NBEnfant) {
-        this.NBEnfant = NBEnfant;
+    public void setNbEnfant(Integer nbEnfant) {
+        this.nbEnfant = nbEnfant;
     }
 
-    public String getIMG() {
-        return IMG;
+    public String getImage() {
+        return image;
     }
 
-    public void setIMG(String IMG) {
-        this.IMG = IMG;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public LocalDate getDateEntree() {
@@ -114,14 +128,35 @@ public class Employer {
     public String toString() {
         return "Employer{" +
                 "id=" + id +
-                ", NCNSS='" + NCNSS + '\'' +
+                ", numeroCNSS='" + numeroCNSS + '\'' +
                 ", observation='" + observation + '\'' +
-                ", situationM='" + situationM + '\'' +
-                ", NBEnfant=" + NBEnfant +
-                ", IMG='" + IMG + '\'' +
+                ", situationMaritale='" + situationMaritale + '\'' +
+                ", nbEnfant=" + nbEnfant +
+                ", image='" + image + '\'' +
                 ", dateEntree=" + dateEntree +
                 ", personne=" + personne +
                 ", typeEmployer=" + typeEmployer +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Employer)) return false;
+        Employer employer = (Employer) o;
+        return getId().equals(employer.getId()) &&
+                getNumeroCNSS().equals(employer.getNumeroCNSS()) &&
+                getObservation().equals(employer.getObservation()) &&
+                getSituationMaritale().equals(employer.getSituationMaritale()) &&
+                getNbEnfant().equals(employer.getNbEnfant()) &&
+                getImage().equals(employer.getImage()) &&
+                getDateEntree().equals(employer.getDateEntree()) &&
+                getPersonne().equals(employer.getPersonne()) &&
+                getTypeEmployer() == employer.getTypeEmployer();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getNumeroCNSS(), getObservation(), getSituationMaritale(), getNbEnfant(), getImage(), getDateEntree(), getPersonne(), getTypeEmployer());
     }
 }

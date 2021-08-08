@@ -11,7 +11,7 @@ import java.util.Collection;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idTransaction;
+    private Integer id;
     private String type;
     @OneToMany
     private Collection<ModaliteTransaction> modalite;
@@ -41,12 +41,12 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Integer getIdTransaction() {
-        return idTransaction;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdTransaction(Integer idTransaction) {
-        this.idTransaction = idTransaction;
+    public void setId(Integer idTransaction) {
+        this.id = idTransaction;
     }
 
     public String getType() {
@@ -116,7 +116,7 @@ public class Transaction {
     @Override
     public String toString() {
         return "Transaction{" +
-                "idTransaction=" + idTransaction +
+                "idTransaction=" + id +
                 ", type=" + type +
                 ", modalite=" + modalite +
                 ", datePayement=" + datePayement +
