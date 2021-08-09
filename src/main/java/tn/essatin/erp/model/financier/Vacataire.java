@@ -8,40 +8,39 @@ import javax.persistence.*;
 public class Vacataire {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idVacataire;
+    private Integer id;
     @ManyToOne
-    private Personne idPersonne;
+    private Personne personne;
 
-    public Vacataire(Personne idPersonne ) {
-        this.idPersonne = idPersonne;
+    public Vacataire(Personne personne) {
+        this.personne = personne;
 
     }
 
     public Vacataire() {
     }
 
-    public Integer getIdVacataire() {
-        return idVacataire;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdVacataire(Integer idVacataire) {
-        this.idVacataire = idVacataire;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Personne getIdPersonne() {
-        return idPersonne;
+    public Personne getPersonne() {
+        return personne;
     }
 
-    public void setIdPersonne(Personne idPersonne) {
-        this.idPersonne = idPersonne;
+    public void setPersonne(Personne personne) {
+        this.personne = personne;
     }
 
     @Override
     public String toString() {
         return "Vacataire{" +
-                "idVacataire=" + idVacataire +
-                ", idPersonne=" + idPersonne +
-
+                "id=" + id +
+                ", Personne=" + personne +
                 '}';
     }
 }

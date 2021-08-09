@@ -34,7 +34,7 @@ public class StudentDebt {
 
     public double debt(Etudiants etudiants, Session session) {
         System.out.println("debt enter");
-        Collection<Transaction> transactions = transactionDao.findAllByIdClientAndSession(etudiants.getIdPersonne(), session);
+        Collection<Transaction> transactions = transactionDao.findAllByClientAndSession(etudiants.getIdPersonne(), session);
         Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants);
         System.out.println(session);
         Enregistrement enregistrement = enregistrementDao.findByIdInscriptionAndIdSession(inscription, session);

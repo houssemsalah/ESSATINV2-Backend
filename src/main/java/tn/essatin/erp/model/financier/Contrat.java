@@ -17,10 +17,10 @@ public class Contrat {
     private LocalDate dateFinContrat;
     private LocalDate dateSignatureContrat;
     private LocalDate dateResiliationContrat;
-    private String observationContrat;
+    private String observation;
 
     public Contrat(ETypeContrat typeContrat, EUniteSalaire uniteSalaire, Double prixUnite,
-                   LocalDate dateDebutContrat, LocalDate dateFinContrat, LocalDate dateSignatureContrat, LocalDate dateResiliationContrat, String observationContrat) {
+                   LocalDate dateDebutContrat, LocalDate dateFinContrat, LocalDate dateSignatureContrat, LocalDate dateResiliationContrat, String observation) {
         this.typeContrat = typeContrat;
         this.uniteSalaire = uniteSalaire;
         this.prixUnite = prixUnite;
@@ -28,7 +28,7 @@ public class Contrat {
         this.dateFinContrat = dateFinContrat;
         this.dateSignatureContrat = dateSignatureContrat;
         this.dateResiliationContrat = dateResiliationContrat;
-        this.observationContrat = observationContrat;
+        this.observation = observation;
     }
 
     public Contrat() {
@@ -98,12 +98,12 @@ public class Contrat {
         this.dateResiliationContrat = dateResiliationContrat;
     }
 
-    public String getObservationContrat() {
-        return observationContrat;
+    public String getObservation() {
+        return observation;
     }
 
-    public void setObservationContrat(String observationContrat) {
-        this.observationContrat = observationContrat;
+    public void setObservation(String observationContrat) {
+        this.observation = observationContrat;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class Contrat {
                 ", dateFinContrat=" + dateFinContrat +
                 ", dateSignatureContrat=" + dateSignatureContrat +
                 ", dateResiliationContrat=" + dateResiliationContrat +
-                ", observationContrat='" + observationContrat + '\'' +
+                ", observationContrat='" + observation + '\'' +
                 '}';
     }
 }

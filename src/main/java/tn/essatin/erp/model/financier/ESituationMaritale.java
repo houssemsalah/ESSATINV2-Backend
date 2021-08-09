@@ -1,13 +1,13 @@
 package tn.essatin.erp.model.financier;
 
-public enum ETypePrestataire {
-    FORMATEUR("Formateur"),
-    FOURNISSEUR("Fournisseur"),
-    INDEPENDANT("Travailleur Indépendant");
+public enum ESituationMaritale {
+
+    CELIBATAIRE("Célibataire"), MARIEE("mariée"), VEUVE("veuve"), DIVORCEE("divorcée");
+
 
     private final String value;
 
-    ETypePrestataire(String value) {
+    ESituationMaritale(String value) {
         this.value = value;
     }
 

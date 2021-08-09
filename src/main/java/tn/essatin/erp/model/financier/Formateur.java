@@ -11,18 +11,18 @@ public class Formateur {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToOne
-    private Personne Personne;
+    private Personne personne;
 
-    public Formateur(Integer id, tn.essatin.erp.model.Personne personne) {
+    public Formateur(Integer id, Personne personne) {
         this.id = id;
-        Personne = personne;
+        this.personne = personne;
     }
 
     public Formateur() {
     }
 
-    public Formateur(tn.essatin.erp.model.Personne personne) {
-        Personne = personne;
+    public Formateur(Personne personne) {
+        this.personne = personne;
     }
 
     public Formateur(Integer id) {
@@ -38,18 +38,18 @@ public class Formateur {
     }
 
     public tn.essatin.erp.model.Personne getPersonne() {
-        return Personne;
+        return personne;
     }
 
-    public void setPersonne(tn.essatin.erp.model.Personne personne) {
-        Personne = personne;
+    public void setPersonne(Personne personne) {
+        this.personne = personne;
     }
 
     @Override
     public String toString() {
         return "Formateur{" +
                 "id=" + id +
-                ", Personne=" + Personne +
+                ", Personne=" + personne +
                 '}';
     }
 

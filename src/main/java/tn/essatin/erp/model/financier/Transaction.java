@@ -12,7 +12,8 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private ETypeTransaction type;
     @OneToMany
     private Collection<ModaliteTransaction> modalite;
     private LocalDate datePayement;
@@ -22,12 +23,13 @@ public class Transaction {
     private Personne client;
     @OneToOne
     private Session session;
-    private String status;
-    private float montant;
+    @Enumerated(EnumType.STRING)
+    private EStatus status;
+    private double montant;
 
-    public Transaction(String type, Collection<ModaliteTransaction> modalite,
+    public Transaction(ETypeTransaction type, Collection<ModaliteTransaction> modalite,
                        LocalDate datePayement, Employer financier, Personne client,
-                       Session session, String status, Float montant) {
+                       Session session, EStatus status, double montant) {
         this.type = type;
         this.modalite = modalite;
         this.datePayement = datePayement;
@@ -49,11 +51,11 @@ public class Transaction {
         this.id = idTransaction;
     }
 
-    public String getType() {
+    public ETypeTransaction getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ETypeTransaction type) {
         this.type = type;
     }
 
@@ -97,19 +99,19 @@ public class Transaction {
         this.session = session;
     }
 
-    public String getStatus() {
+    public EStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(EStatus status) {
         this.status = status;
     }
 
-    public float getMontant() {
+    public double getMontant() {
         return montant;
     }
 
-    public void setMontant(float montant) {
+    public void setMontant(double montant) {
         this.montant = montant;
     }
 

@@ -2,6 +2,8 @@ package tn.essatin.erp.Service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tn.essatin.erp.model.financier.EStatus;
+import tn.essatin.erp.model.financier.ETypeTransaction;
 import tn.essatin.erp.strategy.payement.PayementStrategy;
 import tn.essatin.erp.strategy.payement.PayementStrategyFactory;
 import tn.essatin.erp.strategy.payement.PayementStrategyName;
@@ -21,8 +23,8 @@ public class PaymentServiceImpl implements PayementService {
     }
 
     @Override
-    public void studentPay(Personne personne, float montant, Session session, String datePayement,
-                           int typeTransaction, int statusTransaction, int idFinancier,
+    public void studentPay(Personne personne, double montant, Session session, String datePayement,
+                           ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
                            Set<ModaliteTransaction> modaliteTransactionSet) {
         PayementStrategy payementStrategy = strategyFactory.findStrategy(PayementStrategyName.PAYEMENT_STRATEGY_ETUDIANT);
         payementStrategy.payer(personne, montant, session, datePayement, typeTransaction,

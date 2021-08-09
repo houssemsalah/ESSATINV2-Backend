@@ -13,15 +13,14 @@ public class Employer {
     private Integer id;
     private String numeroCNSS;
     private String observation;
-    private String situationMaritale;
+    @Enumerated(EnumType.STRING)
+    private ESituationMaritale situationMaritale;
     private Integer nbEnfant;
     private String image;
     private LocalDate dateEntree;
     private String ripIBAN;
-    private String img;
     private String poste;
-
-    @ManyToOne
+    @OneToOne
     private Personne personne;
     @Enumerated(EnumType.STRING)
     private ETypeEmployer typeEmployer;
@@ -29,18 +28,20 @@ public class Employer {
     public Employer() {
     }
 
-    public Employer(String numeroCNSS, String observation, String situationMaritale, Integer nbEnfant, String image, LocalDate dateEntree, Personne personne, ETypeEmployer typeEmployer) {
+    public Employer(String numeroCNSS, String observation, ESituationMaritale situationMaritale, Integer nbEnfant, String image, LocalDate dateEntree, String ripIBAN, String poste, Personne personne, ETypeEmployer typeEmployer) {
         this.numeroCNSS = numeroCNSS;
         this.observation = observation;
         this.situationMaritale = situationMaritale;
         this.nbEnfant = nbEnfant;
         this.image = image;
         this.dateEntree = dateEntree;
+        this.ripIBAN = ripIBAN;
+        this.poste = poste;
         this.personne = personne;
         this.typeEmployer = typeEmployer;
     }
 
-    public Employer(Integer id, String numeroCNSS, String observation, String situationMaritale, Integer nbEnfant, String image, LocalDate dateEntree, Personne personne, ETypeEmployer typeEmployer) {
+    public Employer(Integer id, String numeroCNSS, String observation, ESituationMaritale situationMaritale, Integer nbEnfant, String image, LocalDate dateEntree, String ripIBAN, String poste, Personne personne, ETypeEmployer typeEmployer) {
         this.id = id;
         this.numeroCNSS = numeroCNSS;
         this.observation = observation;
@@ -48,11 +49,13 @@ public class Employer {
         this.nbEnfant = nbEnfant;
         this.image = image;
         this.dateEntree = dateEntree;
+        this.ripIBAN = ripIBAN;
+        this.poste = poste;
         this.personne = personne;
         this.typeEmployer = typeEmployer;
     }
 
-    public Integer getId() {
+    public Integer id() {
         return id;
     }
 
@@ -60,7 +63,7 @@ public class Employer {
         this.id = id;
     }
 
-    public String getNumeroCNSS() {
+    public String numeroCNSS() {
         return numeroCNSS;
     }
 
@@ -68,7 +71,7 @@ public class Employer {
         this.numeroCNSS = numeroCNSS;
     }
 
-    public String getObservation() {
+    public String observation() {
         return observation;
     }
 
@@ -76,15 +79,15 @@ public class Employer {
         this.observation = observation;
     }
 
-    public String getSituationMaritale() {
+    public ESituationMaritale situationMaritale() {
         return situationMaritale;
     }
 
-    public void setSituationMaritale(String situationMaritale) {
+    public void setSituationMaritale(ESituationMaritale situationMaritale) {
         this.situationMaritale = situationMaritale;
     }
 
-    public Integer getNbEnfant() {
+    public Integer nbEnfant() {
         return nbEnfant;
     }
 
@@ -92,7 +95,7 @@ public class Employer {
         this.nbEnfant = nbEnfant;
     }
 
-    public String getImage() {
+    public String image() {
         return image;
     }
 
@@ -100,7 +103,7 @@ public class Employer {
         this.image = image;
     }
 
-    public LocalDate getDateEntree() {
+    public LocalDate dateEntree() {
         return dateEntree;
     }
 
@@ -108,7 +111,23 @@ public class Employer {
         this.dateEntree = dateEntree;
     }
 
-    public Personne getPersonne() {
+    public String ripIBAN() {
+        return ripIBAN;
+    }
+
+    public void setRipIBAN(String ripIBAN) {
+        this.ripIBAN = ripIBAN;
+    }
+
+    public String poste() {
+        return poste;
+    }
+
+    public void setPoste(String poste) {
+        this.poste = poste;
+    }
+
+    public Personne personne() {
         return personne;
     }
 
@@ -116,7 +135,7 @@ public class Employer {
         this.personne = personne;
     }
 
-    public ETypeEmployer getTypeEmployer() {
+    public ETypeEmployer typeEmployer() {
         return typeEmployer;
     }
 
@@ -125,38 +144,32 @@ public class Employer {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Employer)) return false;
+        Employer employer = (Employer) o;
+        return id.equals(employer.id) && numeroCNSS.equals(employer.numeroCNSS) && observation.equals(employer.observation) && situationMaritale == employer.situationMaritale && nbEnfant.equals(employer.nbEnfant) && image.equals(employer.image) && dateEntree.equals(employer.dateEntree) && ripIBAN.equals(employer.ripIBAN) && poste.equals(employer.poste) && personne.equals(employer.personne) && typeEmployer == employer.typeEmployer;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, numeroCNSS, observation, situationMaritale, nbEnfant, image, dateEntree, ripIBAN, poste, personne, typeEmployer);
+    }
+
+    @Override
     public String toString() {
         return "Employer{" +
                 "id=" + id +
                 ", numeroCNSS='" + numeroCNSS + '\'' +
                 ", observation='" + observation + '\'' +
-                ", situationMaritale='" + situationMaritale + '\'' +
+                ", situationMaritale=" + situationMaritale +
                 ", nbEnfant=" + nbEnfant +
                 ", image='" + image + '\'' +
                 ", dateEntree=" + dateEntree +
+                ", ripIBAN='" + ripIBAN + '\'' +
+                ", poste='" + poste + '\'' +
                 ", personne=" + personne +
                 ", typeEmployer=" + typeEmployer +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Employer)) return false;
-        Employer employer = (Employer) o;
-        return getId().equals(employer.getId()) &&
-                getNumeroCNSS().equals(employer.getNumeroCNSS()) &&
-                getObservation().equals(employer.getObservation()) &&
-                getSituationMaritale().equals(employer.getSituationMaritale()) &&
-                getNbEnfant().equals(employer.getNbEnfant()) &&
-                getImage().equals(employer.getImage()) &&
-                getDateEntree().equals(employer.getDateEntree()) &&
-                getPersonne().equals(employer.getPersonne()) &&
-                getTypeEmployer() == employer.getTypeEmployer();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getNumeroCNSS(), getObservation(), getSituationMaritale(), getNbEnfant(), getImage(), getDateEntree(), getPersonne(), getTypeEmployer());
     }
 }

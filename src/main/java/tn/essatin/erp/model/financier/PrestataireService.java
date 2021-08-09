@@ -13,17 +13,17 @@ public class PrestataireService {
     @Enumerated(EnumType.STRING)
     private ETypePrestataire typePrestataire;
     @OneToOne
-    private Personne Personne;
+    private Personne personne;
 
-    public PrestataireService(Integer id, ETypePrestataire typePrestataire, tn.essatin.erp.model.Personne personne) {
+    public PrestataireService(Integer id, ETypePrestataire typePrestataire, Personne personne) {
         this.id = id;
         this.typePrestataire = typePrestataire;
-        Personne = personne;
+        this.personne = personne;
     }
 
-    public PrestataireService(ETypePrestataire typePrestataire, tn.essatin.erp.model.Personne personne) {
+    public PrestataireService(ETypePrestataire typePrestataire, Personne personne) {
         this.typePrestataire = typePrestataire;
-        Personne = personne;
+        this.personne = personne;
     }
 
     public PrestataireService() {
@@ -45,12 +45,12 @@ public class PrestataireService {
         this.typePrestataire = typePrestataire;
     }
 
-    public tn.essatin.erp.model.Personne getPersonne() {
-        return Personne;
+    public Personne getPersonne() {
+        return personne;
     }
 
-    public void setPersonne(tn.essatin.erp.model.Personne personne) {
-        Personne = personne;
+    public void setPersonne(Personne personne) {
+        this.personne = personne;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class PrestataireService {
         return "PrestataireService{" +
                 "id=" + id +
                 ", typePrestataire=" + typePrestataire +
-                ", Personne=" + Personne +
+                ", Personne=" + personne +
                 '}';
     }
 

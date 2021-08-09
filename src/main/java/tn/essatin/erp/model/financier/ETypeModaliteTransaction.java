@@ -1,13 +1,14 @@
 package tn.essatin.erp.model.financier;
 
-public enum ETypePrestataire {
-    FORMATEUR("Formateur"),
-    FOURNISSEUR("Fournisseur"),
-    INDEPENDANT("Travailleur Indépendant");
+public enum ETypeModaliteTransaction {
+    ESPECES("espèces"),
+    CARTE_BANCAIRE("carte bancaire"),
+    VIREMENT_BANCAIRE("virement bancaire"),
+    CHEQUE("chèque");
 
     private final String value;
 
-    ETypePrestataire(String value) {
+    ETypeModaliteTransaction(String value) {
         this.value = value;
     }
 

@@ -21,63 +21,41 @@ import java.util.Set;
 
 @Component
 public class ManageTransaction {
-    @Autowired
-    SessionDao sessionDao;
-    @Autowired
-    TransactionDao transactionDao;
-    @Autowired
-    PersonneDao personneDao;
-    @Autowired
-    EmployerDao employerDao;
-    @Autowired
-    PrixNiveauParSessionDao prixNiveauParSessionDao;
-    @Autowired
-    InscriptionDao inscriptionDao;
-    @Autowired
-    EnregistrementDao enregistrementDao;
-    @Autowired
-    EtudiantsDao etudiantsDao;
-    @Autowired
-    StudentDebt studentDebt;
-    @Autowired
-    ModaliteTransactionDao modaliteTransactionDao;
+    final SessionDao sessionDao;
+    final TransactionDao transactionDao;
+    final PersonneDao personneDao;
+    final EmployerDao employerDao;
+    final PrixNiveauParSessionDao prixNiveauParSessionDao;
+    final InscriptionDao inscriptionDao;
+    final EnregistrementDao enregistrementDao;
+    final EtudiantsDao etudiantsDao;
+    final StudentDebt studentDebt;
+    final ModaliteTransactionDao modaliteTransactionDao;
 
-    public void add(int typeTransaction, int statusTransaction, Set<ModaliteTransaction> modalite, Personne personne,
-                    Session session, int idFinancier, String datePayement, Float montant) {
-        String type;
-        String status = "";
-        if (typeTransaction == 1) {
-            type = ETypeTransaction.DEBIT.name();
-        } else {
-            type = ETypeTransaction.CREDIT.name();
-        }
-        switch (statusTransaction) {
-            case 1: {
-                status = EStatus.INCOMPLETE.name();
-                break;
-            }
-            case 2: {
-                status = EStatus.CANCELED.name();
-                break;
-            }
-            case 3: {
-                status = EStatus.COMPLETE.name();
-                break;
-            }
-            case 4: {
-                status = EStatus.REJECTED.name();
-                break;
-            }
-        }
+    public ManageTransaction(SessionDao sessionDao, TransactionDao transactionDao, PersonneDao personneDao, EmployerDao employerDao, PrixNiveauParSessionDao prixNiveauParSessionDao, InscriptionDao inscriptionDao, EnregistrementDao enregistrementDao, EtudiantsDao etudiantsDao, StudentDebt studentDebt, ModaliteTransactionDao modaliteTransactionDao) {
+        this.sessionDao = sessionDao;
+        this.transactionDao = transactionDao;
+        this.personneDao = personneDao;
+        this.employerDao = employerDao;
+        this.prixNiveauParSessionDao = prixNiveauParSessionDao;
+        this.inscriptionDao = inscriptionDao;
+        this.enregistrementDao = enregistrementDao;
+        this.etudiantsDao = etudiantsDao;
+        this.studentDebt = studentDebt;
+        this.modaliteTransactionDao = modaliteTransactionDao;
+    }
+
+    public void add(ETypeTransaction typeTransaction, EStatus statusTransaction, Set<ModaliteTransaction> modalite, Personne personne,
+                    Session session, int idFinancier, String datePayement, double montant) {
+        //ETypeTransaction type=ETypeTransaction.valueOf(typeTransaction);
+        //EStatus status = EStatus.valueOf(statusTransaction);
 
         List<ModaliteTransaction> modaliteTransactionList = modaliteTransactionDao.saveAll(modalite);
         Employer employer = employerDao.findById(idFinancier)
             .orElseThrow(() -> new RuntimeException("error financier not found"));
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate localDate = LocalDate.parse(datePayement, formatter);
-
-        Transaction transaction = new Transaction(type, modaliteTransactionList, localDate, employer, personne, session, status,
+        Transaction transaction = new Transaction(typeTransaction, modaliteTransactionList, localDate, employer, personne, session, statusTransaction,
             montant);
         transactionDao.save(transaction);
     }

@@ -16,19 +16,19 @@ public class PaymentRequest {
     @NotBlank
     private String datePayement;
     @NotNull
-    private int typeTransaction;
+    private String typeTransaction;
     @NotNull
     private Set<ModaliteTransaction> modaliteTransactionSet;
     @NotNull
     private int idFinancier;
     @NotNull
-    private int statusTransaction;
+    private String statusTransaction;
 
-    public int getTypeTransaction() {
+    public String getTypeTransaction() {
         return typeTransaction;
     }
 
-    public void setTypeTransaction(int typeTransaction) {
+    public void setTypeTransaction(String typeTransaction) {
         this.typeTransaction = typeTransaction;
     }
 
@@ -64,11 +64,11 @@ public class PaymentRequest {
         this.session = session;
     }
 
-    public int getStatusTransaction() {
+    public String getStatusTransaction() {
         return statusTransaction;
     }
 
-    public void setStatusTransaction(int statusTransaction) {
+    public void setStatusTransaction(String statusTransaction) {
         this.statusTransaction = statusTransaction;
     }
 
