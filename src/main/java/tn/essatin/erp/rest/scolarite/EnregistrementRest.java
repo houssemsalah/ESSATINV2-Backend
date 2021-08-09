@@ -1,25 +1,37 @@
 package tn.essatin.erp.rest.scolarite;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tn.essatin.erp.dao.*;
+import tn.essatin.erp.dao.PersonneDao;
+import tn.essatin.erp.dao.SessionDao;
 import tn.essatin.erp.dao.scolarite.*;
-import tn.essatin.erp.model.*;
+import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Scolarite.*;
+import tn.essatin.erp.model.Session;
 import tn.essatin.erp.payload.request.GetByIdRequest;
+import tn.essatin.erp.payload.request.IdentificateurRequest;
+import tn.essatin.erp.payload.request.SessionUnivRequest;
 import tn.essatin.erp.payload.request.scolarite.ModifierEnregistrementRequest;
 import tn.essatin.erp.payload.request.scolarite.NivSessRequest;
 import tn.essatin.erp.payload.request.scolarite.NouvelEnregistrementRequest;
-import tn.essatin.erp.payload.request.SessionUnivRequest;
+import tn.essatin.erp.payload.request.scolarite.NumeroInscriptionRequest;
 import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
+import tn.essatin.erp.util.DocumentGenerators.CertificateDeReussite;
+import tn.essatin.erp.util.DocumentGenerators.FeuilleDEmargementPersonnalise;
+import tn.essatin.erp.util.DocumentGenerators.FicheDeNote;
 
 import javax.validation.Valid;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -32,12 +44,13 @@ public class EnregistrementRest {
     final EtatInscriptionDao etatInscriptionDao;
     final EtudiantsDao etudiantsDao;
     final NiveauSuivantDao niveauSuivantDao;
+    final PersonneDao personneDao;
 
     @Autowired
     public EnregistrementRest(EnregistrementDao enregistrementDao, SessionDao sessionDao,
                               NiveauDao niveauDao, InscriptionDao inscriptionDao,
                               EtatInscriptionDao etatInscriptionDao, EtudiantsDao etudiantsDao,
-                              NiveauSuivantDao niveauSuivantDao) {
+                              NiveauSuivantDao niveauSuivantDao, PersonneDao personneDao) {
         this.enregistrementDao = enregistrementDao;
         this.sessionDao = sessionDao;
         this.niveauDao = niveauDao;
@@ -45,6 +58,7 @@ public class EnregistrementRest {
         this.etatInscriptionDao = etatInscriptionDao;
         this.etudiantsDao = etudiantsDao;
         this.niveauSuivantDao = niveauSuivantDao;
+        this.personneDao = personneDao;
     }
 
     @GetMapping("/getall")
@@ -80,10 +94,10 @@ public class EnregistrementRest {
 
     @PostMapping("/getenregistrementbyidinscription")
     public ResponseEntity<?> getEnregistrementByIdInscription(@Valid @RequestBody GetByIdRequest getByIdRequest) {
-        if(inscriptionDao.findById(getByIdRequest.getId()).isPresent()) {
+        if (inscriptionDao.findById(getByIdRequest.getId()).isPresent()) {
             List<Enregistrement> le = enregistrementDao.findByIdInscription(inscriptionDao.findById(getByIdRequest.getId()).get());
             return new ResponseEntity<>(le, HttpStatus.OK);
-        }else
+        } else
             return new ResponseEntity<>(
                     new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
     }
@@ -175,7 +189,7 @@ public class EnregistrementRest {
                         enregistrementDao.save(enregistrement);
                         return new ResponseEntity<>(
                                 new MessageResponse("Modification effectué avec succes", 200), HttpStatus.OK);
-                    }else{
+                    } else {
                         return new ResponseEntity<>(new CombinedResponse(
                                 new MessageResponse("Le niveaux choisis ne correspond pas au niveaux possible " +
                                         "pour cet etudiants ", 403), "Niveau[]", ln),
@@ -183,9 +197,58 @@ public class EnregistrementRest {
                     }
                 }
             }
-        }else{
+        } else {
             return new ResponseEntity<>(
                     new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
         }
+    }
+
+    @PostMapping("/getenregistrementbynumeroinscription")
+    public ResponseEntity<?> getEnregistrementByNumeroInscription(@Valid @RequestBody NumeroInscriptionRequest numeroInscriptionRequest) {
+        Optional<Inscription> oi = inscriptionDao.findByNumeroInscription(numeroInscriptionRequest.getNumeroInscription());
+        if (oi.isPresent()) {
+            Enregistrement en = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(oi.get());
+            return new ResponseEntity<>(en, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
+        }
+    }
+    @PostMapping("/getenregistrementbynumeroidentifiant")
+    public ResponseEntity<?> getEnregistrementByNumeroIdentifiant(@Valid @RequestBody IdentificateurRequest identificateurRequest) {
+        List<Etudiants> cinE = new ArrayList<>();
+        for (Etudiants E : etudiantsDao.findAll()) {
+            int idp = E.getIdPersonne().getIdPersonne();
+            if (personneDao.findById(idp).isPresent()) {
+                Personne p = personneDao.findById(idp).get();
+                String Identificateur = p.getNumeroIdentificateur();
+                if (Identificateur.equalsIgnoreCase(identificateurRequest.getNumidentificateur()))
+                    cinE.add(E);
+            }
+        }
+        if (cinE.isEmpty())
+            return new ResponseEntity<>(new MessageResponse("Personne introuvable", 403),
+                    HttpStatus.FORBIDDEN);
+        Inscription inscri = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(cinE.get(0));
+        Enregistrement en = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(inscri);
+        return new ResponseEntity<>(en, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/getcertificatreussite")
+    public ResponseEntity<?> getCertificatReussite(@Valid @RequestBody GetByIdRequest getByIdEnregistrementRequest) {
+        Optional<Enregistrement> oe = enregistrementDao.findById(getByIdEnregistrementRequest.getId());
+        if (oe.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Enregistrement Etudiant introvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Enregistrement enregistrement = oe.get();
+
+
+        ByteArrayOutputStream os = CertificateDeReussite.createDoc(enregistrement);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+        ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 }

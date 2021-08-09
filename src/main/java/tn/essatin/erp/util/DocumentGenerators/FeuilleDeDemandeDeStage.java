@@ -49,7 +49,7 @@ public class FeuilleDeDemandeDeStage {
 
         try {
             PdfWriter.getInstance(document, response);
-            document.setPageSize(PageSize.A4.rotate());
+            document.setPageSize(PageSize.A4);
             document.setMargins(15f, 15f, 10f, 10f);
             document.open();
             DocumentFunction.ajouterEnteteSpeciale(document, "DEMANDE DE STAGE", "GES-IMP-17", "02", "21/10/2019", 1, 1);

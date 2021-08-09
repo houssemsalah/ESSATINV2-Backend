@@ -6,10 +6,12 @@ import tn.essatin.erp.model.Scolarite.Etudiants;
 import tn.essatin.erp.model.Scolarite.Inscription;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InscriptionDao extends JpaRepository<Inscription, Integer> {
     List<Inscription> findAllByIdEtudiant(Etudiants idEtudiant);
     Inscription findTopByIdEtudiantOrderByDateDesc(Etudiants idEtudiant);
     int countAllByNumeroInscriptionEndsWith(String suffixInscription);
+    Optional<Inscription> findByNumeroInscription(String numeroInscription);
 }
