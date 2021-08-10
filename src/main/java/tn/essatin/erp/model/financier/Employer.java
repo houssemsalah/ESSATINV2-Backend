@@ -55,7 +55,7 @@ public class Employer {
         this.typeEmployer = typeEmployer;
     }
 
-    public Integer id() {
+    public Integer getId() {
         return id;
     }
 
@@ -63,7 +63,7 @@ public class Employer {
         this.id = id;
     }
 
-    public String numeroCNSS() {
+    public String getNumeroCNSS() {
         return numeroCNSS;
     }
 
@@ -71,7 +71,7 @@ public class Employer {
         this.numeroCNSS = numeroCNSS;
     }
 
-    public String observation() {
+    public String getObservation() {
         return observation;
     }
 
@@ -79,7 +79,7 @@ public class Employer {
         this.observation = observation;
     }
 
-    public ESituationMaritale situationMaritale() {
+    public ESituationMaritale getSituationMaritale() {
         return situationMaritale;
     }
 
@@ -87,7 +87,7 @@ public class Employer {
         this.situationMaritale = situationMaritale;
     }
 
-    public Integer nbEnfant() {
+    public Integer getNbEnfant() {
         return nbEnfant;
     }
 
@@ -95,7 +95,7 @@ public class Employer {
         this.nbEnfant = nbEnfant;
     }
 
-    public String image() {
+    public String getImage() {
         return image;
     }
 
@@ -103,7 +103,7 @@ public class Employer {
         this.image = image;
     }
 
-    public LocalDate dateEntree() {
+    public LocalDate getDateEntree() {
         return dateEntree;
     }
 
@@ -111,7 +111,7 @@ public class Employer {
         this.dateEntree = dateEntree;
     }
 
-    public String ripIBAN() {
+    public String getRipIBAN() {
         return ripIBAN;
     }
 
@@ -119,7 +119,7 @@ public class Employer {
         this.ripIBAN = ripIBAN;
     }
 
-    public String poste() {
+    public String getPoste() {
         return poste;
     }
 
@@ -127,7 +127,7 @@ public class Employer {
         this.poste = poste;
     }
 
-    public Personne personne() {
+    public Personne getPersonne() {
         return personne;
     }
 
@@ -135,7 +135,7 @@ public class Employer {
         this.personne = personne;
     }
 
-    public ETypeEmployer typeEmployer() {
+    public ETypeEmployer getTypeEmployer() {
         return typeEmployer;
     }
 

@@ -18,9 +18,11 @@ public class Contrat {
     private LocalDate dateSignatureContrat;
     private LocalDate dateResiliationContrat;
     private String observation;
+    @ManyToOne
+    private Employer employer;
 
     public Contrat(ETypeContrat typeContrat, EUniteSalaire uniteSalaire, Double prixUnite,
-                   LocalDate dateDebutContrat, LocalDate dateFinContrat, LocalDate dateSignatureContrat, LocalDate dateResiliationContrat, String observation) {
+                   LocalDate dateDebutContrat, LocalDate dateFinContrat, LocalDate dateSignatureContrat, LocalDate dateResiliationContrat, String observation,Employer employer) {
         this.typeContrat = typeContrat;
         this.uniteSalaire = uniteSalaire;
         this.prixUnite = prixUnite;
@@ -29,6 +31,7 @@ public class Contrat {
         this.dateSignatureContrat = dateSignatureContrat;
         this.dateResiliationContrat = dateResiliationContrat;
         this.observation = observation;
+        this.employer = employer;
     }
 
     public Contrat() {
@@ -98,6 +101,14 @@ public class Contrat {
         this.dateResiliationContrat = dateResiliationContrat;
     }
 
+    public Employer getEmployer() {
+        return employer;
+    }
+
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
+    }
+
     public String getObservation() {
         return observation;
     }
@@ -117,7 +128,8 @@ public class Contrat {
                 ", dateFinContrat=" + dateFinContrat +
                 ", dateSignatureContrat=" + dateSignatureContrat +
                 ", dateResiliationContrat=" + dateResiliationContrat +
-                ", observationContrat='" + observation + '\'' +
+                ", observation='" + observation + '\'' +
+                ", employer=" + employer +
                 '}';
     }
 }
