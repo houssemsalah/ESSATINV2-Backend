@@ -11,6 +11,7 @@ import tn.essatin.erp.model.financier.ESituationMaritale;
 import tn.essatin.erp.model.financier.ETypeEmployer;
 import tn.essatin.erp.model.financier.Employer;
 import tn.essatin.erp.payload.request.financier.AjouterEmployerRequest;
+import tn.essatin.erp.payload.request.financier.ModifierEmployerRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
@@ -62,9 +63,36 @@ public class EmployerRest {
         } catch (Exception E) {
             return new ResponseEntity<>(new MessageResponse("Type Employer incorecte"), HttpStatus.FORBIDDEN);
         }
-
-
-
+        Employer employer = new Employer(ajouterEmployerRequest.getNumeroCNSS(),
+                ajouterEmployerRequest.getObservation(),
+                situationMaritale,
+                ajouterEmployerRequest.getNbEnfant(),
+                ajouterEmployerRequest.getImage(),
+                ajouterEmployerRequest.getDateEntree(),
+                ajouterEmployerRequest.getRipIBAN(),
+                ajouterEmployerRequest.getPoste(),
+                personne.get(),
+                typeEmployer);
+        employerDao.save(employer);
+        return new ResponseEntity<>(new MessageResponse(
+                "L'employer " + employer.getPersonne().getIdPersonne()
+                        + " " + employer.getPersonne().getNom()
+                        + "a été ajouter avec succes",
+                200), HttpStatus.OK);
     }
+
+    @PostMapping("/modifieremployer")
+    public ResponseEntity<?> ajouterEmployer(@Valid @RequestBody ModifierEmployerRequest modifierEmployerRequest) {
+
+        Optional<Employer> oemployer = employerDao.findById(modifierEmployerRequest.getId());
+        if(oemployer.isEmpty()){
+            return new ResponseEntity<>(new MessageResponse("Employer Introuvable",403),HttpStatus.FORBIDDEN);
+        }
+        Employer employer = oemployer.get();
+
+
+        return null;
+    }
+
 
 }
