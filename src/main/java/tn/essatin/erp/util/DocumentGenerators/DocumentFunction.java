@@ -22,6 +22,7 @@ public class DocumentFunction {
         return c;
     }
 
+
     public static List<String> listeAleatoire(int colones, int nbPlaces, int nbEtudiant) {
         String col = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         List<String> place = new ArrayList<>();
@@ -95,6 +96,20 @@ public class DocumentFunction {
         }
     }
 
+    public static void ajoutercadre(Document document){
+        try{
+            Rectangle rect= new Rectangle(36,108);
+            rect.enableBorderSide(1);
+            rect.enableBorderSide(2);
+            rect.enableBorderSide(4);
+            rect.enableBorderSide(8);
+            rect.setBorder(2);
+            rect.setBorderColor(BaseColor.BLACK);
+            document.add(rect);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     public static void ajouterEntete(Document document, String titre, String ref, String indice, String Date, Session session, int page, int nbpage) {
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
         Font fontRefs = FontFactory.getFont(FontFactory.TIMES_ROMAN , 10, BaseColor.BLACK);

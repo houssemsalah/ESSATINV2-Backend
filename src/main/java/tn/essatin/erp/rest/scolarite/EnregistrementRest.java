@@ -22,9 +22,6 @@ import tn.essatin.erp.payload.request.scolarite.NouvelEnregistrementRequest;
 import tn.essatin.erp.payload.request.scolarite.NumeroInscriptionRequest;
 import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
-import tn.essatin.erp.util.DocumentGenerators.CertificateDeReussite;
-import tn.essatin.erp.util.DocumentGenerators.FeuilleDEmargementPersonnalise;
-import tn.essatin.erp.util.DocumentGenerators.FicheDeNote;
 
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
@@ -235,7 +232,7 @@ public class EnregistrementRest {
     }
 
 
-    @PostMapping("/getcertificatreussite")
+    /*@PostMapping("/getcertificatreussite")
     public ResponseEntity<?> getCertificatReussite(@Valid @RequestBody GetByIdRequest getByIdEnregistrementRequest) {
         Optional<Enregistrement> oe = enregistrementDao.findById(getByIdEnregistrementRequest.getId());
         if (oe.isEmpty()) {
@@ -250,5 +247,5 @@ public class EnregistrementRest {
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-    }
+    }*/
 }
