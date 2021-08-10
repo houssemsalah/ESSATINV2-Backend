@@ -15,6 +15,7 @@ import tn.essatin.erp.payload.request.financier.ContratUpdateRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -121,6 +122,33 @@ public class ContratRest {
                         + " Mise A jours avec Success",
                         200), HttpStatus.OK);
 
+    }
+    @GetMapping("/getbyemployer/{id}")
+    public ResponseEntity<?> getByEmployer(@PathVariable int id){
+        Optional<Employer> employer = employerDao.findById(id);
+        if (employer.isEmpty()){
+            return new ResponseEntity<>(new MessageResponse("Employer introuvable"), HttpStatus.FORBIDDEN);
+        }
+
+        List<Contrat> contrats = contratDao.findContratByEmployer(employer.get());
+        if (contrats.isEmpty()){
+            return new ResponseEntity<>(new MessageResponse("cette Employer n'a aucun contrat"), HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(contrats, HttpStatus.OK);
+    }
+
+    @GetMapping("/getlastcontratbyemployer/{id}")
+    public ResponseEntity<?> getLastContratByEmployer(@PathVariable int id){
+        Optional<Employer> employer = employerDao.findById(id);
+        if (employer.isEmpty()){
+            return new ResponseEntity<>(new MessageResponse("Employer introuvable"), HttpStatus.FORBIDDEN);
+        }
+        Optional<Contrat> contrat = contratDao.findTopByEmployerOrderByIdDesc(employer.get());
+        if (contrat.isEmpty()){
+            return new ResponseEntity<>(new MessageResponse("cette Employer n'a aucun contrat"), HttpStatus.FORBIDDEN);
+
+        }
+        return new ResponseEntity<>(contrat.get(), HttpStatus.OK);
     }
 }
 
