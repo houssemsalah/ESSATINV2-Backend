@@ -1,15 +1,13 @@
 package tn.essatin.erp.model.financier;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
+public enum ESituationMaritale {
 
-public enum ETypeTransaction {
-    DEBIT("Debit"),
-    CREDIT("Credit");
+    CELIBATAIRE("Célibataire"), MARIEE("mariée"), VEUVE("veuve"), DIVORCEE("divorcée");
+
 
     private final String value;
 
-    ETypeTransaction(String value) {
+    ESituationMaritale(String value) {
         this.value = value;
     }
 

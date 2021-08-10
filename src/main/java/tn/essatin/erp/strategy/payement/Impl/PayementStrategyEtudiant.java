@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tn.essatin.erp.dao.scolarite.EtudiantsDao;
 import tn.essatin.erp.model.Scolarite.Etudiants;
+import tn.essatin.erp.model.financier.EStatus;
+import tn.essatin.erp.model.financier.ETypeTransaction;
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Session;
@@ -29,8 +31,8 @@ public class PayementStrategyEtudiant implements PayementStrategy {
     }
 
     @Override
-    public void payer(Personne personne, float montant, Session session, String datePayement,
-                      int typeTransaction, int statusTransaction, int idFinancier,
+    public void payer(Personne personne, double montant, Session session, String datePayement,
+                      ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
                       Set<ModaliteTransaction> modaliteTransactionSet) {
         Optional<Etudiants> etudiant = etudiantsDao.findByIdPersonne(personne);
         if (etudiant.isPresent()) {

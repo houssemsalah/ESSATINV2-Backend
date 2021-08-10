@@ -11,28 +11,30 @@ import java.util.Collection;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idTransaction;
-    private String type;
+    private Integer id;
+    @Enumerated(EnumType.STRING)
+    private ETypeTransaction type;
     @OneToMany
     private Collection<ModaliteTransaction> modalite;
     private LocalDate datePayement;
     @OneToOne
-    private Employer idFinancier;
+    private Employer financier;
     @OneToOne
-    private Personne idClient;
+    private Personne client;
     @OneToOne
     private Session session;
-    private String status;
-    private float montant;
+    @Enumerated(EnumType.STRING)
+    private EStatus status;
+    private double montant;
 
-    public Transaction(String type, Collection<ModaliteTransaction> modalite,
-                       LocalDate datePayement, Employer idFinancier, Personne idClient,
-                       Session session, String status, Float montant) {
+    public Transaction(ETypeTransaction type, Collection<ModaliteTransaction> modalite,
+                       LocalDate datePayement, Employer financier, Personne client,
+                       Session session, EStatus status, double montant) {
         this.type = type;
         this.modalite = modalite;
         this.datePayement = datePayement;
-        this.idFinancier = idFinancier;
-        this.idClient = idClient;
+        this.financier = financier;
+        this.client = client;
         this.session = session;
         this.status = status;
         this.montant = montant;
@@ -41,19 +43,19 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Integer getIdTransaction() {
-        return idTransaction;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdTransaction(Integer idTransaction) {
-        this.idTransaction = idTransaction;
+    public void setId(Integer idTransaction) {
+        this.id = idTransaction;
     }
 
-    public String getType() {
+    public ETypeTransaction getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ETypeTransaction type) {
         this.type = type;
     }
 
@@ -73,20 +75,20 @@ public class Transaction {
         this.datePayement = datePayement;
     }
 
-    public Employer getIdFinancier() {
-        return idFinancier;
+    public Employer getFinancier() {
+        return financier;
     }
 
-    public void setIdFinancier(Employer idFinancier) {
-        this.idFinancier = idFinancier;
+    public void setFinancier(Employer idFinancier) {
+        this.financier = idFinancier;
     }
 
-    public Personne getIdClient() {
-        return idClient;
+    public Personne getClient() {
+        return client;
     }
 
-    public void setIdClient(Personne idClient) {
-        this.idClient = idClient;
+    public void setClient(Personne idClient) {
+        this.client = idClient;
     }
 
     public Session getSession() {
@@ -97,31 +99,31 @@ public class Transaction {
         this.session = session;
     }
 
-    public String getStatus() {
+    public EStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(EStatus status) {
         this.status = status;
     }
 
-    public float getMontant() {
+    public double getMontant() {
         return montant;
     }
 
-    public void setMontant(float montant) {
+    public void setMontant(double montant) {
         this.montant = montant;
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
-                "idTransaction=" + idTransaction +
+                "idTransaction=" + id +
                 ", type=" + type +
                 ", modalite=" + modalite +
                 ", datePayement=" + datePayement +
-                ", idFinancier=" + idFinancier +
-                ", idClient=" + idClient +
+                ", idFinancier=" + financier +
+                ", idClient=" + client +
                 ", session=" + session +
                 ", status=" + status +
                 ", montant=" + montant +

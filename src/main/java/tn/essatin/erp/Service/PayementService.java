@@ -1,5 +1,7 @@
 package tn.essatin.erp.Service;
 
+import tn.essatin.erp.model.financier.EStatus;
+import tn.essatin.erp.model.financier.ETypeTransaction;
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Session;
@@ -7,9 +9,9 @@ import tn.essatin.erp.model.Session;
 import java.util.Set;
 
 public interface PayementService {
-   void studentPay(Personne personne, float montant, Session session, String datePayement,
-                   int typeTransaction, int statusTransaction, int idFinancier,
-                   Set<ModaliteTransaction> modaliteTransactionSet);
+   void studentPay(Personne personne, double montant, Session session, String datePayement,
+                   ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
+                   Set<ModaliteTransaction> modaliteTransactionSet) ;
    void salaryPay();
    void servicePay();
    void vacatairPay();

@@ -7,65 +7,66 @@ import java.time.LocalDate;
 public class Contrat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idContrat;
-    @ManyToOne
-    private Salarie idSalarie;
-    @ManyToOne
-    private ModeleContrat idModeleContrat;
-    @ManyToOne
-    private TypeContrat idtypeContrat;
+    private Integer id;
+    @Enumerated(EnumType.STRING)
+    private ETypeContrat typeContrat;
+    @Enumerated(EnumType.STRING)
+    private EUniteSalaire uniteSalaire;
+    private Double prixUnite;
     private LocalDate dateDebutContrat;
     private LocalDate dateFinContrat;
     private LocalDate dateSignatureContrat;
     private LocalDate dateResiliationContrat;
-    private String observationContrat;
+    private String observation;
+    @ManyToOne
+    private Employer employer;
 
-    public Contrat(Salarie idSalarie, ModeleContrat idModeleContrat, TypeContrat idtypeContrat,
-                   LocalDate dateDebutContrat, LocalDate dateFinContrat, LocalDate dateSignatureContrat,
-                   LocalDate dateResiliationContrat, String observationContrat) {
-        this.idSalarie = idSalarie;
-        this.idModeleContrat = idModeleContrat;
-        this.idtypeContrat = idtypeContrat;
+    public Contrat(ETypeContrat typeContrat, EUniteSalaire uniteSalaire, Double prixUnite,
+                   LocalDate dateDebutContrat, LocalDate dateFinContrat, LocalDate dateSignatureContrat, LocalDate dateResiliationContrat, String observation,Employer employer) {
+        this.typeContrat = typeContrat;
+        this.uniteSalaire = uniteSalaire;
+        this.prixUnite = prixUnite;
         this.dateDebutContrat = dateDebutContrat;
         this.dateFinContrat = dateFinContrat;
         this.dateSignatureContrat = dateSignatureContrat;
         this.dateResiliationContrat = dateResiliationContrat;
-        this.observationContrat = observationContrat;
+        this.observation = observation;
+        this.employer = employer;
     }
 
     public Contrat() {
     }
 
-    public Integer getIdContrat() {
-        return idContrat;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdContrat(Integer idContrat) {
-        this.idContrat = idContrat;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Salarie getIdSalarie() {
-        return idSalarie;
+    public ETypeContrat getTypeContrat() {
+        return typeContrat;
     }
 
-    public void setIdSalarie(Salarie idSalarie) {
-        this.idSalarie = idSalarie;
+    public void setTypeContrat(ETypeContrat typeContrat) {
+        this.typeContrat = typeContrat;
     }
 
-    public ModeleContrat getIdModeleContrat() {
-        return idModeleContrat;
+    public EUniteSalaire getUniteSalaire() {
+        return uniteSalaire;
     }
 
-    public void setIdModeleContrat(ModeleContrat idModeleContrat) {
-        this.idModeleContrat = idModeleContrat;
+    public void setUniteSalaire(EUniteSalaire uniteSalaire) {
+        this.uniteSalaire = uniteSalaire;
     }
 
-    public TypeContrat getIdtypeContrat() {
-        return idtypeContrat;
+    public Double getPrixUnite() {
+        return prixUnite;
     }
 
-    public void setIdtypeContrat(TypeContrat idtypeContrat) {
-        this.idtypeContrat = idtypeContrat;
+    public void setPrixUnite(Double prixUnite) {
+        this.prixUnite = prixUnite;
     }
 
     public LocalDate getDateDebutContrat() {
@@ -100,26 +101,35 @@ public class Contrat {
         this.dateResiliationContrat = dateResiliationContrat;
     }
 
-    public String getObservationContrat() {
-        return observationContrat;
+    public Employer getEmployer() {
+        return employer;
     }
 
-    public void setObservationContrat(String observationContrat) {
-        this.observationContrat = observationContrat;
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observationContrat) {
+        this.observation = observationContrat;
     }
 
     @Override
     public String toString() {
         return "Contrat{" +
-                "idContrat=" + idContrat +
-                ", idSalarie=" + idSalarie +
-                ", idModeleContrat=" + idModeleContrat +
-                ", idtypeContrat=" + idtypeContrat +
+                "id=" + id +
+                ", typeContrat=" + typeContrat +
+                ", uniteSalaire=" + uniteSalaire +
+                ", prixUnite=" + prixUnite +
                 ", dateDebutContrat=" + dateDebutContrat +
                 ", dateFinContrat=" + dateFinContrat +
                 ", dateSignatureContrat=" + dateSignatureContrat +
                 ", dateResiliationContrat=" + dateResiliationContrat +
-                ", observationContrat='" + observationContrat + '\'' +
+                ", observation='" + observation + '\'' +
+                ", employer=" + employer +
                 '}';
     }
 }

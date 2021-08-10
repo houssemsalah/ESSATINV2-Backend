@@ -1,15 +1,13 @@
 package tn.essatin.erp.model.financier;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-public enum ETypeTransaction {
-    DEBIT("Debit"),
-    CREDIT("Credit");
+public enum ETypeEmployer {
+    ADMINISTRATIF("Agent Administratif"),
+    ENSEIGNANT("Enseignant"),
+    PERSONNEL_ENTRETIEN("Personnel d'entretien");
 
     private final String value;
 
-    ETypeTransaction(String value) {
+    ETypeEmployer(String value) {
         this.value = value;
     }
 

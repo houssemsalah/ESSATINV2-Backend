@@ -1,9 +1,6 @@
 package tn.essatin.erp.model.financier;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -12,11 +9,12 @@ public class ModaliteTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String numero;
-    private float montant;
-    private String type;
+    private double montant;
+    @Enumerated(EnumType.STRING)
+    private ETypeModaliteTransaction type;
     private LocalDate date;
 
-    public ModaliteTransaction(String numero, float montant, String type, LocalDate date) {
+    public ModaliteTransaction(String numero, double montant, ETypeModaliteTransaction type, LocalDate date) {
         this.numero = numero;
         this.montant = montant;
         this.type = type;
@@ -42,19 +40,19 @@ public class ModaliteTransaction {
         this.numero = numero;
     }
 
-    public float getMontant() {
+    public double getMontant() {
         return montant;
     }
 
-    public void setMontant(float montant) {
+    public void setMontant(double montant) {
         this.montant = montant;
     }
 
-    public String getType() {
+    public ETypeModaliteTransaction getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ETypeModaliteTransaction type) {
         this.type = type;
     }
 
