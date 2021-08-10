@@ -17,6 +17,7 @@ import tn.essatin.erp.model.Salle;
 import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.model.Session;
 import tn.essatin.erp.payload.request.FeuilleEmergementPersonnaliserRequest;
+import tn.essatin.erp.payload.request.GetByIdRequest;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
 import tn.essatin.erp.payload.request.scolarite.*;
 import tn.essatin.erp.payload.response.MessageResponse;
@@ -224,7 +225,7 @@ public class EtudiantRest {
         List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
         if (!enregistrementList.isEmpty()) {
             ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList,
-                    salle.getNombreDeRangee(), salle.getNombreDePlace());
+                    salle.getNombreDeRangee(), salle.getNombreDePlaceExamen());
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
             ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
@@ -279,6 +280,8 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("listes vide!!!", 403), HttpStatus.FORBIDDEN);
         }
-
     }
+
+
+
 }
