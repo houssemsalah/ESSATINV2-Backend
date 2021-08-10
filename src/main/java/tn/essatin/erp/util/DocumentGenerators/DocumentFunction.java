@@ -12,6 +12,10 @@ import java.util.List;
 
 
 public class DocumentFunction {
+    public static final Font TITLE_FONT = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
+    public static final Font SECTION_FONT = FontFactory.getFont(FontFactory.TIMES_BOLD, 18, BaseColor.BLUE);
+    public static final Font HEAD_FONT = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, BaseColor.BLACK);
+    public static final Font ATTRIB_FONT = FontFactory.getFont(FontFactory.TIMES_BOLD, 15, BaseColor.BLACK);
 
     public static Chunk exposant(String text) {
         Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);

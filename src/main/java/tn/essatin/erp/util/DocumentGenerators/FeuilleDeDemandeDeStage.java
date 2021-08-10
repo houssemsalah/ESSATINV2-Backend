@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
 import static tn.essatin.erp.util.DocumentGenerators.DocumentFunction.exposant;
 
 public class FeuilleDeDemandeDeStage {
-    public static ByteArrayOutputStream createDoc(Enregistrement enregistrement, String nomsociete, int numcase) {
+    public static ByteArrayOutputStream createDoc(Enregistrement enregistrement, String nomsociete, int numcase, String designantion) {
         Font fontGras = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
         ByteArrayOutputStream response = new ByteArrayOutputStream();
@@ -40,35 +40,64 @@ public class FeuilleDeDemandeDeStage {
         try {
             PdfWriter.getInstance(document, response);
             document.setPageSize(PageSize.A4);
-            document.setMargins(15f, 15f, 10f, 10f);
+            //document.setMargins(15f, 15f, 10f, 10f);
             document.open();
             DocumentFunction.ajouterEnteteSpeciale(document, "DEMANDE DE STAGE", "GES-IMP-17", "02", "21/10/2019", 1, 1);
-            document.add(new Paragraph("           A l'attention de Monsieur le Directeur " + nomsociete + "  \n"));
-            document.add(new Paragraph(String.format("           Objet : ", fontTitle)+" Demande de stage au profit des etudiants de l'Ecole Superieure des Sciences Appliquées               et de la Technologie privée de gabés."));
+            document.add(new Paragraph("A l'attention de Monsieur le Directeur de " + designantion +" : "+ nomsociete + "  \n"));
+            document.add(new Paragraph(String.format("Objet : ", fontTitle)+" Demande de stage au profit des etudiants de l'Ecole Superieure des Sciences Appliquées               et de la Technologie privée de gabés."));
             document.add(new Paragraph(" \n"));
-            document.add(new Paragraph("                        L'Ecole Superieur des Sciences Appliquées et de la Technologie Privée de Gabés \n" +
-                    "           (ESSAT) propose à ses étudiants des cursus de formation à caractére technologique et scientifique  " +
-                    "           comportant des specialités qui nécessitent, pour etre efficaces, la réalisation \n " +
-                    "           de stages au sein des entreprise et sociétés industrielles et autres, dans le cadre de l'ouverture \n" +
-                    "           de la faculté sur son environnement, et pour permettre aux étudiants d'enrichir leurs \n" +
-                    "           connaissances et d'acquérir une meilleure insertion professionnelle . De ce fait, nous avons \n" +
-                    "           l'honneur de venir par la présente solliciter l'acceptation de l'étudiant(e) : \n \n" ));
-            PdfPTable table=new PdfPTable(2);
+            Paragraph p = new Paragraph("L'Ecole Superieur des Sciences Appliquées et de la Technologie Privée de Gabés " +
+                    "(ESSAT) propose à ses étudiants des cursus de formation à caractére technologique et scientifique " +
+                    "comportant des specialités qui nécessitent, pour etre efficaces, la réalisation " +
+                    "de stages au sein des entreprise et sociétés industrielles et autres, dans le cadre de l'ouverture " +
+                    "de la faculté sur son environnement, et pour permettre aux étudiants d'enrichir leurs " +
+                    "connaissances et d'acquérir une meilleure insertion professionnelle . De ce fait, nous avons " +
+                    "l'honneur de venir par la présente solliciter l'acceptation de "+(etudiant.getSexe().equalsIgnoreCase("homme")?"l'étudiant":"l'étudiante")+" :" );
+            p.setAlignment(Element.ALIGN_JUSTIFIED);
+            p.setFirstLineIndent(30);
+            document.add(p);
+            PdfPTable table=new PdfPTable(4);
             table.getDefaultCell().setFixedHeight(20);
-            table.setWidthPercentage(85);
+            table.setWidthPercentage(100);
             table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-            PdfPCell cell = new PdfPCell(new Phrase(String.format("NOM :  ",fontGras)+etudiant.getNom()+"\n"));
+            PdfPCell cell = new PdfPCell(new Phrase(new Chunk("NOM :  ",DocumentFunction.HEAD_FONT)));
             cell.setBorder(Rectangle.NO_BORDER);
             table.addCell(cell);
-            cell = new PdfPCell(new Phrase(String.format("PRÉNOM :   ",fontGras) +etudiant.getPrenom()+"\n"));
+
+            cell = new PdfPCell(new Phrase(new Chunk(etudiant.getNom(),DocumentFunction.ATTRIB_FONT)));
             cell.setBorder(Rectangle.NO_BORDER);
             table.addCell(cell);
-            cell = new PdfPCell(new Phrase(String.format("N CIN :    ",fontGras) +etudiant.getNumeroIdentificateur()+"\n"));
+
+
+            cell = new PdfPCell(new Phrase(new Chunk("PRÉNOM :  ",DocumentFunction.HEAD_FONT)));
             cell.setBorder(Rectangle.NO_BORDER);
             table.addCell(cell);
-            cell = new PdfPCell(new Phrase(String.format("CLASSE :   ",fontGras) +niv+"\n"));
+
+            cell = new PdfPCell(new Phrase(new Chunk(etudiant.getPrenom(),DocumentFunction.ATTRIB_FONT)));
             cell.setBorder(Rectangle.NO_BORDER);
             table.addCell(cell);
+
+
+            cell = new PdfPCell(new Phrase(new Chunk("N°"+etudiant.getIdIdentificateur().getTypeIdentificateur()+" : ",DocumentFunction.HEAD_FONT)));
+            cell.setBorder(Rectangle.NO_BORDER);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(new Chunk(etudiant.getNumeroIdentificateur(),DocumentFunction.ATTRIB_FONT)));
+            cell.setBorder(Rectangle.NO_BORDER);
+            table.addCell(cell);
+
+
+            cell = new PdfPCell(new Phrase(new Chunk("CLASSE :  ",DocumentFunction.HEAD_FONT)));
+            cell.setBorder(Rectangle.NO_BORDER);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(new Chunk(niveauxC,DocumentFunction.ATTRIB_FONT)));
+            cell.setBorder(Rectangle.NO_BORDER);
+            table.addCell(cell);
+
+
+
+
             document.add(table);
             document.add(new Phrase("\n"));
             if(numcase == 1){

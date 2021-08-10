@@ -15,12 +15,14 @@ public class DemandeDeStageRequest {
     @Min(value = 1, message = "la variable numCase ne peut pas etre inferieur a 1")
     @Max(value = 3, message = "la variable numCase ne peut pas etre superieur a 3")
     int numCase;
+    String designantionEntreprise ;
 
 
-    public DemandeDeStageRequest(int idenregistrement, String nomSociete, int numCase) {
+    public DemandeDeStageRequest(int idenregistrement, String nomSociete, int numCase, String designantionEntreprise) {
         this.idenregistrement = idenregistrement;
         this.nomSociete = nomSociete;
         this.numCase = numCase;
+        this.designantionEntreprise = designantionEntreprise;
     }
 
     public int getIdenregistrement() {
@@ -33,5 +35,9 @@ public class DemandeDeStageRequest {
 
     public int getNumCase() {
         return numCase;
+    }
+
+    public String getDesignantionEntreprise() {
+        return designantionEntreprise;
     }
 }
