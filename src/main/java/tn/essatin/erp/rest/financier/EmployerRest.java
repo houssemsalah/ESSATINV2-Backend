@@ -82,7 +82,7 @@ public class EmployerRest {
     }
 
     @PostMapping("/modifieremployer")
-    public ResponseEntity<?> ajouterEmployer(@Valid @RequestBody ModifierEmployerRequest modifierEmployerRequest) {
+    public ResponseEntity<?> modifierEmployer(@Valid @RequestBody ModifierEmployerRequest modifierEmployerRequest) {
 
         Optional<Employer> oemployer = employerDao.findById(modifierEmployerRequest.getId());
         if(oemployer.isEmpty()){
