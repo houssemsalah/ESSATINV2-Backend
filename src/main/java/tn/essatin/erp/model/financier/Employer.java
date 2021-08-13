@@ -55,92 +55,92 @@ public class Employer {
         this.typeEmployer = typeEmployer;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getNumeroCNSS() {
-        return numeroCNSS;
     }
 
     public void setNumeroCNSS(String numeroCNSS) {
         this.numeroCNSS = numeroCNSS;
     }
 
-    public String getObservation() {
-        return observation;
-    }
-
     public void setObservation(String observation) {
         this.observation = observation;
-    }
-
-    public ESituationMaritale getSituationMaritale() {
-        return situationMaritale;
     }
 
     public void setSituationMaritale(ESituationMaritale situationMaritale) {
         this.situationMaritale = situationMaritale;
     }
 
-    public Integer getNbEnfant() {
-        return nbEnfant;
-    }
-
     public void setNbEnfant(Integer nbEnfant) {
         this.nbEnfant = nbEnfant;
-    }
-
-    public String getImage() {
-        return image;
     }
 
     public void setImage(String image) {
         this.image = image;
     }
 
-    public LocalDate getDateEntree() {
-        return dateEntree;
-    }
-
     public void setDateEntree(LocalDate dateEntree) {
         this.dateEntree = dateEntree;
-    }
-
-    public String getRipIBAN() {
-        return ripIBAN;
     }
 
     public void setRipIBAN(String ripIBAN) {
         this.ripIBAN = ripIBAN;
     }
 
-    public String getPoste() {
-        return poste;
-    }
-
     public void setPoste(String poste) {
         this.poste = poste;
-    }
-
-    public Personne getPersonne() {
-        return personne;
     }
 
     public void setPersonne(Personne personne) {
         this.personne = personne;
     }
 
-    public ETypeEmployer getTypeEmployer() {
-        return typeEmployer;
-    }
-
     public void setTypeEmployer(ETypeEmployer typeEmployer) {
         this.typeEmployer = typeEmployer;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getNumeroCNSS() {
+        return numeroCNSS;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public ESituationMaritale getSituationMaritale() {
+        return situationMaritale;
+    }
+
+    public Integer getNbEnfant() {
+        return nbEnfant;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public LocalDate getDateEntree() {
+        return dateEntree;
+    }
+
+    public String getRipIBAN() {
+        return ripIBAN;
+    }
+
+    public String getPoste() {
+        return poste;
+    }
+
+    public Personne getPersonne() {
+        return personne;
+    }
+
+    public ETypeEmployer getTypeEmployer() {
+        return typeEmployer;
     }
 
     @Override
