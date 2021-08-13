@@ -55,7 +55,7 @@ public class ManageTransaction {
             .orElseThrow(() -> new RuntimeException("error financier not found"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(datePayement, formatter);
-        Transaction transaction = new Transaction(typeTransaction, modaliteTransactionList, localDate, employer, personne, session, statusTransaction,
+        Transaction transaction = new Transaction(typeTransaction, localDate, employer, personne, session, statusTransaction,
             montant);
         transactionDao.save(transaction);
     }
