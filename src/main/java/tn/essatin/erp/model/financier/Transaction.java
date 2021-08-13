@@ -14,8 +14,8 @@ public class Transaction {
     private Integer id;
     @Enumerated(EnumType.STRING)
     private ETypeTransaction type;
-    @OneToMany
-    private Collection<ModaliteTransaction> modalite;
+    //@ManyToOne
+    //private Collection<ModaliteTransaction> modalite;
     private LocalDate datePayement;
     @ManyToOne
     private Employer financier;
@@ -27,11 +27,10 @@ public class Transaction {
     private EStatus status;
     private double montant;
 
-    public Transaction(ETypeTransaction type, Collection<ModaliteTransaction> modalite,
+    public Transaction(ETypeTransaction type,
                        LocalDate datePayement, Employer financier, Personne client,
                        Session session, EStatus status, double montant) {
         this.type = type;
-        this.modalite = modalite;
         this.datePayement = datePayement;
         this.financier = financier;
         this.client = client;
@@ -59,13 +58,7 @@ public class Transaction {
         this.type = type;
     }
 
-    public Collection<ModaliteTransaction> getModalite() {
-        return modalite;
-    }
 
-    public void setModalite(Collection<ModaliteTransaction> modalite) {
-        this.modalite = modalite;
-    }
 
     public LocalDate getDatePayement() {
         return datePayement;
@@ -120,7 +113,6 @@ public class Transaction {
         return "Transaction{" +
                 "idTransaction=" + id +
                 ", type=" + type +
-                ", modalite=" + modalite +
                 ", datePayement=" + datePayement +
                 ", idFinancier=" + financier +
                 ", idClient=" + client +

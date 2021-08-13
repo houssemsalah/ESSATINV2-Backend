@@ -13,12 +13,15 @@ public class ModaliteTransaction {
     @Enumerated(EnumType.STRING)
     private ETypeModaliteTransaction type;
     private LocalDate date;
+    @ManyToOne
+    private Transaction transaction;
 
-    public ModaliteTransaction(String numero, double montant, ETypeModaliteTransaction type, LocalDate date) {
+    public ModaliteTransaction(String numero, double montant, ETypeModaliteTransaction type, LocalDate date, Transaction transaction) {
         this.numero = numero;
         this.montant = montant;
         this.type = type;
         this.date = date;
+        this.transaction = transaction;
     }
 
     public ModaliteTransaction() {
@@ -64,14 +67,23 @@ public class ModaliteTransaction {
         this.date = date;
     }
 
+    public Transaction getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
+    }
+
     @Override
     public String toString() {
         return "ModaliteTransaction{" +
                 "id=" + id +
                 ", numero='" + numero + '\'' +
                 ", montant=" + montant +
-                ", type='" + type + '\'' +
+                ", type=" + type +
                 ", date=" + date +
+                ", transaction=" + transaction +
                 '}';
     }
 }

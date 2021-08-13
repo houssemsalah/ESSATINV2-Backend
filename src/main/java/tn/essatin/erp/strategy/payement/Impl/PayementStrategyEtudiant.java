@@ -40,7 +40,7 @@ public class PayementStrategyEtudiant implements PayementStrategy {
             System.out.println(session);
             double debt = studentDebt.debt(etudiant.get(), session);
             System.out.println(debt);
-            if (debt != 0 || debt <= montant) {
+            if (  montant <= debt ) {
                 manageTransaction.add(typeTransaction, statusTransaction, modaliteTransactionSet, personne,
                     session, idFinancier, datePayement, montant);
             }

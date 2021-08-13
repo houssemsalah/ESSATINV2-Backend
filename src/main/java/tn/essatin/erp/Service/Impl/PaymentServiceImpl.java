@@ -26,6 +26,9 @@ public class PaymentServiceImpl implements PayementService {
     public void studentPay(Personne personne, double montant, Session session, String datePayement,
                            ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
                            Set<ModaliteTransaction> modaliteTransactionSet) {
+
+
+
         PayementStrategy payementStrategy = strategyFactory.findStrategy(PayementStrategyName.PAYEMENT_STRATEGY_ETUDIANT);
         payementStrategy.payer(personne, montant, session, datePayement, typeTransaction,
             statusTransaction,idFinancier, modaliteTransactionSet);

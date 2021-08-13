@@ -53,7 +53,7 @@ public class ManageTransaction {
         List<ModaliteTransaction> modaliteTransactionList = modaliteTransactionDao.saveAll(modalite);
         Employer employer = employerDao.findById(idFinancier)
             .orElseThrow(() -> new RuntimeException("error financier not found"));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(datePayement, formatter);
         Transaction transaction = new Transaction(typeTransaction, modaliteTransactionList, localDate, employer, personne, session, statusTransaction,
             montant);
