@@ -17,11 +17,11 @@ public class Transaction {
     @OneToMany
     private Collection<ModaliteTransaction> modalite;
     private LocalDate datePayement;
-    @OneToOne
+    @ManyToOne
     private Employer financier;
-    @OneToOne
+    @ManyToOne
     private Personne client;
-    @OneToOne
+    @ManyToOne
     private Session session;
     @Enumerated(EnumType.STRING)
     private EStatus status;

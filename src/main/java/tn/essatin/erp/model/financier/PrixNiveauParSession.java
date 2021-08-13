@@ -11,14 +11,14 @@ public class PrixNiveauParSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private Niveau niveau;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private Session session;
-    private float montantNiveau;
+    private double montantNiveau;
     private LocalDate date;
 
-    public PrixNiveauParSession(Niveau niveau, Session session, float montantNiveau, LocalDate date) {
+    public PrixNiveauParSession(Niveau niveau, Session session, double montantNiveau, LocalDate date) {
         this.niveau = niveau;
         this.session = session;
         this.montantNiveau = montantNiveau;
@@ -52,11 +52,11 @@ public class PrixNiveauParSession {
         this.session = session;
     }
 
-    public float getMontantNiveau() {
+    public double getMontantNiveau() {
         return montantNiveau;
     }
 
-    public void setMontantNiveau(float montantNiveau) {
+    public void setMontantNiveau(double montantNiveau) {
         this.montantNiveau = montantNiveau;
     }
 
