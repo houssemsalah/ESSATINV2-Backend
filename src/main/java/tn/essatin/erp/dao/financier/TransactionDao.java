@@ -11,5 +11,5 @@ import java.util.Collection;
 
 @Repository
 public interface TransactionDao extends JpaRepository<Transaction, Integer> {
-    Collection<Transaction> findAllByIdClientAndSession(Personne idClient, Session session);
+    Collection<Transaction> findAllByClientAndSession(Personne idClient, Session session);
 }

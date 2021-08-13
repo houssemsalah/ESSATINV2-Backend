@@ -1,40 +1,30 @@
 package tn.essatin.erp.payload.request.financier;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import tn.essatin.erp.model.financier.ETypeContrat;
-import tn.essatin.erp.model.financier.EUniteSalaire;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.util.List;
 
-public class ContratRequest {
+public class ContratUpdateRequest {
+    @Min(value = 1, message = "l'ID ne peut etre inferieur a 1")
+    int id;
     @NotBlank(message = "Ennumeration de type 'ETypeContrat'")
-    private String typeContrat;
+    private final String typeContrat;
     @NotBlank(message = "Ennumeration de type 'EUniteSalaire'")
-    private String uniteSalaire;
-    @NotNull(message="prixUnite ne peut etre null")
-    private Double prixUnite;
-    private LocalDate dateDebutContrat;
-    private LocalDate dateFinContrat;
-    private LocalDate dateSignatureContrat;
-    private LocalDate dateResiliationContrat;
-    private String observation;
-    private int idEmployer;
+    private final String uniteSalaire;
+    @NotNull(message = "prixUnite ne peut etre null")
+    private final Double prixUnite;
+    private final LocalDate dateDebutContrat;
+    private final LocalDate dateFinContrat;
+    private final LocalDate dateSignatureContrat;
+    private final LocalDate dateResiliationContrat;
+    private final String observation;
 
-    public int getIdEmployer() {
-        return idEmployer;
-    }
-
-
-
-    public ContratRequest(String typeContrat, String uniteSalaire,
-                          Double prixUnite, LocalDate dateDebutContrat, LocalDate dateFinContrat,
-                          LocalDate dateSignatureContrat, LocalDate dateResiliationContrat, String observation, int idEmployer) {
+    public ContratUpdateRequest(int id, String typeContrat, String uniteSalaire, Double prixUnite,
+                                LocalDate dateDebutContrat, LocalDate dateFinContrat,
+                                LocalDate dateSignatureContrat, LocalDate dateResiliationContrat,
+                                String observation) {
+        this.id = id;
         this.typeContrat = typeContrat;
         this.uniteSalaire = uniteSalaire;
         this.prixUnite = prixUnite;
@@ -43,7 +33,6 @@ public class ContratRequest {
         this.dateSignatureContrat = dateSignatureContrat;
         this.dateResiliationContrat = dateResiliationContrat;
         this.observation = observation;
-        this.idEmployer = idEmployer;
     }
 
     public String getTypeContrat() {
@@ -76,5 +65,9 @@ public class ContratRequest {
 
     public String getObservation() {
         return observation;
+    }
+
+    public int getId() {
+        return id;
     }
 }

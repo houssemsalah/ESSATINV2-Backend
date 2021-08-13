@@ -1,15 +1,13 @@
 package tn.essatin.erp.model.financier;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-public enum ETypeTransaction {
-    DEBIT("Debit"),
-    CREDIT("Credit");
+public enum ETypeContrat {
+    CDI("Contrat a Durée Indéterminé"),
+    CDD("Contrat a Durée Déterminé"),
+    VACATION("Contrat de Vacation");
 
     private final String value;
 
-    ETypeTransaction(String value) {
+    ETypeContrat(String value) {
         this.value = value;
     }
 
