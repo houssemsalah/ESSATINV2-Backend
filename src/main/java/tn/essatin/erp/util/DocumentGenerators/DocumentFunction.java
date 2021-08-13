@@ -54,7 +54,46 @@ public class DocumentFunction {
         Collections.shuffle(place);
         return place;
     }
+    public static void ajouterEnteteSpeciale(Document document, String titre, String ref, String indice, String Date, int page, int nbpage) {
+        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
+        Font fontRefs = FontFactory.getFont(FontFactory.TIMES_ROMAN , 10, BaseColor.BLACK);
 
+        Image img ;
+        PdfPTable head ;
+        try {
+            img = Image.getInstance("logoEssat.png");
+            img.scaleAbsoluteHeight(50);
+            img.scaleAbsoluteWidth(50);
+            head = new PdfPTable(7);
+            head.getDefaultCell().setFixedHeight(20);
+            head.setWidthPercentage(100f);
+            PdfPCell cell = new PdfPCell(img);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setRowspan(4);
+            head.addCell(cell);
+            cell = new PdfPCell(new Phrase( titre , fontTitle));
+            cell.setRowspan(4);
+            cell.setColspan(5);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            head.addCell(cell);
+            cell = new PdfPCell(new Phrase("Ref : " + ref,fontRefs));
+            head.addCell(cell);
+            cell = new PdfPCell(new Phrase("Indice : " + indice,fontRefs));
+            head.addCell(cell);
+            cell = new PdfPCell(new Phrase("Date : " + Date,fontRefs));
+            head.addCell(cell);
+            cell = new PdfPCell(new Phrase("Page : " + (page + 1) + "/" + nbpage,fontRefs));
+            head.addCell(cell);
+            head.addCell("  \n \n  ");
+            document.add(new Paragraph(Chunk.NEWLINE));
+            document.add(head);
+            document.add(new Paragraph(Chunk.NEWLINE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void ajouterEntete(Document document, String titre, String ref, String indice, String Date, Session session, int page, int nbpage) {
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);

@@ -34,9 +34,6 @@ public class FicheDeNote {
         for (Personne personne : personneList) {
             nomPrenom.add(personne.getNom() + " " + personne.getPrenom());
         }
-
-
-
         Collections.sort(nomPrenom);
         String niveauxC = niveau.getDesignation();
         String designationNiveaux =cycle.getDescription() + " " + parcours.getDesignation();

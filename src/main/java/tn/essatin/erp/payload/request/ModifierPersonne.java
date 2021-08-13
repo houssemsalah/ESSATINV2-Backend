@@ -23,7 +23,7 @@ public class ModifierPersonne {
     String lieuDeNaissance;
     @Min(value = 1, message = "le champ idTypeIdentificateur est obligatoire")
     int idTypeIdentificateur;
-    @Size(min = 8, max = 9, message = "champ numeroIdentificateur invalide")
+    @Pattern(regexp = "(([a-zA-Z0-9]{8,9})?)", message = "message = champ numeroIdentificateur invalide")
     String numeroIdentificateur;
     @NotBlank(message = "le sexe ne peut etre vide")
     String sexe;
@@ -80,5 +80,9 @@ public class ModifierPersonne {
 
     public int getIdNationalite() {
         return idNationalite;
+    }
+
+    public void setNumeroIdentificateur(String numeroIdentificateur) {
+        this.numeroIdentificateur = numeroIdentificateur;
     }
 }

@@ -18,7 +18,10 @@ import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.model.Session;
 import tn.essatin.erp.payload.request.FeuilleEmergementPersonnaliserRequest;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
-import tn.essatin.erp.payload.request.scolarite.*;
+import tn.essatin.erp.payload.request.scolarite.CertificatRequest;
+import tn.essatin.erp.payload.request.scolarite.FeuilleDEmargementRequest;
+import tn.essatin.erp.payload.request.scolarite.FeuilleDeNote;
+import tn.essatin.erp.payload.request.scolarite.InfoRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.DocumentGenerators.*;
 
@@ -146,28 +149,27 @@ public class EtudiantRest {
     }
 
 
-    @PostMapping("/getfichepresencebyniveauetsession")
-    public ResponseEntity<?> getFichePresenceByNiveauEtSession(@Valid @RequestBody PresenceNiveauSession presenceNiveauSession) {
-        if (
-                niveauDao.findById(presenceNiveauSession.getIdNiveau()).isPresent()
-                        && sessionDao.findById(presenceNiveauSession.getIdSession()).isPresent()
-        ) {
-            Niveau n = niveauDao.findById(presenceNiveauSession.getIdNiveau()).get();
-            Session s = sessionDao.findById(presenceNiveauSession.getIdSession()).get();
-            List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
-            if (enregistrementList.size() > 0) {
-                ByteArrayOutputStream os = ListePresence.createDoc(enregistrementList);
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
-                ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
-                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(
-                        new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
-            }
-        } else
+    @GetMapping("/getfichepresencebyniveau/{id}")
+    public ResponseEntity<?> getFichePresenceByNiveauEtSession(@PathVariable int id) {
+        Optional<Niveau> niveau = niveauDao.findById(id);
+        if (niveau.isEmpty()) {
             return new ResponseEntity<>(
-                    new MessageResponse("Ressource indisponible", 403), HttpStatus.FORBIDDEN);
+                    new MessageResponse("Niveaux introuvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Niveau n = niveau.get();
+        Session s = sessionDao.findTopByOrderByIdSessionDesc();
+        List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
+        if (enregistrementList.size() > 0) {
+            ByteArrayOutputStream os = ListePresence.createDoc(enregistrementList);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+            ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(
+                    new MessageResponse("Classe vide!!!", 403), HttpStatus.FORBIDDEN);
+        }
+
     }
 
     @PostMapping("/getfeuilledenotebyniveauetsession")
@@ -224,7 +226,7 @@ public class EtudiantRest {
         List<Enregistrement> enregistrementList = enregistrementDao.findByIdNiveauAndIdSession(n, s);
         if (!enregistrementList.isEmpty()) {
             ByteArrayOutputStream os = FeuilleDEmargement.createDoc(enregistrementList,
-                    salle.getNombreDeRangee(), salle.getNombreDePlace());
+                    salle.getNombreDeRangee(), salle.getNombreDePlaceExamen());
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
             ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
@@ -279,6 +281,7 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("listes vide!!!", 403), HttpStatus.FORBIDDEN);
         }
-
     }
+
+
 }
