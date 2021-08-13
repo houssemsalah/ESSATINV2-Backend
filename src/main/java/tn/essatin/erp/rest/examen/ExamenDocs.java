@@ -43,7 +43,7 @@ public class ExamenDocs {
             return new ResponseEntity<>(
                     new MessageResponse("Enregistrement introuvable", 403), HttpStatus.FORBIDDEN);
         }
-        ByteArrayOutputStream os = FeuilleDeDemandeDeStage.createDoc(etudiant.get(), demandeDeStageRequest.getNomSociete(), demandeDeStageRequest.getNumCase());
+        ByteArrayOutputStream os = FeuilleDeDemandeDeStage.createDoc(etudiant.get(), demandeDeStageRequest.getNomSociete(), demandeDeStageRequest.getNumCase(),demandeDeStageRequest.getDesignantionEntreprise());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
