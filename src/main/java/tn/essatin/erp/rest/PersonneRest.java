@@ -14,6 +14,7 @@ import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
+import java.util.Locale;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -73,7 +74,7 @@ public class PersonneRest {
                     p.setDateDeNaissance(modifierPersonne.getDateDeNaissance());
                     p.setLieuDeNaissance(modifierPersonne.getLieuDeNaissance());
                     p.setIdIdentificateur(typeIdentificateurDao.findById(modifierPersonne.getIdTypeIdentificateur()).get());
-                    p.setNumeroIdentificateur(modifierPersonne.getNumeroIdentificateur());
+                    p.setNumeroIdentificateur(modifierPersonne.getNumeroIdentificateur().toUpperCase(Locale.ROOT));
                     p.setSexe(modifierPersonne.getSexe());
                     p.setIdNationalite(nationaliteDao.findById(modifierPersonne.getIdNationalite()).get());
                     personneDao.save(p);
