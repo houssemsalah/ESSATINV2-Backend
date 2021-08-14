@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "tn.essat.erp.jwtSecret",
+      "type": "java.lang.String",
+      "description": "Description for tn.essat.erp.jwtSecret."
+    },
+    {
+      "name": "tn.essat.erp.jwtExpirationMs",
+      "type": "java.lang.String",
+      "description": "Description for tn.jihen.jwtExpirationMs."
+    }
+  ] }

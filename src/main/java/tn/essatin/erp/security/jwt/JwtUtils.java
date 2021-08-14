@@ -13,9 +13,9 @@ import java.util.Date;
 @Component
 public class JwtUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtils.class);
-    @Value("${tn.jihen.jwtSecret}")
+    @Value("${tn.essat.erp.jwtSecret}")
     private String jwtSecret;
-    @Value("${tn.jihen.jwtExpirationMs}")
+    @Value("${tn.essat.erp.jwtExpirationMs}")
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
