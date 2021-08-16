@@ -5,26 +5,21 @@ import tn.essatin.erp.payload.response.MessageResponse;
 import java.util.List;
 
 public class ApiInfo {
-    String description;
     String url;
+    String methode;
+    String description;
     Object exempleRequete;
     String typeReponse;
     List<MessageResponse> responses;
 
-    public ApiInfo(String description, String url, Object exempleRequete, String typeReponse, List<MessageResponse> responses) {
-        this.description = description;
+
+    public ApiInfo(String url, String methode, String description, Object exempleRequete, String typeReponse, List<MessageResponse> responses) {
         this.url = url;
+        this.methode = methode;
+        this.description = description;
         this.exempleRequete = exempleRequete;
         this.typeReponse = typeReponse;
         this.responses = responses;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getUrl() {
@@ -33,6 +28,22 @@ public class ApiInfo {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getMethode() {
+        return methode;
+    }
+
+    public void setMethode(String methode) {
+        methode = methode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Object getExempleRequete() {

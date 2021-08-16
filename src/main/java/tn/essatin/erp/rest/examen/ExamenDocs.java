@@ -51,15 +51,18 @@ public class ExamenDocs {
 
     @GetMapping("/")
     public ResponseEntity<?> infoApi(){
+        /////
         List<ApiInfo> infos = new ArrayList<>();
         List<MessageResponse> responses = new ArrayList<>();
         responses.add(new MessageResponse("Niveau est introvable", 403));
         responses.add(new MessageResponse("Session est introvable", 403));
         responses.add(new MessageResponse("Classe vide!!!", 403));
-        ApiInfo feulleDeNote = new ApiInfo("Retourne une feille de notes en PDF","/api/examdocs/getfeuilledenotebyniveauetsession",
+        ApiInfo feulleDeNote = new ApiInfo("/api/examdocs/getfeuilledenotebyniveauetsession","Post","Retourne une feille de notes en PDF",
                 new FeuilleDeNote(28,6,15),"Document PDF",responses);
         infos.add(feulleDeNote);
         return new ResponseEntity<>(infos,HttpStatus.OK);
+        /////////////////////
+
     }
 
     @PostMapping("/getfeuilledenotebyniveauetsession")
