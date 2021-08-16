@@ -12,6 +12,12 @@ public class FeuilleDeNote {
     @Max(value = 16,message = "la variable colonnes ne peut pas etre superieur a 16")
     int colones;
 
+    public FeuilleDeNote(int idNiveau, int idSession, int colones) {
+        this.idNiveau = idNiveau;
+        this.idSession = idSession;
+        this.colones = colones;
+    }
+
     public int getIdNiveau() {
         return idNiveau;
     }
