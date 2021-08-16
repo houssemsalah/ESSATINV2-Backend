@@ -1,5 +1,7 @@
 package tn.essatin.erp.model.financier;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -25,6 +27,13 @@ public class ModaliteTransaction {
     }
 
     public ModaliteTransaction() {
+    }
+
+    public ModaliteTransaction(String numero, double montant, ETypeModaliteTransaction type, LocalDate now) {
+        this.numero = numero;
+        this.montant = montant;
+        this.type = type;
+        this.date = now;
     }
 
     public Integer getId() {

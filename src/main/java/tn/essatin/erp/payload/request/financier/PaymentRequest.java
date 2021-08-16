@@ -17,6 +17,16 @@ public class PaymentRequest {
     @NotNull
     private String statusTransaction;
 
+    public PaymentRequest(int personne,int session,
+                          Set<ModaliteTransaction> modaliteTransactionSet,int idFinancier,String statusTransaction){
+
+        this.personne = personne;
+        this.session = session;
+        this.modaliteTransactionSet = modaliteTransactionSet;
+        this.idFinancier = idFinancier;
+        this.statusTransaction = statusTransaction;
+    }
+
     public int getIdFinancier() {
         return idFinancier;
     }
