@@ -2,7 +2,6 @@ package tn.essatin.erp.payload.request.financier;
 
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
@@ -10,35 +9,13 @@ public class PaymentRequest {
     @NotNull
     private int personne;
     @NotNull
-    private float montant;
-    @NotNull
     private int session;
-    @NotBlank
-    private String datePayement;
-    @NotNull
-    private String typeTransaction;
     @NotNull
     private Set<ModaliteTransaction> modaliteTransactionSet;
     @NotNull
     private int idFinancier;
     @NotNull
     private String statusTransaction;
-
-    public String getTypeTransaction() {
-        return typeTransaction;
-    }
-
-    public void setTypeTransaction(String typeTransaction) {
-        this.typeTransaction = typeTransaction;
-    }
-
-    public String getDatePayement() {
-        return datePayement;
-    }
-
-    public void setDatePayement(String datePayement) {
-        this.datePayement = datePayement;
-    }
 
     public int getIdFinancier() {
         return idFinancier;
@@ -70,14 +47,6 @@ public class PaymentRequest {
 
     public void setStatusTransaction(String statusTransaction) {
         this.statusTransaction = statusTransaction;
-    }
-
-    public Float getMontant() {
-        return montant;
-    }
-
-    public void setMontant(Float montant) {
-        this.montant = montant;
     }
 
     public Set<ModaliteTransaction> getModaliteTransactionSet() {

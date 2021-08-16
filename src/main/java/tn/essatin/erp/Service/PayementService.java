@@ -9,7 +9,7 @@ import tn.essatin.erp.model.Session;
 import java.util.Set;
 
 public interface PayementService {
-   void studentPay(Personne personne, double montant, Session session, String datePayement,
+   void studentPay(Personne personne, Session session,
                    ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
                    Set<ModaliteTransaction> modaliteTransactionSet) ;
    void salaryPay();
