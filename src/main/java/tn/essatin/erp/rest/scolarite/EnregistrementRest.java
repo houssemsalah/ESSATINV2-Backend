@@ -22,11 +22,16 @@ import tn.essatin.erp.payload.request.scolarite.NouvelEnregistrementRequest;
 import tn.essatin.erp.payload.request.scolarite.NumeroInscriptionRequest;
 import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
+import tn.essatin.erp.util.DocumentGenerators.AttestationDeReussite;
+import tn.essatin.erp.util.DocumentGenerators.CertificateDeReussite;
+import tn.essatin.erp.util.DocumentGenerators.FeuilleDEmargementPersonnalise;
+import tn.essatin.erp.util.DocumentGenerators.FicheDeNote;
 
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -242,7 +247,7 @@ public class EnregistrementRest {
         Enregistrement enregistrement = oe.get();
 
 
-        ByteArrayOutputStream os = CertificateDeReussite.createDoc(enregistrement);
+        ByteArrayOutputStream os = AttestationDeReussite.createDoc(enregistrement,"Principale",1,new Date());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());

@@ -2,6 +2,7 @@ package tn.essatin.erp.payload.request;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 public class SignupRequest {
@@ -24,8 +25,8 @@ public class SignupRequest {
     private String dateDeNaissance;
     @NotBlank
     private String lieuDeNaissance;
-    @NotBlank
-    private String typeIdentificateur;
+    @NotNull
+    private int typeIdentificateur;
     @NotBlank
     private String numeroIdentificateur;
     @NotBlank
@@ -34,11 +35,11 @@ public class SignupRequest {
     private String nationalite;
     private Set<String> role;
 
-    public String getTypeIdentificateur() {
+    public int getTypeIdentificateur() {
         return typeIdentificateur;
     }
 
-    public void setTypeIdentificateur(String typeIdentificateur) {
+    public void setTypeIdentificateur(int typeIdentificateur) {
         this.typeIdentificateur = typeIdentificateur;
     }
 

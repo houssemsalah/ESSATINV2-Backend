@@ -9,9 +9,10 @@ import tn.essatin.erp.model.Session;
 import java.util.Set;
 
 public interface PayementStrategy {
-    void payer(Personne personne, double montant, Session session, String datePayement,
+    void payer(Personne personne, Session session,
                ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
                Set<ModaliteTransaction> modaliteTransactionSet);
 
     PayementStrategyName getPayementStrategyName();
+
 }

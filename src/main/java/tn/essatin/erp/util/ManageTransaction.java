@@ -46,17 +46,14 @@ public class ManageTransaction {
     }
 
     public void add(ETypeTransaction typeTransaction, EStatus statusTransaction, Set<ModaliteTransaction> modalite, Personne personne,
-                    Session session, int idFinancier, String datePayement, double montant) {
-        //ETypeTransaction type=ETypeTransaction.valueOf(typeTransaction);
-        //EStatus status = EStatus.valueOf(statusTransaction);
-
-        List<ModaliteTransaction> modaliteTransactionList = modaliteTransactionDao.saveAll(modalite);
+                    Session session, int idFinancier) {
         Employer employer = employerDao.findById(idFinancier)
             .orElseThrow(() -> new RuntimeException("error financier not found"));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate localDate = LocalDate.parse(datePayement, formatter);
-        Transaction transaction = new Transaction(typeTransaction, modaliteTransactionList, localDate, employer, personne, session, statusTransaction,
-            montant);
+        Transaction transaction = new Transaction(typeTransaction, LocalDate.now(), employer,
+                personne, session, statusTransaction );
         transactionDao.save(transaction);
+        for (ModaliteTransaction m :modalite)
+            m.setTransaction(transaction);
+        modaliteTransactionDao.saveAll(modalite);
     }
 }

@@ -23,11 +23,14 @@ public class PaymentServiceImpl implements PayementService {
     }
 
     @Override
-    public void studentPay(Personne personne, double montant, Session session, String datePayement,
+    public void studentPay(Personne personne,  Session session,
                            ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
                            Set<ModaliteTransaction> modaliteTransactionSet) {
+
+
+
         PayementStrategy payementStrategy = strategyFactory.findStrategy(PayementStrategyName.PAYEMENT_STRATEGY_ETUDIANT);
-        payementStrategy.payer(personne, montant, session, datePayement, typeTransaction,
+        payementStrategy.payer(personne, session, typeTransaction,
             statusTransaction,idFinancier, modaliteTransactionSet);
     }
 

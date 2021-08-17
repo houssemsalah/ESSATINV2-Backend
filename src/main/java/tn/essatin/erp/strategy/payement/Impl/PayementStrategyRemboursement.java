@@ -13,10 +13,9 @@ import java.util.Set;
 
 @Component
 public class PayementStrategyRemboursement implements PayementStrategy {
-    public void payer(Personne personne, double montant, Session session, String datePayement,
+    public void payer(Personne personne, Session session,
                       ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
                       Set<ModaliteTransaction> modaliteTransactionSet) {
-
     }
 
     @Override
