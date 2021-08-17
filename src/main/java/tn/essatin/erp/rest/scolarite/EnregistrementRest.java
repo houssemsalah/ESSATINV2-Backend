@@ -1,10 +1,7 @@
 package tn.essatin.erp.rest.scolarite;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.PersonneDao;
@@ -22,16 +19,10 @@ import tn.essatin.erp.payload.request.scolarite.NouvelEnregistrementRequest;
 import tn.essatin.erp.payload.request.scolarite.NumeroInscriptionRequest;
 import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
-import tn.essatin.erp.util.DocumentGenerators.AttestationDeReussite;
-import tn.essatin.erp.util.DocumentGenerators.CertificateDeReussite;
-import tn.essatin.erp.util.DocumentGenerators.FeuilleDEmargementPersonnalise;
-import tn.essatin.erp.util.DocumentGenerators.FicheDeNote;
 
 import javax.validation.Valid;
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -216,6 +207,7 @@ public class EnregistrementRest {
                     new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
         }
     }
+
     @PostMapping("/getenregistrementbynumeroidentifiant")
     public ResponseEntity<?> getEnregistrementByNumeroIdentifiant(@Valid @RequestBody IdentificateurRequest identificateurRequest) {
         List<Etudiants> cinE = new ArrayList<>();
