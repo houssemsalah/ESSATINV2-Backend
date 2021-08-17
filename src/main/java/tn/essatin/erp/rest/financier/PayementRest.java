@@ -63,7 +63,8 @@ public class PayementRest {
         responses.add(new MessageResponse("Session est introvable", 403));
         responses.add(new MessageResponse("TypeTransaction est introvable", 403));
         responses.add(new MessageResponse("employer introvable", 403));
-        responses.add(new MessageResponse("compte introvable", 403));
+        responses.add(new MessageResponse("compte Etudiant introvable", 403));
+        responses.add(new MessageResponse("compte Financier introvable", 403));
         responses.add(new MessageResponse("financier introvable", 403));
         responses.add(new MessageResponse("Etuduant introvable", 403));
         responses.add(new MessageResponse("une transaction doit avoir au moin une modalité de transaction", 403));
@@ -105,13 +106,18 @@ public class PayementRest {
                             "EStatus[]", EStatus.values())
                     , HttpStatus.FORBIDDEN);
         }
-        Optional<Employer> employer = employerDao.findById(paymentRequest.getIdFinancier());
+        Optional<Compte> compteEmployer = compteDao.findById(paymentRequest.getIdFinancier());
+        if(compteEmployer.isEmpty()){
+            return new ResponseEntity<>(new MessageResponse("Compte Financier introvable", 403), HttpStatus.FORBIDDEN);
+        }
+        Personne personneEmployer = compteEmployer.get().getIdPersonne();
+        Optional<Employer> employer = employerDao.findByPersonne(personneEmployer);
         if (employer.isEmpty()) {
             return new ResponseEntity<>(new MessageResponse("employer introvable", 403), HttpStatus.FORBIDDEN);
         }
         Optional<Compte> compte = compteDao.findByIdPersonne(employer.get().getPersonne());
         if (compte.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("compte introvable", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse("compte Etudiant introvable", 403), HttpStatus.FORBIDDEN);
         }
         Set<Role> role = compte.get().getRoles();
         boolean financier = false;
