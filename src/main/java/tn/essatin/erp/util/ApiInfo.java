@@ -12,7 +12,6 @@ public class ApiInfo {
     String typeReponse;
     List<MessageResponse> responses;
 
-
     public ApiInfo(String url, String methode, String description, Object exempleRequete, String typeReponse, List<MessageResponse> responses) {
         this.url = url;
         this.methode = methode;
@@ -35,7 +34,7 @@ public class ApiInfo {
     }
 
     public void setMethode(String methode) {
-        methode = methode;
+        this.methode = methode;
     }
 
     public String getDescription() {

@@ -27,7 +27,7 @@ import java.util.*;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/pay/")
-//@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ROLE_FINANCIER')")
 public class PayementRest {
     final PayementService payementService;
     final PersonneDao personneDao;

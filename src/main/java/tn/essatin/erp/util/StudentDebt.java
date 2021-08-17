@@ -37,23 +37,38 @@ public class StudentDebt {
     }
 
     public double debt(Etudiants etudiants, Session session) {
-        Collection<Transaction> transactions = transactionDao.findAllByClientAndSession(etudiants.getIdPersonne(), session);
-        Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants);
-        Enregistrement enregistrement = enregistrementDao.findByIdInscriptionAndIdSession(inscription, session);
-        Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(session, enregistrement.getIdNiveau());
-        List<ModaliteTransaction> modaliteTransactionList;
-        double sum = 0;
-        if (!transactions.isEmpty()) {
-            //sum = transactions.stream().filter(transaction -> transaction.getType().equals(ETypeTransaction.CREDIT.name())).mapToDouble(Transaction::getMontant).sum();
-            for (Transaction transaction: transactions) {
-                modaliteTransactionList = modaliteTransactionDao.findModaliteTransactionByTransaction(transaction);
-                if(!modaliteTransactionList.isEmpty()){
-                    for(ModaliteTransaction modaliteTransaction: modaliteTransactionList){
-                        sum+=modaliteTransaction.getMontant();
+        try {
+            Collection<Transaction> transactions = transactionDao.findAllByClientAndSession(etudiants.getIdPersonne(), session);
+            Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants);
+            Enregistrement enregistrement = enregistrementDao.findByIdInscriptionAndIdSession(inscription, session);
+            Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(session, enregistrement.getIdNiveau());
+            List<ModaliteTransaction> modaliteTransactionList;
+            double sum = 0;
+            if (!transactions.isEmpty()) {
+                for (Transaction transaction : transactions) {
+                    modaliteTransactionList = modaliteTransactionDao.findModaliteTransactionByTransaction(transaction);
+                    if (!modaliteTransactionList.isEmpty()) {
+                        for (ModaliteTransaction modaliteTransaction : modaliteTransactionList) {
+                            sum += modaliteTransaction.getMontant();
+                        }
                     }
                 }
             }
+            if (prixNiveauParSession.isEmpty()){
+                return 0.0;
+            }
+            return prixNiveauParSession.get().getMontantNiveau() - sum;
+        }catch (Exception E){
+            return 0.0;
         }
-        return prixNiveauParSession.get().getMontantNiveau() - sum;
+    }
+
+    public double PayerEnPourcent(Enregistrement enregistrement) {
+        double rest = debt(enregistrement.getIdInscription().getIdEtudiant(),enregistrement.getIdSession());
+        Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(enregistrement.getIdSession(), enregistrement.getIdNiveau());
+        if (prixNiveauParSession.isEmpty())
+            return 0.0;
+        double payer = prixNiveauParSession.get().getMontantNiveau() - rest;
+        return (payer/prixNiveauParSession.get().getMontantNiveau()) * 100.0 ;
     }
 }
