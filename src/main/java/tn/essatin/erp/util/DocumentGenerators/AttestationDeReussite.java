@@ -9,12 +9,16 @@ import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.model.Session;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static tn.essatin.erp.util.DocumentGenerators.DocumentFunction.exposant;
 
 public class AttestationDeReussite {
-    public static ByteArrayOutputStream createDoc(Enregistrement enregistrement, String TypeSession, int NumMention, Date date) {
+    public static ByteArrayOutputStream createDoc(Enregistrement enregistrement, String TypeSession, int NumMention) {
+
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("dd MMMMMM yyyy", new Locale("FR"));
 
         Font fontGras = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 15, BaseColor.BLACK);
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 25, BaseColor.BLACK);
@@ -130,7 +134,7 @@ public class AttestationDeReussite {
             cell2.setBorder(Rectangle.NO_BORDER);
             cell2.setColspan(2);
             table2.addCell(cell2);
-            cell2= new PdfPCell(new Paragraph("Fait à Gabés, le  "+date+"  "));
+            cell2= new PdfPCell(new Paragraph("Fait à Gabés, le  "+simpleFormat.format(new Date())+"  "));
             cell2.setBorder(Rectangle.NO_BORDER);
             table2.addCell(cell2);
             cell2=new PdfPCell(new Phrase( " "));

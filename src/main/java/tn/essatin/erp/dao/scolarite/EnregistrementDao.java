@@ -8,6 +8,7 @@ import tn.essatin.erp.model.Scolarite.Niveau;
 import tn.essatin.erp.model.Session;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EnregistrementDao extends JpaRepository<Enregistrement, Integer> {
@@ -16,5 +17,4 @@ public interface EnregistrementDao extends JpaRepository<Enregistrement, Integer
     List<Enregistrement> findByIdSession(Session idsession);
     Enregistrement findTopByIdInscriptionOrderByIdEnregistrementDesc(Inscription idInscription);
     List<Enregistrement> findByIdInscription(Inscription inscription);
-
 }
