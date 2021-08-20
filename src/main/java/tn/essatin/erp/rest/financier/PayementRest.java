@@ -10,8 +10,10 @@ import tn.essatin.erp.dao.PersonneDao;
 import tn.essatin.erp.dao.SessionDao;
 import tn.essatin.erp.dao.financier.EmployerDao;
 import tn.essatin.erp.dao.financier.ModaliteTransactionDao;
+import tn.essatin.erp.dao.scolarite.EnregistrementDao;
 import tn.essatin.erp.dao.scolarite.EtudiantsDao;
 import tn.essatin.erp.model.*;
+import tn.essatin.erp.model.Scolarite.Enregistrement;
 import tn.essatin.erp.model.Scolarite.Etudiants;
 import tn.essatin.erp.model.financier.*;
 import tn.essatin.erp.payload.request.financier.PaymentRequest;
@@ -37,11 +39,13 @@ public class PayementRest {
     final StudentDebt studentDebt;
     final EtudiantsDao etudiantsDao;
     final ModaliteTransactionDao modaliteTransactionDao;
+    final EnregistrementDao enregistrementDao;
 
 
     @Autowired
     public PayementRest(PayementService payementService, PersonneDao personneDao, StudentDebt studentDebt, ModaliteTransactionDao modaliteTransactionDao,
-                        SessionDao sessionDao, EmployerDao employerDao, CompteDao compteDao, EtudiantsDao etudiantsDao) {
+                        SessionDao sessionDao, EmployerDao employerDao, CompteDao compteDao, EtudiantsDao etudiantsDao,
+                        EnregistrementDao enregistrementDao) {
         this.payementService = payementService;
         this.personneDao = personneDao;
         this.sessionDao = sessionDao;
@@ -50,7 +54,7 @@ public class PayementRest {
         this.studentDebt = studentDebt;
         this.etudiantsDao = etudiantsDao;
         this.modaliteTransactionDao = modaliteTransactionDao;
-
+        this.enregistrementDao = enregistrementDao;
     }
 
     @GetMapping("/")
@@ -134,6 +138,10 @@ public class PayementRest {
             return new ResponseEntity<>(new MessageResponse("Etuduant introvable", 403), HttpStatus.FORBIDDEN);
         }
         double debt = studentDebt.debt(etudiant.get(), session.get());
+        //double debt = studentDebt.debt();
+        //Optional<Enregistrement> enregistrement = enregistrementDao.findByIdInscriptionAndIdSession(,session.get())
+
+
         double montant = 0;
         if (!paymentRequest.getModaliteTransactionSet().isEmpty()) {
             for (ModaliteTransaction modalite : paymentRequest.getModaliteTransactionSet()) {
@@ -190,6 +198,7 @@ public class PayementRest {
                     ETypeTransaction.CREDIT,
                     status, paymentRequest.getIdFinancier(),
                     paymentRequest.getModaliteTransactionSet());
+
             return ResponseEntity.ok(new MessageResponse("Transaction effectuer avec succée"));
         } else {
             return new ResponseEntity<>(new MessageResponse("le monant est superieur a ce qui reste a payer", 403), HttpStatus.FORBIDDEN);

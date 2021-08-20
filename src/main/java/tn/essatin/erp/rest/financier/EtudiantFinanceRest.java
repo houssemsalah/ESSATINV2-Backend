@@ -4,13 +4,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.SessionDao;
+import tn.essatin.erp.dao.financier.DateDesactivationEtudiantsDao;
 import tn.essatin.erp.dao.financier.ModaliteTransactionDao;
 import tn.essatin.erp.dao.financier.TransactionDao;
 import tn.essatin.erp.dao.scolarite.EnregistrementDao;
+import tn.essatin.erp.dao.scolarite.EtatInscriptionDao;
 import tn.essatin.erp.dao.scolarite.InscriptionDao;
 import tn.essatin.erp.model.Scolarite.Enregistrement;
 import tn.essatin.erp.model.Scolarite.Inscription;
 import tn.essatin.erp.model.Session;
+import tn.essatin.erp.model.financier.DateDesactivationEtudiants;
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.financier.Transaction;
 import tn.essatin.erp.payload.response.MessageResponse;
@@ -18,6 +21,8 @@ import tn.essatin.erp.payload.response.PrimitifResponse;
 import tn.essatin.erp.util.ApiInfo;
 import tn.essatin.erp.util.StudentDebt;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,18 +39,23 @@ public class EtudiantFinanceRest {
     final TransactionDao transactionDao;
     final ModaliteTransactionDao modaliteTransactionDao;
     final InscriptionDao inscriptionDao;
+    final DateDesactivationEtudiantsDao dateDesactivationEtudiantsDao;
+    final EtatInscriptionDao etatInscriptionDao;
 
     public EtudiantFinanceRest(
             EnregistrementDao enregistrementDao, StudentDebt studentDebt,
             SessionDao sessionDao, TransactionDao transactionDao,
             ModaliteTransactionDao modaliteTransactionDao,
-            InscriptionDao inscriptionDao) {
+            InscriptionDao inscriptionDao, DateDesactivationEtudiantsDao dateDesactivationEtudiantsDao,
+            EtatInscriptionDao etatInscriptionDao) {
         this.enregistrementDao = enregistrementDao;
         this.studentDebt = studentDebt;
         this.sessionDao = sessionDao;
         this.transactionDao = transactionDao;
         this.modaliteTransactionDao = modaliteTransactionDao;
         this.inscriptionDao = inscriptionDao;
+        this.dateDesactivationEtudiantsDao = dateDesactivationEtudiantsDao;
+        this.etatInscriptionDao = etatInscriptionDao;
     }
 
     @GetMapping("/")
@@ -240,5 +250,59 @@ public class EtudiantFinanceRest {
             }
         }
         return new ResponseEntity<>(enregistrementList, HttpStatus.OK);
+    }
+
+    @GetMapping("/desactiveretudiantsparpourcentage")
+    public ResponseEntity<?> desactiverEtudiantsParPourcentage() {
+        LocalDate now = LocalDate.now();
+        Session session = sessionDao.findTopByOrderByIdSessionDesc();
+        LocalDate dateDesactivation;
+        DateTimeFormatter dyf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String firstYear = session.getSession().substring(0, session.getSession().indexOf('-'));
+        String lastYear = session.getSession().substring(session.getSession().indexOf('-') + 1);
+        List<Enregistrement> enregistrementList = enregistrementDao.findAll();
+        List<DateDesactivationEtudiants> dateDesactivationEtudiantsList = dateDesactivationEtudiantsDao.findAll();
+        List<Enregistrement> etudiantDesactive = new ArrayList<>();
+
+        for (Enregistrement enregistrement : enregistrementList) {
+            if (enregistrement.getIdSession().getIdSession().equals(session.getIdSession())) {
+                for (DateDesactivationEtudiants dateDesactivationEtudiants : dateDesactivationEtudiantsList) {
+                    if (Integer.parseInt(dateDesactivationEtudiants.getMoisDesactivation()) <= 8) {
+                        dateDesactivation = LocalDate.parse(dateDesactivationEtudiants.getJourDesactivation()
+                                + "/" + dateDesactivationEtudiants.getMoisDesactivation() + "/" + firstYear, dyf);
+                    } else {
+                        dateDesactivation = LocalDate.parse(dateDesactivationEtudiants.getJourDesactivation() +
+                                "/" + dateDesactivationEtudiants.getMoisDesactivation() + "/" + lastYear, dyf);
+                    }
+                    if (dateDesactivation.isBefore(now)) {
+                        if (studentDebt.PayerEnPourcent(enregistrement) < dateDesactivationEtudiants.getPourcentagePayement()) {
+                            if (enregistrement.getEtatFinanciere() == 1) {
+                                enregistrement.setEtatFinanciere(0);
+                                enregistrementDao.save(enregistrement);
+                                etudiantDesactive.add(enregistrement);
+                                if (etatInscriptionDao.findById(3).isPresent()) {
+                                    enregistrement.getIdInscription().setIdEtatInscription(etatInscriptionDao.findById(3).get());
+                                    inscriptionDao.save(enregistrement.getIdInscription());
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (studentDebt.PayerEnPourcent(enregistrement) < 100) {
+                    if (enregistrement.getEtatFinanciere() == 1) {
+                        enregistrement.setEtatFinanciere(0);
+                        enregistrementDao.save(enregistrement);
+                        etudiantDesactive.add(enregistrement);
+                        if (etatInscriptionDao.findById(3).isPresent()) {
+                            enregistrement.getIdInscription().setIdEtatInscription(etatInscriptionDao.findById(3).get());
+                            inscriptionDao.save(enregistrement.getIdInscription());
+                        }
+                    }
+                }
+            }
+        }
+
+        return new ResponseEntity<>(etudiantDesactive, HttpStatus.OK);
     }
 }

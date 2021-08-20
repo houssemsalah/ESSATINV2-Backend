@@ -20,6 +20,10 @@ public class EtatInscription {
     public EtatInscription() {
     }
 
+    public EtatInscription(String nom) {
+        this.nom = nom;
+    }
+
     public Integer getIdEtatInscription() {
         return idEtatInscription;
     }
