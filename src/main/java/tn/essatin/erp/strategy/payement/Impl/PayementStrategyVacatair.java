@@ -3,6 +3,7 @@ package tn.essatin.erp.strategy.payement.Impl;
 import org.springframework.stereotype.Component;
 import tn.essatin.erp.model.financier.EStatus;
 import tn.essatin.erp.model.financier.ETypeTransaction;
+import tn.essatin.erp.model.financier.Employer;
 import tn.essatin.erp.strategy.payement.PayementStrategyName;
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.Personne;
@@ -15,7 +16,7 @@ import java.util.Set;
 public class PayementStrategyVacatair implements PayementStrategy {
     @Override
     public void payer(Personne personne,  Session session,
-                      ETypeTransaction typeTransaction, EStatus statusTransaction, int idFinancier,
+                      ETypeTransaction typeTransaction,  Employer Financier,
                       Set<ModaliteTransaction> modaliteTransactionSet) {
     }
 

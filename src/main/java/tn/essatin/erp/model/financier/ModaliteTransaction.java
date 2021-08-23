@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 public class ModaliteTransaction {
@@ -15,25 +16,31 @@ public class ModaliteTransaction {
     @Enumerated(EnumType.STRING)
     private ETypeModaliteTransaction type;
     private LocalDate date;
+    @Enumerated(EnumType.STRING)
+    private EStatus status;
     @ManyToOne
     private Transaction transaction;
-
-    public ModaliteTransaction(String numero, double montant, ETypeModaliteTransaction type, LocalDate date, Transaction transaction) {
-        this.numero = numero;
-        this.montant = montant;
-        this.type = type;
-        this.date = date;
-        this.transaction = transaction;
-    }
 
     public ModaliteTransaction() {
     }
 
-    public ModaliteTransaction(String numero, double montant, ETypeModaliteTransaction type, LocalDate now) {
+    public ModaliteTransaction(String numero, double montant, ETypeModaliteTransaction type, LocalDate date, EStatus status, Transaction transaction) {
         this.numero = numero;
         this.montant = montant;
         this.type = type;
-        this.date = now;
+        this.date = date;
+        this.status = status;
+        this.transaction = transaction;
+    }
+
+    public ModaliteTransaction(Integer id, String numero, double montant, ETypeModaliteTransaction type, LocalDate date, EStatus status, Transaction transaction) {
+        this.id = id;
+        this.numero = numero;
+        this.montant = montant;
+        this.type = type;
+        this.date = date;
+        this.status = status;
+        this.transaction = transaction;
     }
 
     public Integer getId() {
@@ -76,12 +83,33 @@ public class ModaliteTransaction {
         this.date = date;
     }
 
+    public EStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EStatus status) {
+        this.status = status;
+    }
+
     public Transaction getTransaction() {
         return transaction;
     }
 
     public void setTransaction(Transaction transaction) {
         this.transaction = transaction;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ModaliteTransaction)) return false;
+        ModaliteTransaction that = (ModaliteTransaction) o;
+        return Double.compare(that.getMontant(), getMontant()) == 0 && getId().equals(that.getId()) && getNumero().equals(that.getNumero()) && getType() == that.getType() && getDate().equals(that.getDate()) && getStatus() == that.getStatus() && getTransaction().equals(that.getTransaction());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getNumero(), getMontant(), getType(), getDate(), getStatus(), getTransaction());
     }
 
     @Override
@@ -92,6 +120,7 @@ public class ModaliteTransaction {
                 ", montant=" + montant +
                 ", type=" + type +
                 ", date=" + date +
+                ", status=" + status +
                 ", transaction=" + transaction +
                 '}';
     }

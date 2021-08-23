@@ -4,20 +4,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.SessionDao;
+import tn.essatin.erp.dao.financier.DateDesactivationEtudiantsDao;
 import tn.essatin.erp.dao.financier.ModaliteTransactionDao;
 import tn.essatin.erp.dao.financier.TransactionDao;
 import tn.essatin.erp.dao.scolarite.EnregistrementDao;
+import tn.essatin.erp.dao.scolarite.EtatInscriptionDao;
 import tn.essatin.erp.dao.scolarite.InscriptionDao;
 import tn.essatin.erp.model.Scolarite.Enregistrement;
 import tn.essatin.erp.model.Scolarite.Inscription;
 import tn.essatin.erp.model.Session;
+import tn.essatin.erp.model.financier.DateDesactivationEtudiants;
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.financier.Transaction;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.payload.response.PrimitifResponse;
+import tn.essatin.erp.payload.response.TransactionAvecModalite;
 import tn.essatin.erp.util.ApiInfo;
 import tn.essatin.erp.util.StudentDebt;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,18 +40,23 @@ public class EtudiantFinanceRest {
     final TransactionDao transactionDao;
     final ModaliteTransactionDao modaliteTransactionDao;
     final InscriptionDao inscriptionDao;
+    final DateDesactivationEtudiantsDao dateDesactivationEtudiantsDao;
+    final EtatInscriptionDao etatInscriptionDao;
 
     public EtudiantFinanceRest(
             EnregistrementDao enregistrementDao, StudentDebt studentDebt,
             SessionDao sessionDao, TransactionDao transactionDao,
             ModaliteTransactionDao modaliteTransactionDao,
-            InscriptionDao inscriptionDao) {
+            InscriptionDao inscriptionDao, DateDesactivationEtudiantsDao dateDesactivationEtudiantsDao,
+            EtatInscriptionDao etatInscriptionDao) {
         this.enregistrementDao = enregistrementDao;
         this.studentDebt = studentDebt;
         this.sessionDao = sessionDao;
         this.transactionDao = transactionDao;
         this.modaliteTransactionDao = modaliteTransactionDao;
         this.inscriptionDao = inscriptionDao;
+        this.dateDesactivationEtudiantsDao = dateDesactivationEtudiantsDao;
+        this.etatInscriptionDao = etatInscriptionDao;
     }
 
     @GetMapping("/")
@@ -113,6 +124,15 @@ public class EtudiantFinanceRest {
                 "une texte JSON avec une liste d'enregistrements", responses);
         infos.add(info);
         /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse("Enregistrement introuvable!", 403));
+        responses.add(new MessageResponse("Pas de transactions pour cet etudiant", 403));
+        info = new ApiInfo("/api/etudiantfinance/getdetaillepayementbyidenregistrementnew/{idEnregistrement}", "Get",
+                "retourne un JSON avec la liste des transactions éféctué par un étudiant (y compris les modalite de transaction impliqué; REMARQUE: les Modalité ont un champ transaction null pour evité d'affiché la transaction 2 fois)",
+                "/api/etudiantfinance/getdetaillepayementbyidenregistrementnew/1",
+                "une texte JSON avec une liste de transaction", responses);
+        infos.add(info);
+        /////////////////////
 
         return new ResponseEntity<>(infos, HttpStatus.OK);
     }
@@ -124,8 +144,7 @@ public class EtudiantFinanceRest {
             return new ResponseEntity<>(
                     new MessageResponse("Enregistrement introuvable!", 403), HttpStatus.FORBIDDEN);
         }
-        double resteAPayer = studentDebt.debt(enregistrement.get().getIdInscription().getIdEtudiant(),
-                enregistrement.get().getIdSession());
+        double resteAPayer = studentDebt.debt(enregistrement.get());
         return new ResponseEntity<>(new PrimitifResponse("restAPayer", resteAPayer)
                 , HttpStatus.OK);
     }
@@ -139,7 +158,7 @@ public class EtudiantFinanceRest {
         List<Enregistrement> enregistrementList = enregistrementDao.findByIdSession(session.get());
         List<Enregistrement> enregistrementListAvecRest = new ArrayList<>();
         for (Enregistrement enregistrement : enregistrementList) {
-            if (studentDebt.debt(enregistrement.getIdInscription().getIdEtudiant(), enregistrement.getIdSession()) > 0) {
+            if (studentDebt.debt(enregistrement) > 0) {
                 enregistrementListAvecRest.add(enregistrement);
             }
         }
@@ -207,8 +226,7 @@ public class EtudiantFinanceRest {
             List<Enregistrement> enregistrementList1 = enregistrementDao.findByIdInscription(inscription);
             for (Enregistrement enregistrement1 : enregistrementList1) {
                 if (!enregistrement1.getIdEnregistrement().equals(enregistrement.get().getIdEnregistrement()))
-                    if (studentDebt.debt(enregistrement1.getIdInscription().getIdEtudiant(),
-                            enregistrement1.getIdSession()) > 0) {
+                    if (studentDebt.debt(enregistrement1) > 0) {
                         return new ResponseEntity<>(
                                 new PrimitifResponse("aDesImpayerDansUneAutreSession", true)
                                 , HttpStatus.OK);
@@ -233,12 +251,88 @@ public class EtudiantFinanceRest {
             List<Enregistrement> enregistrementList1 = enregistrementDao.findByIdInscription(inscription);
             for (Enregistrement enregistrement1 : enregistrementList1) {
                 if (!enregistrement1.getIdEnregistrement().equals(enregistrement.get().getIdEnregistrement()))
-                    if (studentDebt.debt(enregistrement1.getIdInscription().getIdEtudiant(),
-                            enregistrement1.getIdSession()) > 0) {
+                    if (studentDebt.debt(enregistrement1) > 0) {
                         enregistrementList.add(enregistrement1);
                     }
             }
         }
         return new ResponseEntity<>(enregistrementList, HttpStatus.OK);
+    }
+
+    @GetMapping("/desactiveretudiantsparpourcentage")
+    public ResponseEntity<?> desactiverEtudiantsParPourcentage() {
+        LocalDate now = LocalDate.now();
+        Session session = sessionDao.findTopByOrderByIdSessionDesc();
+        LocalDate dateDesactivation;
+        DateTimeFormatter dyf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String firstYear = session.getSession().substring(0, session.getSession().indexOf('-'));
+        String lastYear = session.getSession().substring(session.getSession().indexOf('-') + 1);
+        List<Enregistrement> enregistrementList = enregistrementDao.findAll();
+        List<DateDesactivationEtudiants> dateDesactivationEtudiantsList = dateDesactivationEtudiantsDao.findAll();
+        List<Enregistrement> etudiantDesactive = new ArrayList<>();
+
+        for (Enregistrement enregistrement : enregistrementList) {
+            if (enregistrement.getIdSession().getIdSession().equals(session.getIdSession())) {
+                for (DateDesactivationEtudiants dateDesactivationEtudiants : dateDesactivationEtudiantsList) {
+                    if (Integer.parseInt(dateDesactivationEtudiants.getMoisDesactivation()) <= 8) {
+                        dateDesactivation = LocalDate.parse(dateDesactivationEtudiants.getJourDesactivation()
+                                + "/" + dateDesactivationEtudiants.getMoisDesactivation() + "/" + firstYear, dyf);
+                    } else {
+                        dateDesactivation = LocalDate.parse(dateDesactivationEtudiants.getJourDesactivation() +
+                                "/" + dateDesactivationEtudiants.getMoisDesactivation() + "/" + lastYear, dyf);
+                    }
+                    if (dateDesactivation.isBefore(now)) {
+                        if (studentDebt.PayerEnPourcent(enregistrement) < dateDesactivationEtudiants.getPourcentagePayement()) {
+                            if (enregistrement.getEtatFinanciere() == 1) {
+                                enregistrement.setEtatFinanciere(0);
+                                enregistrementDao.save(enregistrement);
+                                etudiantDesactive.add(enregistrement);
+                                if (etatInscriptionDao.findById(3).isPresent()) {
+                                    enregistrement.getIdInscription().setIdEtatInscription(etatInscriptionDao.findById(3).get());
+                                    inscriptionDao.save(enregistrement.getIdInscription());
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (studentDebt.PayerEnPourcent(enregistrement) < 100) {
+                    if (enregistrement.getEtatFinanciere() == 1) {
+                        enregistrement.setEtatFinanciere(0);
+                        enregistrementDao.save(enregistrement);
+                        etudiantDesactive.add(enregistrement);
+                        if (etatInscriptionDao.findById(3).isPresent()) {
+                            enregistrement.getIdInscription().setIdEtatInscription(etatInscriptionDao.findById(3).get());
+                            inscriptionDao.save(enregistrement.getIdInscription());
+                        }
+                    }
+                }
+            }
+        }
+
+        return new ResponseEntity<>(etudiantDesactive, HttpStatus.OK);
+    }
+
+    @GetMapping("/getdetaillepayementbyidenregistrementnew/{idEnregistrement}")
+    public ResponseEntity<?> getDetailleDePayementByIdEnregistrementNew(@PathVariable int idEnregistrement) {
+        Optional<Enregistrement> enregistrement = enregistrementDao.findById(idEnregistrement);
+        if (enregistrement.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Enregistrement introuvable!", 403), HttpStatus.FORBIDDEN);
+        }
+        Collection<Transaction> transactions = transactionDao.findAllByClientAndSession(
+                enregistrement.get().getIdInscription().getIdEtudiant().getIdPersonne(),
+                enregistrement.get().getIdSession());
+        if (transactions.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Pas de transactions pour cet etudiant", 403), HttpStatus.FORBIDDEN);
+        }
+        List<TransactionAvecModalite> modaliteTransactionList = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            List<ModaliteTransaction> modaliteTransactionList1 =
+                    modaliteTransactionDao.findModaliteTransactionByTransaction(transaction);
+            modaliteTransactionList.add(new TransactionAvecModalite(transaction, modaliteTransactionList1));
+        }
+        return new ResponseEntity<>(modaliteTransactionList, HttpStatus.OK);
     }
 }
