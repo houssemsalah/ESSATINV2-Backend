@@ -1,11 +1,17 @@
 package tn.essatin.erp.util.DocumentGenerators;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import tn.essatin.erp.model.Scolarite.Cycle;
+import tn.essatin.erp.model.Scolarite.Niveau;
+import tn.essatin.erp.model.Scolarite.Parcours;
+import tn.essatin.erp.model.Scolarite.Specialite;
 import tn.essatin.erp.model.Session;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +22,12 @@ public class DocumentFunction {
     public static final Font SECTION_FONT = FontFactory.getFont(FontFactory.TIMES_BOLD, 18, BaseColor.BLUE);
     public static final Font HEAD_FONT = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, BaseColor.BLACK);
     public static final Font ATTRIB_FONT = FontFactory.getFont(FontFactory.TIMES_BOLD, 15, BaseColor.BLACK);
+    public static final Font FONT_GRAS = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
+    public static final Font FONT_GRAS_OBLIQUE = FontFactory.getFont(FontFactory.TIMES_BOLDITALIC, 14, BaseColor.BLACK);
+    public static final Font FONT_OBLIQUE = FontFactory.getFont(FontFactory.TIMES_ITALIC, 14, BaseColor.BLACK);
+
+    public static final Chunk ligneHorizentale = new Chunk(new LineSeparator());
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     public static Chunk exposant(String text) {
         Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
@@ -59,12 +71,13 @@ public class DocumentFunction {
         Collections.shuffle(place);
         return place;
     }
+
     public static void ajouterEnteteSpeciale(Document document, String titre, String ref, String indice, String Date, int page, int nbpage) {
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
-        Font fontRefs = FontFactory.getFont(FontFactory.TIMES_ROMAN , 10, BaseColor.BLACK);
+        Font fontRefs = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, BaseColor.BLACK);
 
-        Image img ;
-        PdfPTable head ;
+        Image img;
+        PdfPTable head;
         try {
             img = Image.getInstance("logoEssat.png");
             img.scaleAbsoluteHeight(50);
@@ -77,19 +90,19 @@ public class DocumentFunction {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setRowspan(4);
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase( titre , fontTitle));
+            cell = new PdfPCell(new Phrase(titre, fontTitle));
             cell.setRowspan(4);
             cell.setColspan(5);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase("Ref : " + ref,fontRefs));
+            cell = new PdfPCell(new Phrase("Ref : " + ref, fontRefs));
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase("Indice : " + indice,fontRefs));
+            cell = new PdfPCell(new Phrase("Indice : " + indice, fontRefs));
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase("Date : " + Date,fontRefs));
+            cell = new PdfPCell(new Phrase("Date : " + Date, fontRefs));
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase("Page : " + (page + 1) + "/" + nbpage,fontRefs));
+            cell = new PdfPCell(new Phrase("Page : " + page + "/" + nbpage, fontRefs));
             head.addCell(cell);
             head.addCell("  \n \n  ");
             document.add(new Paragraph(Chunk.NEWLINE));
@@ -100,9 +113,9 @@ public class DocumentFunction {
         }
     }
 
-    public static void ajoutercadre(Document document){
-        try{
-            Rectangle rect= new Rectangle(36,108);
+    public static void ajoutercadre(Document document) {
+        try {
+            Rectangle rect = new Rectangle(36, 108);
             rect.enableBorderSide(1);
             rect.enableBorderSide(2);
             rect.enableBorderSide(4);
@@ -110,16 +123,17 @@ public class DocumentFunction {
             rect.setBorder(2);
             rect.setBorderColor(BaseColor.BLACK);
             document.add(rect);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     public static void ajouterEntete(Document document, String titre, String ref, String indice, String Date, Session session, int page, int nbpage) {
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
-        Font fontRefs = FontFactory.getFont(FontFactory.TIMES_ROMAN , 10, BaseColor.BLACK);
+        Font fontRefs = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, BaseColor.BLACK);
 
-        Image img ;
-        PdfPTable head ;
+        Image img;
+        PdfPTable head;
         try {
             img = Image.getInstance("logoEssat.png");
             img.scaleAbsoluteHeight(50);
@@ -138,13 +152,13 @@ public class DocumentFunction {
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase("Ref : " + ref,fontRefs));
+            cell = new PdfPCell(new Phrase("Ref : " + ref, fontRefs));
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase("Indice : " + indice,fontRefs));
+            cell = new PdfPCell(new Phrase("Indice : " + indice, fontRefs));
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase("Date : " + Date,fontRefs));
+            cell = new PdfPCell(new Phrase("Date : " + Date, fontRefs));
             head.addCell(cell);
-            cell = new PdfPCell(new Phrase("Page : " + (page + 1) + "/" + nbpage,fontRefs));
+            cell = new PdfPCell(new Phrase("Page : " + (page + 1) + "/" + nbpage, fontRefs));
             head.addCell(cell);
             head.addCell("  \n \n  ");
             document.add(new Paragraph(Chunk.NEWLINE));
@@ -173,8 +187,22 @@ public class DocumentFunction {
     }
 
 
-
-
-
+    public static Phrase niveaux(Niveau niveau) {
+        Parcours parcours = niveau.getParcours();
+        Specialite specialite = parcours.getSpecialite();
+        Cycle cycle = specialite.getCycle();
+        String niveauxC = niveau.getDesignation();
+        String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
+        Phrase niv = new Phrase(niveauxC,DocumentFunction.FONT_GRAS_OBLIQUE);
+        if (Integer.parseInt(niveauxC) == 1) {
+            niv.add(DocumentFunction.exposant("ère"));
+            niv.add(" Année ");
+        } else {
+            niv.add(DocumentFunction.exposant("ème"));
+            niv.add(" Années ");
+        }
+        niv.add(new Chunk(designationNiveaux,DocumentFunction.FONT_GRAS_OBLIQUE));
+        return niv;
+    }
 
 }

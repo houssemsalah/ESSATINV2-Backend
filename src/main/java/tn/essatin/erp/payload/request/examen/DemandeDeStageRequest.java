@@ -4,6 +4,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 public class DemandeDeStageRequest {
 
@@ -16,13 +17,19 @@ public class DemandeDeStageRequest {
     @Max(value = 3, message = "la variable numCase ne peut pas etre superieur a 3")
     int numCase;
     String designantionEntreprise ;
+    @NotNull
+    int idSignataire;
+    LocalDate date;
 
 
-    public DemandeDeStageRequest(int idenregistrement, String nomSociete, int numCase, String designantionEntreprise) {
+    public DemandeDeStageRequest(int idenregistrement, String nomSociete, int numCase,
+                                 String designantionEntreprise,int idSignataire, LocalDate date) {
         this.idenregistrement = idenregistrement;
         this.nomSociete = nomSociete;
         this.numCase = numCase;
         this.designantionEntreprise = designantionEntreprise;
+        this.idSignataire=idSignataire;
+        this.date=date;
     }
 
     public int getIdenregistrement() {
@@ -39,5 +46,13 @@ public class DemandeDeStageRequest {
 
     public String getDesignantionEntreprise() {
         return designantionEntreprise;
+    }
+
+    public int getIdSignataire() {
+        return idSignataire;
+    }
+
+    public LocalDate getDate() {
+        return date;
     }
 }

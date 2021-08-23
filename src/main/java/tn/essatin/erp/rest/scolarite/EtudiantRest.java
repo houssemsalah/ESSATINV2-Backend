@@ -7,14 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tn.essatin.erp.dao.PersonneDao;
-import tn.essatin.erp.dao.SalleDao;
-import tn.essatin.erp.dao.SessionDao;
-import tn.essatin.erp.dao.TypeIdentificateurDao;
+import tn.essatin.erp.dao.*;
 import tn.essatin.erp.dao.scolarite.*;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.model.Session;
+import tn.essatin.erp.model.Signataire;
 import tn.essatin.erp.payload.request.IdentificateurRequest;
 import tn.essatin.erp.payload.request.examen.DemandeDeStageRequest;
 import tn.essatin.erp.payload.request.scolarite.CertificatRequest;
@@ -45,13 +43,16 @@ public class EtudiantRest {
     final DiplomeEtudiantDao diplomeEtudiantDao;
     final ContactEtudiantDao contactEtudiantDao;
     final SalleDao salleDao;
+    final SignataireDao signataireDao;
 
     @Autowired
     public EtudiantRest(PersonneDao personneDao, EtudiantsDao etudiantsDao,
                         SessionDao sessionDao, TypeIdentificateurDao typeIdentificateurDAO,
                         ContactEtudiantDao contactEtudiantDao, InscriptionDao inscriptionDao,
                         EnregistrementDao enregistrementDao, NiveauDao niveauDao, ParcoursDao parcoursDao,
-                        SpecialiteDao specialiteDao, CycleDao cycleDao, DiplomeEtudiantDao diplomeEtudiantDao, SalleDao salleDao) {
+                        SpecialiteDao specialiteDao, CycleDao cycleDao,
+                        DiplomeEtudiantDao diplomeEtudiantDao, SalleDao salleDao,
+                        SignataireDao signataireDao) {
         this.personneDao = personneDao;
         this.etudiantsDao = etudiantsDao;
         this.sessionDao = sessionDao;
@@ -65,6 +66,8 @@ public class EtudiantRest {
         this.cycleDao = cycleDao;
         this.diplomeEtudiantDao = diplomeEtudiantDao;
         this.salleDao = salleDao;
+        this.signataireDao = signataireDao;
+
     }
 
     @GetMapping("/getall")
@@ -170,9 +173,14 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("Enregistrement introuvable", 403), HttpStatus.FORBIDDEN);
         }
-        ByteArrayOutputStream os = FeuilleDeDemandeDeStage.createDoc(
+        Optional<Signataire> signataire = signataireDao.findById(demandeDeStageRequest.getIdSignataire());
+        if(signataire.isEmpty()){
+            return new ResponseEntity<>(
+                    new MessageResponse("Signataire introuvable", 403), HttpStatus.FORBIDDEN);
+        }
+                ByteArrayOutputStream os = FeuilleDeDemandeDeStage.createDoc(
                 etudiant.get(), demandeDeStageRequest.getNomSociete(), demandeDeStageRequest.getNumCase(),
-                demandeDeStageRequest.getDesignantionEntreprise());
+                demandeDeStageRequest.getDesignantionEntreprise(), signataire.get(), demandeDeStageRequest.getDate());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
