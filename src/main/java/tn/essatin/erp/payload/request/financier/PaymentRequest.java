@@ -2,89 +2,34 @@ package tn.essatin.erp.payload.request.financier;
 
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 public class PaymentRequest {
     @NotNull
-    private int personne;
-    @NotNull
-    private float montant;
-    @NotNull
-    private int session;
-    @NotBlank
-    private String datePayement;
-    @NotNull
-    private String typeTransaction;
+    private int idEnregistrement;
     @NotNull
     private Set<ModaliteTransaction> modaliteTransactionSet;
     @NotNull
-    private int idFinancier;
-    @NotNull
-    private String statusTransaction;
+    private int idCompteFinancier;
 
-    public String getTypeTransaction() {
-        return typeTransaction;
+    public PaymentRequest(int idEnregistrement, Set<ModaliteTransaction> modaliteTransactionSet, int idCompteFinancier) {
+        this.idEnregistrement = idEnregistrement;
+        this.modaliteTransactionSet = modaliteTransactionSet;
+        this.idCompteFinancier = idCompteFinancier;
     }
 
-    public void setTypeTransaction(String typeTransaction) {
-        this.typeTransaction = typeTransaction;
-    }
-
-    public String getDatePayement() {
-        return datePayement;
-    }
-
-    public void setDatePayement(String datePayement) {
-        this.datePayement = datePayement;
-    }
-
-    public int getIdFinancier() {
-        return idFinancier;
-    }
-
-    public void setIdFinancier(int idFinancier) {
-        this.idFinancier = idFinancier;
-    }
-
-    public int getPersonne() {
-        return personne;
-    }
-
-    public void setPersonne(int personne) {
-        this.personne = personne;
-    }
-
-    public int getSession() {
-        return session;
-    }
-
-    public void setSession(int session) {
-        this.session = session;
-    }
-
-    public String getStatusTransaction() {
-        return statusTransaction;
-    }
-
-    public void setStatusTransaction(String statusTransaction) {
-        this.statusTransaction = statusTransaction;
-    }
-
-    public Float getMontant() {
-        return montant;
-    }
-
-    public void setMontant(Float montant) {
-        this.montant = montant;
+    public int getIdEnregistrement() {
+        return idEnregistrement;
     }
 
     public Set<ModaliteTransaction> getModaliteTransactionSet() {
         return modaliteTransactionSet;
     }
 
-    public void setModaliteTransactionSet(Set<ModaliteTransaction> modaliteTransactionSet) {
-        this.modaliteTransactionSet = modaliteTransactionSet;
+    public int getIdCompteFinancier() {
+        return idCompteFinancier;
     }
+
+
 }

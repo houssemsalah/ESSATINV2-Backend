@@ -1,10 +1,7 @@
 package tn.essatin.erp.rest.scolarite;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.PersonneDao;
@@ -24,7 +21,6 @@ import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -211,6 +207,7 @@ public class EnregistrementRest {
                     new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
         }
     }
+
     @PostMapping("/getenregistrementbynumeroidentifiant")
     public ResponseEntity<?> getEnregistrementByNumeroIdentifiant(@Valid @RequestBody IdentificateurRequest identificateurRequest) {
         List<Etudiants> cinE = new ArrayList<>();
@@ -242,7 +239,7 @@ public class EnregistrementRest {
         Enregistrement enregistrement = oe.get();
 
 
-        ByteArrayOutputStream os = CertificateDeReussite.createDoc(enregistrement);
+        ByteArrayOutputStream os = AttestationDeReussite.createDoc(enregistrement,"Principale",1,new Date());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
