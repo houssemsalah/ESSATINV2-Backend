@@ -6,7 +6,8 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import tn.essatin.erp.model.Scolarite.*;
-import tn.essatin.erp.model.financier.Transaction;
+import tn.essatin.erp.model.financier.ModaliteTransaction;
+import tn.essatin.erp.payload.response.TransactionAvecModalite;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
@@ -19,16 +20,18 @@ public class RecuEtudiant {
     public static Chunk Gras(String text) {
         Font fontGras = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 15, BaseColor.BLACK);
         Font supFont = new Font(fontGras);
-        Chunk c = new Chunk(text, supFont);
-        return c;
+        return new Chunk(text, supFont);
     }
     public static Chunk titre(String text) {
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 25, BaseColor.BLACK);
         Font supFont = new Font(fontTitle);
-        Chunk c = new Chunk(text, supFont);
-        return c;
+        return new Chunk(text, supFont);
     }
-    public static ByteArrayOutputStream createDoc(Transaction transaction, Niveau niveau) {
+    public static ByteArrayOutputStream createDoc(TransactionAvecModalite transaction, Niveau niveau) {
+
+        double montant=0.0;
+        for(ModaliteTransaction modaliteTransaction:transaction.getModaliteTransactionList())
+            montant+=modaliteTransaction.getMontant();
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Document document = new Document();
         Image img ;
@@ -37,8 +40,6 @@ public class RecuEtudiant {
         String sexe = transaction.getClient().getSexe();
         boolean isHomme = sexe.equalsIgnoreCase("homme");
         LocalDate date= transaction.getDatePayement();
-        double Montant = transaction.getMontant();
-        String type = transaction.toString();
 
         Parcours parcours = niveau.getParcours();
         Specialite specialite = parcours.getSpecialite();
@@ -46,7 +47,7 @@ public class RecuEtudiant {
         String niveauxC = niveau.getDesignation();
         String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
 
-        String sex = null;
+        String sex ;
         try {
             PdfWriter.getInstance(document, response);
             document.setPageSize(PageSize.A5);
@@ -120,9 +121,9 @@ public class RecuEtudiant {
             cell1= new PdfPCell(new Phrase(("Classe : "+ niv + "  Date : "+ date)));
             cell1.setBorder(Rectangle.NO_BORDER);
             contenu.addCell(cell1);
-            transaction.getType();
+            //transaction.getType();
            // if(liste.size ==1){
-            cell1= new PdfPCell( new Phrase( "La somme de : "+ Montant));
+            cell1= new PdfPCell( new Phrase( "La somme de : "+ montant));
             cell1.setBorder(Rectangle.NO_BORDER);
             contenu.addCell(cell1);
             //cell1= new PdfPCell(new Phrase(" "+type));
