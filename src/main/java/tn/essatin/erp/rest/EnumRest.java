@@ -29,12 +29,12 @@ public class EnumRest {
                 Class<? extends Enum> c = (Class<? extends Enum>) Class.forName(pakage + "." + EType);
                 List<EnumRepresentation> enumRepresentations = new ArrayList<>();
                 for (int i = 0; i < c.getEnumConstants().length; i++) {
-                    enumRepresentations.add(new EnumRepresentation(i, c.getEnumConstants()[i].name(),
+                    enumRepresentations.add(new EnumRepresentation(i+1, c.getEnumConstants()[i].name(),
                             c.getEnumConstants()[i].toString()));
                 }
                 return new ResponseEntity<>(enumRepresentations, HttpStatus.OK);
             } catch (Exception e) {
-                e.printStackTrace();
+                continue;
             }
         }
         return new ResponseEntity<>(
