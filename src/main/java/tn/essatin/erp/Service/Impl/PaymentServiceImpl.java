@@ -2,7 +2,6 @@ package tn.essatin.erp.Service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tn.essatin.erp.model.financier.EStatus;
 import tn.essatin.erp.model.financier.ETypeTransaction;
 import tn.essatin.erp.model.financier.Employer;
 import tn.essatin.erp.strategy.payement.PayementStrategy;

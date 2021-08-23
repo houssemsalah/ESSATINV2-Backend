@@ -10,7 +10,6 @@ import tn.essatin.erp.dao.scolarite.InscriptionDao;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Scolarite.Enregistrement;
 import tn.essatin.erp.model.Scolarite.Etudiants;
-import tn.essatin.erp.model.Scolarite.Inscription;
 import tn.essatin.erp.model.Session;
 import tn.essatin.erp.model.financier.EStatus;
 import tn.essatin.erp.model.financier.ModaliteTransaction;
@@ -36,35 +35,6 @@ public class StudentDebt {
         this.inscriptionDao = inscriptionDao;
         this.enregistrementDao = enregistrementDao;
         this.modaliteTransactionDao = modaliteTransactionDao;
-    }
-
-    @Deprecated
-    public double debt(Etudiants etudiants, Session session) {
-        try {
-            Collection<Transaction> transactions = transactionDao.findAllByClientAndSession(etudiants.getIdPersonne(), session);
-            Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants);
-            Enregistrement enregistrement = enregistrementDao.findByIdInscriptionAndIdSession(inscription, session);
-            Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(session, enregistrement.getIdNiveau());
-            List<ModaliteTransaction> modaliteTransactionList;
-            double sum = 0;
-            if (!transactions.isEmpty()) {
-                for (Transaction transaction : transactions) {
-                    modaliteTransactionList = modaliteTransactionDao.findModaliteTransactionByTransaction(transaction);
-                    if (!modaliteTransactionList.isEmpty()) {
-                        for (ModaliteTransaction modaliteTransaction : modaliteTransactionList) {
-                            if (!modaliteTransaction.getStatus().equals(EStatus.CANCELED) && !modaliteTransaction.getStatus().equals(EStatus.REJECTED))
-                                sum += modaliteTransaction.getMontant();
-                        }
-                    }
-                }
-            }
-            if (prixNiveauParSession.isEmpty()) {
-                return 0.0;
-            }
-            return prixNiveauParSession.get().getMontantNiveau() - sum;
-        } catch (Exception E) {
-            return 0.0;
-        }
     }
 
     public double debt(Enregistrement enregistrement) {
@@ -97,7 +67,7 @@ public class StudentDebt {
     }
 
     public double PayerEnPourcent(Enregistrement enregistrement) {
-        double rest = debt(enregistrement.getIdInscription().getIdEtudiant(), enregistrement.getIdSession());
+        double rest = debt(enregistrement);
         Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(enregistrement.getIdSession(), enregistrement.getIdNiveau());
         if (prixNiveauParSession.isEmpty())
             return 100.0;
