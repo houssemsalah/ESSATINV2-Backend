@@ -1,6 +1,6 @@
 package tn.essatin.erp.rest.financier;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,6 @@ import tn.essatin.erp.model.*;
 import tn.essatin.erp.model.Scolarite.Enregistrement;
 import tn.essatin.erp.model.financier.*;
 import tn.essatin.erp.payload.request.financier.PaymentRequest;
-import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.ApiInfo;
 import tn.essatin.erp.util.StudentDebt;
@@ -43,13 +42,13 @@ public class PayementRest {
     final EnregistrementDao enregistrementDao;
     final EtatInscriptionDao etatInscriptionDao;
     final InscriptionDao inscriptionDao;
+    final MessageSource messageSource;
 
-
-    @Autowired
-    public PayementRest(PayementService payementService, PersonneDao personneDao, StudentDebt studentDebt, ModaliteTransactionDao modaliteTransactionDao,
+    public PayementRest(MessageSource messageSource, PayementService payementService, PersonneDao personneDao, StudentDebt studentDebt, ModaliteTransactionDao modaliteTransactionDao,
                         SessionDao sessionDao, EmployerDao employerDao, CompteDao compteDao, EtudiantsDao etudiantsDao,
-                        EnregistrementDao enregistrementDao,EtatInscriptionDao etatInscriptionDao,
+                        EnregistrementDao enregistrementDao, EtatInscriptionDao etatInscriptionDao,
                         InscriptionDao inscriptionDao) {
+        this.messageSource = messageSource;
         this.payementService = payementService;
         this.personneDao = personneDao;
         this.sessionDao = sessionDao;
@@ -65,31 +64,34 @@ public class PayementRest {
 
     @GetMapping("/")
     public ResponseEntity<?> infoApi() {
-        /////
         List<ApiInfo> infos = new ArrayList<>();
-        List<MessageResponse> responses = new ArrayList<>();
-        responses.add(new MessageResponse("Transaction effectuer avec succée",200));
-        responses.add(new MessageResponse("Enregistrement introvable", 403));
-        responses.add(new MessageResponse("TypeTransaction est introvable"));
-        responses.add(new MessageResponse("Compte Financier introvable", 403));
-        responses.add(new MessageResponse("employer introvable", 403));
-        responses.add(new MessageResponse("financier introvable", 403));
-        responses.add(new MessageResponse("une transaction doit avoir au moin une modalité de transaction", 403));
-        responses.add(new MessageResponse("ce numero de cheque existe deja", 403));
-        responses.add(new MessageResponse("ce code virement existe deja", 403));
-        responses.add(new MessageResponse("un numero de cheque est dupliqué", 403));
-        responses.add(new MessageResponse("un code de virement est dupliqué", 403));
-        responses.add(new MessageResponse("le monant est superieur a ce qui reste a payer", 403));
+        List<MessageResponse> responses;
+        ApiInfo info;
+        /////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("message.transaction.success", null, Locale.FRENCH), 200));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.enregistrement", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.compteFinancier", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.financier", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.modalite.vide", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.existe.cheque", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.existe.virement", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.duplicated.cheque", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.duplicated.virement", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.montant.supdept", null, Locale.FRENCH), 403));
         Set<ModaliteTransaction> modaliteTransactionSet = new HashSet<>();
-            modaliteTransactionSet.add(new ModaliteTransaction("", 300.0, ETypeModaliteTransaction.ESPECES,LocalDate.now(),EStatus.COMPLETE, null));
-        modaliteTransactionSet.add(new ModaliteTransaction("123456789", 300, ETypeModaliteTransaction.CHEQUE, LocalDate.now(),EStatus.INCOMPLETE,null));
+        modaliteTransactionSet.add(new ModaliteTransaction(null, 300.0, ETypeModaliteTransaction.ESPECES, null, null, null));
+        modaliteTransactionSet.add(new ModaliteTransaction("123456789", 600, ETypeModaliteTransaction.CHEQUE, LocalDate.now().plusDays(30), EStatus.INCOMPLETE, null));
+        modaliteTransactionSet.add(new ModaliteTransaction("987654321", 1000, ETypeModaliteTransaction.VIREMENT_BANCAIRE, LocalDate.now().minusDays(3), null, null));
 
         ApiInfo payementEtudiant = new ApiInfo("/api/pay/etudiant", "Post",
-                "effectue une operation de payment pour un étudiant avec plusieur modalité différantes (espèces, cheque...)",
-                new PaymentRequest(589, modaliteTransactionSet, 1 ), "JSON text Message", responses);
+                messageSource.getMessage("desc.api.pay.etudiant", null, Locale.FRENCH),
+                new PaymentRequest(589, modaliteTransactionSet, 1), "JSON text Message", responses);
         infos.add(payementEtudiant);
-        return new ResponseEntity<>(infos, HttpStatus.OK);
         /////////////////////
+        return new ResponseEntity<>(infos, HttpStatus.OK);
+
 
     }
 
@@ -97,19 +99,19 @@ public class PayementRest {
     public ResponseEntity<?> payEtudiant(@Valid @RequestBody PaymentRequest paymentRequest) {
         Optional<Enregistrement> enregistrement = enregistrementDao.findById(paymentRequest.getIdEnregistrement());
         if (enregistrement.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("Enregistrement introvable", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.enregistrement", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
         Personne personne = enregistrement.get().getIdInscription().getIdEtudiant().getIdPersonne();
         Session session = enregistrement.get().getIdSession();
 
         Optional<Compte> compteEmployer = compteDao.findById(paymentRequest.getIdCompteFinancier());
         if (compteEmployer.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("Compte Financier introvable", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.compteFinancier", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
         Personne personneEmployer = compteEmployer.get().getIdPersonne();
         Optional<Employer> employer = employerDao.findByPersonne(personneEmployer);
         if (employer.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("employer introvable", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
         Set<Role> role = compteEmployer.get().getRoles();
         boolean financier = false;
@@ -120,7 +122,7 @@ public class PayementRest {
             }
         }
         if (!financier)
-            return new ResponseEntity<>(new MessageResponse("financier introvable", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.financier", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         double debt = studentDebt.debt(enregistrement.get());
         double montant = 0;
         if (!paymentRequest.getModaliteTransactionSet().isEmpty()) {
@@ -128,18 +130,18 @@ public class PayementRest {
                 montant += modalite.getMontant();
             }
         } else {
-            return new ResponseEntity<>(new MessageResponse("une transaction doit avoir au moin une modalité de transaction", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.modalite.vide", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
         Optional<ModaliteTransaction> modaliteTransaction;
         if (!paymentRequest.getModaliteTransactionSet().isEmpty()) {
             for (ModaliteTransaction modalite : paymentRequest.getModaliteTransactionSet()) {
                 modaliteTransaction = modaliteTransactionDao.findModaliteTransactionByNumeroAndType(modalite.getNumero(), ETypeModaliteTransaction.CHEQUE);
                 if (modaliteTransaction.isPresent()) {
-                    return new ResponseEntity<>(new MessageResponse("ce numero de cheque existe deja", 403), HttpStatus.FORBIDDEN);
+                    return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.existe.cheque", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
                 }
                 modaliteTransaction = modaliteTransactionDao.findModaliteTransactionByNumeroAndType(modalite.getNumero(), ETypeModaliteTransaction.VIREMENT_BANCAIRE);
                 if (modaliteTransaction.isPresent()) {
-                    return new ResponseEntity<>(new MessageResponse("ce code virement existe deja", 403), HttpStatus.FORBIDDEN);
+                    return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.existe.virement", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
                 }
             }
             Object[] modalite = paymentRequest.getModaliteTransactionSet().toArray();
@@ -151,7 +153,7 @@ public class PayementRest {
                         ModaliteTransaction mo1 = (ModaliteTransaction) modalite[j];
                         if (mo1.getType().equals(ETypeModaliteTransaction.CHEQUE)) {
                             if (mo1.getNumero().equalsIgnoreCase(numero)) {
-                                return new ResponseEntity<>(new MessageResponse("un numero de cheque est dupliqué", 403), HttpStatus.FORBIDDEN);
+                                return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.duplicated.cheque", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
                             }
                         }
                     }
@@ -165,16 +167,20 @@ public class PayementRest {
                         ModaliteTransaction mo1 = (ModaliteTransaction) modalite[j];
                         if (mo1.getType().equals(ETypeModaliteTransaction.VIREMENT_BANCAIRE)) {
                             if (mo1.getNumero().equalsIgnoreCase(numero)) {
-                                return new ResponseEntity<>(new MessageResponse("un code de virement est dupliqué", 403), HttpStatus.FORBIDDEN);
+                                return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.duplicated.virement", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
                             }
                         }
                     }
                 }
             }
         }
-        for (ModaliteTransaction m:paymentRequest.getModaliteTransactionSet()){
-            if(m.getType().equals(ETypeModaliteTransaction.ESPECES)){
+        for (ModaliteTransaction m : paymentRequest.getModaliteTransactionSet()) {
+            if (m.getType().equals(ETypeModaliteTransaction.ESPECES)) {
                 m.setDate(LocalDate.now());
+                m.setStatus(EStatus.COMPLETE);
+            }
+            if (m.getType().equals(ETypeModaliteTransaction.VIREMENT_BANCAIRE)) {
+                m.setStatus(EStatus.COMPLETE);
             }
         }
         if (montant <= debt) {
@@ -186,9 +192,9 @@ public class PayementRest {
             enregistrement.get().getIdInscription().setIdEtatInscription(etatInscriptionDao.findByNom("Valide"));
             enregistrementDao.save(enregistrement.get());
             inscriptionDao.save(enregistrement.get().getIdInscription());
-            return ResponseEntity.ok(new MessageResponse("Transaction effectuer avec succée"));
+            return ResponseEntity.ok(new MessageResponse(messageSource.getMessage("message.transaction.success", null, Locale.FRENCH), 200));
         } else {
-            return new ResponseEntity<>(new MessageResponse("le monant est superieur a ce qui reste a payer", 403), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.montant.supdept", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
     }
 }

@@ -2,7 +2,6 @@ package tn.essatin.erp.model.financier;
 
 public enum ETypeModaliteTransaction {
     ESPECES("espèces"),
-    CARTE_BANCAIRE("carte bancaire"),
     VIREMENT_BANCAIRE("virement bancaire"),
     CHEQUE("chèque");
 

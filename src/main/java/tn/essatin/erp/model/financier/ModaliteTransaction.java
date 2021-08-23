@@ -1,6 +1,7 @@
 package tn.essatin.erp.model.financier;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -8,16 +9,21 @@ import java.util.Objects;
 
 @Entity
 public class ModaliteTransaction {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String numero;
     private double montant;
     @Enumerated(EnumType.STRING)
     private ETypeModaliteTransaction type;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate date;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Enumerated(EnumType.STRING)
     private EStatus status;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @ManyToOne
     private Transaction transaction;
 

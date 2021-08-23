@@ -12,6 +12,7 @@ import tn.essatin.erp.model.Scolarite.Enregistrement;
 import tn.essatin.erp.model.Scolarite.Etudiants;
 import tn.essatin.erp.model.Scolarite.Inscription;
 import tn.essatin.erp.model.Session;
+import tn.essatin.erp.model.financier.EStatus;
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.financier.PrixNiveauParSession;
 import tn.essatin.erp.model.financier.Transaction;
@@ -29,13 +30,14 @@ public class StudentDebt {
     final ModaliteTransactionDao modaliteTransactionDao;
 
     @Autowired
-    public StudentDebt(PrixNiveauParSessionDao prixNiveauParSessionDao, TransactionDao transactionDao, InscriptionDao inscriptionDao, EnregistrementDao enregistrementDao,ModaliteTransactionDao modaliteTransactionDao) {
+    public StudentDebt(PrixNiveauParSessionDao prixNiveauParSessionDao, TransactionDao transactionDao, InscriptionDao inscriptionDao, EnregistrementDao enregistrementDao, ModaliteTransactionDao modaliteTransactionDao) {
         this.prixNiveauParSessionDao = prixNiveauParSessionDao;
         this.transactionDao = transactionDao;
         this.inscriptionDao = inscriptionDao;
         this.enregistrementDao = enregistrementDao;
         this.modaliteTransactionDao = modaliteTransactionDao;
     }
+
     @Deprecated
     public double debt(Etudiants etudiants, Session session) {
         try {
@@ -50,19 +52,21 @@ public class StudentDebt {
                     modaliteTransactionList = modaliteTransactionDao.findModaliteTransactionByTransaction(transaction);
                     if (!modaliteTransactionList.isEmpty()) {
                         for (ModaliteTransaction modaliteTransaction : modaliteTransactionList) {
-                            sum += modaliteTransaction.getMontant();
+                            if (!modaliteTransaction.getStatus().equals(EStatus.CANCELED) && !modaliteTransaction.getStatus().equals(EStatus.REJECTED))
+                                sum += modaliteTransaction.getMontant();
                         }
                     }
                 }
             }
-            if (prixNiveauParSession.isEmpty()){
+            if (prixNiveauParSession.isEmpty()) {
                 return 0.0;
             }
             return prixNiveauParSession.get().getMontantNiveau() - sum;
-        }catch (Exception E){
+        } catch (Exception E) {
             return 0.0;
         }
     }
+
     public double debt(Enregistrement enregistrement) {
         try {
             Etudiants etudiants = enregistrement.getIdInscription().getIdEtudiant();
@@ -77,26 +81,27 @@ public class StudentDebt {
                     modaliteTransactionList = modaliteTransactionDao.findModaliteTransactionByTransaction(transaction);
                     if (!modaliteTransactionList.isEmpty()) {
                         for (ModaliteTransaction modaliteTransaction : modaliteTransactionList) {
-                            sum += modaliteTransaction.getMontant();
+                            if (!modaliteTransaction.getStatus().equals(EStatus.CANCELED) && !modaliteTransaction.getStatus().equals(EStatus.REJECTED))
+                                sum += modaliteTransaction.getMontant();
                         }
                     }
                 }
             }
-            if (prixNiveauParSession.isEmpty()){
+            if (prixNiveauParSession.isEmpty()) {
                 return 0.0;
             }
             return prixNiveauParSession.get().getMontantNiveau() - sum;
-        }catch (Exception E){
+        } catch (Exception E) {
             return 0.0;
         }
     }
 
     public double PayerEnPourcent(Enregistrement enregistrement) {
-        double rest = debt(enregistrement.getIdInscription().getIdEtudiant(),enregistrement.getIdSession());
+        double rest = debt(enregistrement.getIdInscription().getIdEtudiant(), enregistrement.getIdSession());
         Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(enregistrement.getIdSession(), enregistrement.getIdNiveau());
         if (prixNiveauParSession.isEmpty())
             return 100.0;
         double payer = prixNiveauParSession.get().getMontantNiveau() - rest;
-        return (payer/prixNiveauParSession.get().getMontantNiveau()) * 100.0 ;
+        return (payer / prixNiveauParSession.get().getMontantNiveau()) * 100.0;
     }
 }
