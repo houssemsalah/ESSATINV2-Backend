@@ -1,46 +1,43 @@
-package tn.essatin.erp.model.financier;
+package tn.essatin.erp.payload.response;
 
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Session;
+import tn.essatin.erp.model.financier.ETypeTransaction;
+import tn.essatin.erp.model.financier.Employer;
+import tn.essatin.erp.model.financier.ModaliteTransaction;
+import tn.essatin.erp.model.financier.Transaction;
 
-import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.List;
 
-@Entity
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TransactionAvecModalite {
     private Integer id;
-    @Enumerated(EnumType.STRING)
     private ETypeTransaction type;
     private LocalDate datePayement;
-    @ManyToOne
     private Employer financier;
-    @ManyToOne
     private Personne client;
-    @ManyToOne
     private Session session;
+    private List<ModaliteTransaction> modaliteTransactionList;
 
-    public Transaction(Integer id, ETypeTransaction type, LocalDate datePayement, Employer financier, Personne client, Session session) {
+    public TransactionAvecModalite(Integer id, ETypeTransaction type, LocalDate datePayement, Employer financier, Personne client, Session session, List<ModaliteTransaction> modaliteTransactionList) {
         this.id = id;
         this.type = type;
         this.datePayement = datePayement;
         this.financier = financier;
         this.client = client;
         this.session = session;
+        this.modaliteTransactionList = modaliteTransactionList;
     }
-
-    public Transaction(ETypeTransaction type, LocalDate datePayement, Employer financier, Personne client, Session session) {
-        this.type = type;
-        this.datePayement = datePayement;
-        this.financier = financier;
-        this.client = client;
-        this.session = session;
-    }
-
-    public Transaction() {
+    public TransactionAvecModalite(Transaction transaction, List<ModaliteTransaction> modaliteTransactionList) {
+        this.id = transaction.getId();
+        this.type = transaction.getType();
+        this.datePayement = transaction.getDatePayement();
+        this.financier = transaction.getFinancier();
+        this.client = transaction.getClient();
+        this.session = transaction.getSession();
+        for(ModaliteTransaction m:modaliteTransactionList)
+            m.setTransaction(null);
+        this.modaliteTransactionList = modaliteTransactionList;
     }
 
     public Integer getId() {
@@ -91,28 +88,24 @@ public class Transaction {
         this.session = session;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Transaction)) return false;
-        Transaction that = (Transaction) o;
-        return getId().equals(that.getId()) && getType() == that.getType() && getDatePayement().equals(that.getDatePayement()) && getFinancier().equals(that.getFinancier()) && getClient().equals(that.getClient()) && getSession().equals(that.getSession());
+    public List<ModaliteTransaction> getModaliteTransactionList() {
+        return modaliteTransactionList;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getType(), getDatePayement(), getFinancier(), getClient(), getSession());
+    public void setModaliteTransactionList(List<ModaliteTransaction> modaliteTransactionList) {
+        this.modaliteTransactionList = modaliteTransactionList;
     }
 
     @Override
     public String toString() {
-        return "Transaction{" +
+        return "TransactionAvecModalite{" +
                 "id=" + id +
                 ", type=" + type +
                 ", datePayement=" + datePayement +
                 ", financier=" + financier +
                 ", client=" + client +
                 ", session=" + session +
+                ", modaliteTransactionList=" + modaliteTransactionList +
                 '}';
     }
 }

@@ -11,10 +11,11 @@ import tn.essatin.erp.dao.SessionDao;
 import tn.essatin.erp.dao.financier.EmployerDao;
 import tn.essatin.erp.dao.financier.ModaliteTransactionDao;
 import tn.essatin.erp.dao.scolarite.EnregistrementDao;
+import tn.essatin.erp.dao.scolarite.EtatInscriptionDao;
 import tn.essatin.erp.dao.scolarite.EtudiantsDao;
+import tn.essatin.erp.dao.scolarite.InscriptionDao;
 import tn.essatin.erp.model.*;
 import tn.essatin.erp.model.Scolarite.Enregistrement;
-import tn.essatin.erp.model.Scolarite.Etudiants;
 import tn.essatin.erp.model.financier.*;
 import tn.essatin.erp.payload.request.financier.PaymentRequest;
 import tn.essatin.erp.payload.response.CombinedResponse;
@@ -40,12 +41,15 @@ public class PayementRest {
     final EtudiantsDao etudiantsDao;
     final ModaliteTransactionDao modaliteTransactionDao;
     final EnregistrementDao enregistrementDao;
+    final EtatInscriptionDao etatInscriptionDao;
+    final InscriptionDao inscriptionDao;
 
 
     @Autowired
     public PayementRest(PayementService payementService, PersonneDao personneDao, StudentDebt studentDebt, ModaliteTransactionDao modaliteTransactionDao,
                         SessionDao sessionDao, EmployerDao employerDao, CompteDao compteDao, EtudiantsDao etudiantsDao,
-                        EnregistrementDao enregistrementDao) {
+                        EnregistrementDao enregistrementDao,EtatInscriptionDao etatInscriptionDao,
+                        InscriptionDao inscriptionDao) {
         this.payementService = payementService;
         this.personneDao = personneDao;
         this.sessionDao = sessionDao;
@@ -55,6 +59,8 @@ public class PayementRest {
         this.etudiantsDao = etudiantsDao;
         this.modaliteTransactionDao = modaliteTransactionDao;
         this.enregistrementDao = enregistrementDao;
+        this.etatInscriptionDao = etatInscriptionDao;
+        this.inscriptionDao = inscriptionDao;
     }
 
     @GetMapping("/")
@@ -63,14 +69,11 @@ public class PayementRest {
         List<ApiInfo> infos = new ArrayList<>();
         List<MessageResponse> responses = new ArrayList<>();
         responses.add(new MessageResponse("Transaction effectuer avec succée",200));
-        responses.add(new MessageResponse("Personne est introvable", 403));
-        responses.add(new MessageResponse("Session est introvable", 403));
-        responses.add(new MessageResponse("TypeTransaction est introvable", 403));
+        responses.add(new MessageResponse("Enregistrement introvable", 403));
+        responses.add(new MessageResponse("TypeTransaction est introvable"));
+        responses.add(new MessageResponse("Compte Financier introvable", 403));
         responses.add(new MessageResponse("employer introvable", 403));
-        responses.add(new MessageResponse("compte Etudiant introvable", 403));
-        responses.add(new MessageResponse("compte Financier introvable", 403));
         responses.add(new MessageResponse("financier introvable", 403));
-        responses.add(new MessageResponse("Etuduant introvable", 403));
         responses.add(new MessageResponse("une transaction doit avoir au moin une modalité de transaction", 403));
         responses.add(new MessageResponse("ce numero de cheque existe deja", 403));
         responses.add(new MessageResponse("ce code virement existe deja", 403));
@@ -78,12 +81,12 @@ public class PayementRest {
         responses.add(new MessageResponse("un code de virement est dupliqué", 403));
         responses.add(new MessageResponse("le monant est superieur a ce qui reste a payer", 403));
         Set<ModaliteTransaction> modaliteTransactionSet = new HashSet<>();
-        modaliteTransactionSet.add(new ModaliteTransaction("", 300, ETypeModaliteTransaction.ESPECES, LocalDate.now()));
-        modaliteTransactionSet.add(new ModaliteTransaction("123456789", 300, ETypeModaliteTransaction.CHEQUE, LocalDate.now()));
+            modaliteTransactionSet.add(new ModaliteTransaction("", 300.0, ETypeModaliteTransaction.ESPECES,LocalDate.now(),EStatus.COMPLETE, null));
+        modaliteTransactionSet.add(new ModaliteTransaction("123456789", 300, ETypeModaliteTransaction.CHEQUE, LocalDate.now(),EStatus.INCOMPLETE,null));
 
         ApiInfo payementEtudiant = new ApiInfo("/api/pay/etudiant", "Post",
                 "effectue une operation de payment pour un étudiant avec plusieur modalité différantes (espèces, cheque...)",
-                new PaymentRequest(5, 5, modaliteTransactionSet, 2, "COMPLETE"), "JSON text Message", responses);
+                new PaymentRequest(589, modaliteTransactionSet, 1 ), "JSON text Message", responses);
         infos.add(payementEtudiant);
         return new ResponseEntity<>(infos, HttpStatus.OK);
         /////////////////////
@@ -92,26 +95,15 @@ public class PayementRest {
 
     @PostMapping("/etudiant")
     public ResponseEntity<?> payEtudiant(@Valid @RequestBody PaymentRequest paymentRequest) {
-        Optional<Personne> personne = personneDao.findById(paymentRequest.getPersonne());
-        if (personne.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("Personne est introvable", 403), HttpStatus.FORBIDDEN);
+        Optional<Enregistrement> enregistrement = enregistrementDao.findById(paymentRequest.getIdEnregistrement());
+        if (enregistrement.isEmpty()) {
+            return new ResponseEntity<>(new MessageResponse("Enregistrement introvable", 403), HttpStatus.FORBIDDEN);
         }
-        Optional<Session> session = sessionDao.findById(paymentRequest.getSession());
-        if (session.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("Session est introvable", 403), HttpStatus.FORBIDDEN);
-        }
+        Personne personne = enregistrement.get().getIdInscription().getIdEtudiant().getIdPersonne();
+        Session session = enregistrement.get().getIdSession();
 
-        EStatus status;
-        try {
-            status = EStatus.valueOf(paymentRequest.getStatusTransaction());
-        } catch (IllegalArgumentException illegalArgumentException) {
-            return new ResponseEntity<>(
-                    new CombinedResponse(new MessageResponse("TypeTransaction est introvable"),
-                            "EStatus[]", EStatus.values())
-                    , HttpStatus.FORBIDDEN);
-        }
-        Optional<Compte> compteEmployer = compteDao.findById(paymentRequest.getIdFinancier());
-        if(compteEmployer.isEmpty()){
+        Optional<Compte> compteEmployer = compteDao.findById(paymentRequest.getIdCompteFinancier());
+        if (compteEmployer.isEmpty()) {
             return new ResponseEntity<>(new MessageResponse("Compte Financier introvable", 403), HttpStatus.FORBIDDEN);
         }
         Personne personneEmployer = compteEmployer.get().getIdPersonne();
@@ -119,11 +111,7 @@ public class PayementRest {
         if (employer.isEmpty()) {
             return new ResponseEntity<>(new MessageResponse("employer introvable", 403), HttpStatus.FORBIDDEN);
         }
-        Optional<Compte> compte = compteDao.findByIdPersonne(employer.get().getPersonne());
-        if (compte.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("compte Etudiant introvable", 403), HttpStatus.FORBIDDEN);
-        }
-        Set<Role> role = compte.get().getRoles();
+        Set<Role> role = compteEmployer.get().getRoles();
         boolean financier = false;
         for (Role r : role) {
             if (r.getRole().equals(ERole.ROLE_FINANCIER)) {
@@ -133,15 +121,7 @@ public class PayementRest {
         }
         if (!financier)
             return new ResponseEntity<>(new MessageResponse("financier introvable", 403), HttpStatus.FORBIDDEN);
-        Optional<Etudiants> etudiant = etudiantsDao.findByIdPersonne(personne.get());
-        if (etudiant.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("Etuduant introvable", 403), HttpStatus.FORBIDDEN);
-        }
-        double debt = studentDebt.debt(etudiant.get(), session.get());
-        //double debt = studentDebt.debt();
-        //Optional<Enregistrement> enregistrement = enregistrementDao.findByIdInscriptionAndIdSession(,session.get())
-
-
+        double debt = studentDebt.debt(enregistrement.get());
         double montant = 0;
         if (!paymentRequest.getModaliteTransactionSet().isEmpty()) {
             for (ModaliteTransaction modalite : paymentRequest.getModaliteTransactionSet()) {
@@ -192,18 +172,23 @@ public class PayementRest {
                 }
             }
         }
-
+        for (ModaliteTransaction m:paymentRequest.getModaliteTransactionSet()){
+            if(m.getType().equals(ETypeModaliteTransaction.ESPECES)){
+                m.setDate(LocalDate.now());
+            }
+        }
         if (montant <= debt) {
-            payementService.studentPay(personne.get(), session.get(),
-                    ETypeTransaction.CREDIT,
-                    status, paymentRequest.getIdFinancier(),
+            payementService.studentPay(personne, session,
+                    ETypeTransaction.CREDIT
+                    , employer.get(),
                     paymentRequest.getModaliteTransactionSet());
-
+            enregistrement.get().setEtatFinanciere(1);
+            enregistrement.get().getIdInscription().setIdEtatInscription(etatInscriptionDao.findByNom("Valide"));
+            enregistrementDao.save(enregistrement.get());
+            inscriptionDao.save(enregistrement.get().getIdInscription());
             return ResponseEntity.ok(new MessageResponse("Transaction effectuer avec succée"));
         } else {
             return new ResponseEntity<>(new MessageResponse("le monant est superieur a ce qui reste a payer", 403), HttpStatus.FORBIDDEN);
         }
     }
-
-
 }

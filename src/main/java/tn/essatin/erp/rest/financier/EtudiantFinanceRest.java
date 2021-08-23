@@ -18,6 +18,7 @@ import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.financier.Transaction;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.payload.response.PrimitifResponse;
+import tn.essatin.erp.payload.response.TransactionAvecModalite;
 import tn.essatin.erp.util.ApiInfo;
 import tn.essatin.erp.util.StudentDebt;
 
@@ -123,6 +124,15 @@ public class EtudiantFinanceRest {
                 "une texte JSON avec une liste d'enregistrements", responses);
         infos.add(info);
         /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse("Enregistrement introuvable!", 403));
+        responses.add(new MessageResponse("Pas de transactions pour cet etudiant", 403));
+        info = new ApiInfo("/api/etudiantfinance/getdetaillepayementbyidenregistrementnew/{idEnregistrement}", "Get",
+                "retourne un JSON avec la liste des transactions éféctué par un étudiant (y compris les modalite de transaction impliqué; REMARQUE: les Modalité ont un champ transaction null pour evité d'affiché la transaction 2 fois)",
+                "/api/etudiantfinance/getdetaillepayementbyidenregistrementnew/1",
+                "une texte JSON avec une liste de transaction", responses);
+        infos.add(info);
+        /////////////////////
 
         return new ResponseEntity<>(infos, HttpStatus.OK);
     }
@@ -134,8 +144,7 @@ public class EtudiantFinanceRest {
             return new ResponseEntity<>(
                     new MessageResponse("Enregistrement introuvable!", 403), HttpStatus.FORBIDDEN);
         }
-        double resteAPayer = studentDebt.debt(enregistrement.get().getIdInscription().getIdEtudiant(),
-                enregistrement.get().getIdSession());
+        double resteAPayer = studentDebt.debt(enregistrement.get());
         return new ResponseEntity<>(new PrimitifResponse("restAPayer", resteAPayer)
                 , HttpStatus.OK);
     }
@@ -149,7 +158,7 @@ public class EtudiantFinanceRest {
         List<Enregistrement> enregistrementList = enregistrementDao.findByIdSession(session.get());
         List<Enregistrement> enregistrementListAvecRest = new ArrayList<>();
         for (Enregistrement enregistrement : enregistrementList) {
-            if (studentDebt.debt(enregistrement.getIdInscription().getIdEtudiant(), enregistrement.getIdSession()) > 0) {
+            if (studentDebt.debt(enregistrement) > 0) {
                 enregistrementListAvecRest.add(enregistrement);
             }
         }
@@ -217,8 +226,7 @@ public class EtudiantFinanceRest {
             List<Enregistrement> enregistrementList1 = enregistrementDao.findByIdInscription(inscription);
             for (Enregistrement enregistrement1 : enregistrementList1) {
                 if (!enregistrement1.getIdEnregistrement().equals(enregistrement.get().getIdEnregistrement()))
-                    if (studentDebt.debt(enregistrement1.getIdInscription().getIdEtudiant(),
-                            enregistrement1.getIdSession()) > 0) {
+                    if (studentDebt.debt(enregistrement1) > 0) {
                         return new ResponseEntity<>(
                                 new PrimitifResponse("aDesImpayerDansUneAutreSession", true)
                                 , HttpStatus.OK);
@@ -243,8 +251,7 @@ public class EtudiantFinanceRest {
             List<Enregistrement> enregistrementList1 = enregistrementDao.findByIdInscription(inscription);
             for (Enregistrement enregistrement1 : enregistrementList1) {
                 if (!enregistrement1.getIdEnregistrement().equals(enregistrement.get().getIdEnregistrement()))
-                    if (studentDebt.debt(enregistrement1.getIdInscription().getIdEtudiant(),
-                            enregistrement1.getIdSession()) > 0) {
+                    if (studentDebt.debt(enregistrement1) > 0) {
                         enregistrementList.add(enregistrement1);
                     }
             }
@@ -304,5 +311,28 @@ public class EtudiantFinanceRest {
         }
 
         return new ResponseEntity<>(etudiantDesactive, HttpStatus.OK);
+    }
+
+    @GetMapping("/getdetaillepayementbyidenregistrementnew/{idEnregistrement}")
+    public ResponseEntity<?> getDetailleDePayementByIdEnregistrementNew(@PathVariable int idEnregistrement) {
+        Optional<Enregistrement> enregistrement = enregistrementDao.findById(idEnregistrement);
+        if (enregistrement.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Enregistrement introuvable!", 403), HttpStatus.FORBIDDEN);
+        }
+        Collection<Transaction> transactions = transactionDao.findAllByClientAndSession(
+                enregistrement.get().getIdInscription().getIdEtudiant().getIdPersonne(),
+                enregistrement.get().getIdSession());
+        if (transactions.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Pas de transactions pour cet etudiant", 403), HttpStatus.FORBIDDEN);
+        }
+        List<TransactionAvecModalite> modaliteTransactionList = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            List<ModaliteTransaction> modaliteTransactionList1 =
+                    modaliteTransactionDao.findModaliteTransactionByTransaction(transaction);
+            modaliteTransactionList.add(new TransactionAvecModalite(transaction, modaliteTransactionList1));
+        }
+        return new ResponseEntity<>(modaliteTransactionList, HttpStatus.OK);
     }
 }
