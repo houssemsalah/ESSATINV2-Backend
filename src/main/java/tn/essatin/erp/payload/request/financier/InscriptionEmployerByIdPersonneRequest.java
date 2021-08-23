@@ -1,5 +1,10 @@
 package tn.essatin.erp.payload.request.financier;
 
+import tn.essatin.erp.model.financier.ESituationMaritale;
+import tn.essatin.erp.model.financier.ETypeContrat;
+import tn.essatin.erp.model.financier.ETypeEmployer;
+import tn.essatin.erp.model.financier.EUniteSalaire;
+
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
@@ -7,41 +12,40 @@ public class InscriptionEmployerByIdPersonneRequest {
     @Min(value = 1,message = "id personne est strictemt positif")
     int idPersonne;
     @Pattern(regexp = "([0-9]{10})", message = "Numero de Securité sociale doit contenir 10 chiffres")
-    private final String numeroCNSS;
-    private final String observationEmployer;
+    private String numeroCNSS;
+    private String observationEmployer;
     @NotBlank(message = "la situation mariétale ne peut etre vide")
-    private final String situationMaritale;
+    private ESituationMaritale situationMaritale;
     @NotNull(message = "Le nombre d'enfants ne peut etre null")
-    private final int nbEnfant;
-    private final String image;
+    private int nbEnfant;
+    private String image;
     @Past(message = "la date de naissance doit etre au passé!")
-    private final LocalDate dateEntree;
+    private LocalDate dateEntree;
     @Pattern(regexp = "([0-9A-Za-z]{15,24})", message = "Veillez verifier le numero de comptes")
-    private final String ripIBAN;
+    private String ripIBAN;
     @NotBlank(message = "le poste ne peut etre vide")
-    private final String poste;
+    private String poste;
     @NotBlank(message = "le type employer ne peut etre vide")
-    private final String typeEmployer;
+    private ETypeEmployer typeEmployer;
 
     @NotBlank(message = "Ennumeration de type 'ETypeContrat'")
-    private final String typeContrat;
+    private ETypeContrat typeContrat;
     @NotBlank(message = "Ennumeration de type 'EUniteSalaire'")
-    private final String uniteSalaire;
+    private EUniteSalaire uniteSalaire;
     @NotNull(message = "prixUnite ne peut etre null")
-    private final Double prixUnite;
-    private final LocalDate dateDebutContrat;
-    private final LocalDate dateFinContrat;
-    private final LocalDate dateSignatureContrat;
-    private final LocalDate dateResiliationContrat;
-    private final String observationContrat;
+    private  Double prixUnite;
+    private  LocalDate dateDebutContrat;
+    private  LocalDate dateFinContrat;
+    private  LocalDate dateSignatureContrat;
+    private  LocalDate dateResiliationContrat;
+    private  String observationContrat;
 
-    public InscriptionEmployerByIdPersonneRequest(int idPersonne, String numeroCNSS,
-                                                  String observationEmployer, String situationMaritale,
-                                                  int nbEnfant, String image, LocalDate dateEntree, String ripIBAN,
-                                                  String poste, String typeEmployer, String typeContrat,
-                                                  String uniteSalaire, Double prixUnite, LocalDate dateDebutContrat,
-                                                  LocalDate dateFinContrat, LocalDate dateSignatureContrat,
-                                                  LocalDate dateResiliationContrat, String observationContrat) {
+    public InscriptionEmployerByIdPersonneRequest(int idPersonne, String numeroCNSS, String observationEmployer,
+                                                  ESituationMaritale situationMaritale, int nbEnfant, String image,
+                                                  LocalDate dateEntree, String ripIBAN, String poste, ETypeEmployer typeEmployer, ETypeContrat typeContrat,
+                                                  EUniteSalaire uniteSalaire, Double prixUnite, LocalDate dateDebutContrat, LocalDate dateFinContrat,
+                                                  LocalDate dateSignatureContrat, LocalDate dateResiliationContrat,
+                                                  String observationContrat) {
         this.idPersonne = idPersonne;
         this.numeroCNSS = numeroCNSS;
         this.observationEmployer = observationEmployer;
@@ -66,71 +70,143 @@ public class InscriptionEmployerByIdPersonneRequest {
         return idPersonne;
     }
 
+    public void setIdPersonne(int idPersonne) {
+        this.idPersonne = idPersonne;
+    }
+
     public String getNumeroCNSS() {
         return numeroCNSS;
+    }
+
+    public void setNumeroCNSS(String numeroCNSS) {
+        this.numeroCNSS = numeroCNSS;
     }
 
     public String getObservationEmployer() {
         return observationEmployer;
     }
 
-    public String getSituationMaritale() {
+    public void setObservationEmployer(String observationEmployer) {
+        this.observationEmployer = observationEmployer;
+    }
+
+    public ESituationMaritale getSituationMaritale() {
         return situationMaritale;
+    }
+
+    public void setSituationMaritale(ESituationMaritale situationMaritale) {
+        this.situationMaritale = situationMaritale;
     }
 
     public int getNbEnfant() {
         return nbEnfant;
     }
 
+    public void setNbEnfant(int nbEnfant) {
+        this.nbEnfant = nbEnfant;
+    }
+
     public String getImage() {
         return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public LocalDate getDateEntree() {
         return dateEntree;
     }
 
+    public void setDateEntree(LocalDate dateEntree) {
+        this.dateEntree = dateEntree;
+    }
+
     public String getRipIBAN() {
         return ripIBAN;
+    }
+
+    public void setRipIBAN(String ripIBAN) {
+        this.ripIBAN = ripIBAN;
     }
 
     public String getPoste() {
         return poste;
     }
 
-    public String getTypeEmployer() {
+    public void setPoste(String poste) {
+        this.poste = poste;
+    }
+
+    public ETypeEmployer getTypeEmployer() {
         return typeEmployer;
     }
 
-    public String getTypeContrat() {
+    public void setTypeEmployer(ETypeEmployer typeEmployer) {
+        this.typeEmployer = typeEmployer;
+    }
+
+    public ETypeContrat getTypeContrat() {
         return typeContrat;
     }
 
-    public String getUniteSalaire() {
+    public void setTypeContrat(ETypeContrat typeContrat) {
+        this.typeContrat = typeContrat;
+    }
+
+    public EUniteSalaire getUniteSalaire() {
         return uniteSalaire;
+    }
+
+    public void setUniteSalaire(EUniteSalaire uniteSalaire) {
+        this.uniteSalaire = uniteSalaire;
     }
 
     public Double getPrixUnite() {
         return prixUnite;
     }
 
+    public void setPrixUnite(Double prixUnite) {
+        this.prixUnite = prixUnite;
+    }
+
     public LocalDate getDateDebutContrat() {
         return dateDebutContrat;
+    }
+
+    public void setDateDebutContrat(LocalDate dateDebutContrat) {
+        this.dateDebutContrat = dateDebutContrat;
     }
 
     public LocalDate getDateFinContrat() {
         return dateFinContrat;
     }
 
+    public void setDateFinContrat(LocalDate dateFinContrat) {
+        this.dateFinContrat = dateFinContrat;
+    }
+
     public LocalDate getDateSignatureContrat() {
         return dateSignatureContrat;
+    }
+
+    public void setDateSignatureContrat(LocalDate dateSignatureContrat) {
+        this.dateSignatureContrat = dateSignatureContrat;
     }
 
     public LocalDate getDateResiliationContrat() {
         return dateResiliationContrat;
     }
 
+    public void setDateResiliationContrat(LocalDate dateResiliationContrat) {
+        this.dateResiliationContrat = dateResiliationContrat;
+    }
+
     public String getObservationContrat() {
         return observationContrat;
+    }
+
+    public void setObservationContrat(String observationContrat) {
+        this.observationContrat = observationContrat;
     }
 }
