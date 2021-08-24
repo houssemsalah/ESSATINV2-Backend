@@ -32,31 +32,29 @@ public class RecuEtudiant {
         double montant=0.0;
         for(ModaliteTransaction modaliteTransaction:transaction.getModaliteTransactionList())
             montant+=modaliteTransaction.getMontant();
-        ByteArrayOutputStream response = new ByteArrayOutputStream();
-        Document document = new Document();
-        Image img ;
+
         String nom = transaction.getClient().getNom();
         String prenom = transaction.getClient().getPrenom();
         String sexe = transaction.getClient().getSexe();
         boolean isHomme = sexe.equalsIgnoreCase("homme");
         LocalDate date= transaction.getDatePayement();
-
         Parcours parcours = niveau.getParcours();
         Specialite specialite = parcours.getSpecialite();
         Cycle cycle = specialite.getCycle();
         String niveauxC = niveau.getDesignation();
         String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
+        String sex = isHomme ? "Monsieur": "Madame" ;
 
-        String sex ;
+        ByteArrayOutputStream response = new ByteArrayOutputStream();
+        Document document = new Document();
+        document.setPageSize(PageSize.A5);
+        document.setMargins(15f, 15f, 10f, 10f);
         try {
             PdfWriter.getInstance(document, response);
-            document.setPageSize(PageSize.A5);
-            document.setMargins(15f, 15f, 10f, 10f);
             document.open();
-            img = Image.getInstance("logoEssat.png");
-            img.scaleAbsoluteHeight(50);
-            img.scaleAbsoluteWidth(50);
-
+            Image img = Image.getInstance("logoEssat.png");
+            img.scaleAbsoluteHeight(30);
+            img.scaleAbsoluteWidth(30);
             PdfPTable signature = new PdfPTable(7);
             signature.getDefaultCell().setFixedHeight(20);
             signature.setWidthPercentage(100);
@@ -72,7 +70,6 @@ public class RecuEtudiant {
             cell3.setColspan(2);
             cell3.setBorder(Rectangle.NO_BORDER);
             signature.addCell(cell3);
-
             PdfPTable entete = new PdfPTable(7);
             entete.getDefaultCell().setFixedHeight(20);
             entete.setWidthPercentage(100);
@@ -101,10 +98,7 @@ public class RecuEtudiant {
             cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell1.setBorder(Rectangle.NO_BORDER);
             contenu.addCell(cell1);
-            if (isHomme)
-                sex= "MONSIEUR";
-            else
-                sex = "MADAMME";
+
             cell1= new PdfPCell(new Phrase("DE "+sex+" : "+nom +" "+prenom));
             cell1.setBorder(Rectangle.NO_BORDER);
             contenu.addCell(cell1);
@@ -121,15 +115,11 @@ public class RecuEtudiant {
             cell1= new PdfPCell(new Phrase(("Classe : "+ niv + "  Date : "+ date)));
             cell1.setBorder(Rectangle.NO_BORDER);
             contenu.addCell(cell1);
-            //transaction.getType();
-           // if(liste.size ==1){
+
             cell1= new PdfPCell( new Phrase( "La somme de : "+ montant));
             cell1.setBorder(Rectangle.NO_BORDER);
             contenu.addCell(cell1);
-            //cell1= new PdfPCell(new Phrase(" "+type));
-            //cell1.setBorder(Rectangle.NO_BORDER);
-            //contenu.addCell(cell1);
-            // else (parcourir toute la liste  et ajouter dans cette cellule
+
             cell1 = new PdfPCell( signature);
             cell1.setBorder(Rectangle.NO_BORDER);
             contenu.addCell(cell1);

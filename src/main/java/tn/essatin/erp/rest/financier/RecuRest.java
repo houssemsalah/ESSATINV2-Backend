@@ -1,6 +1,7 @@
 package tn.essatin.erp.rest.financier;
 
 
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ import tn.essatin.erp.util.DocumentGenerators.RecuEtudiant;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -44,10 +46,12 @@ public class RecuRest {
     final NiveauDao niveauDao;
     final SessionDao sessionDao;
     final ModaliteTransactionDao modaliteTransactionDao;
+    final MessageSource messageSource;
 
     public RecuRest(PersonneDao personneDao, EtudiantsDao etudiantsDao, InscriptionDao inscriptionDao,
                     EnregistrementDao enregistrementDao, NiveauDao niveauDao, SessionDao sessionDao,
-                    TransactionDao transactionDao,ModaliteTransactionDao modaliteTransactionDa) {
+                    TransactionDao transactionDao,ModaliteTransactionDao modaliteTransactionDa,
+                    MessageSource messageSource) {
         this.personneDao = personneDao;
         this.etudiantsDao = etudiantsDao;
         this.inscriptionDao = inscriptionDao;
@@ -56,17 +60,18 @@ public class RecuRest {
         this.sessionDao = sessionDao;
         this.transactionDao = transactionDao;
         this.modaliteTransactionDao = modaliteTransactionDa;
+        this.messageSource=messageSource;
     }
 
     @GetMapping("/pdfbyidtransaction/{id}")
     public ResponseEntity<?>pdfByIdTransaction(@PathVariable int id){
         Optional<Transaction> transaction = transactionDao.findById(id);
         if(transaction.isEmpty())
-            return  new ResponseEntity<>(new MessageResponse("Transaction introuvable",403), HttpStatus.FORBIDDEN);
+            return  new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.transaction",null, Locale.FRENCH),403), HttpStatus.FORBIDDEN);
         Personne personne = transaction.get().getClient();
         Optional<Etudiants> etudiants = etudiantsDao.findByIdPersonne(personne);
         if(etudiants.isEmpty())
-            return  new ResponseEntity<>(new MessageResponse("Etudiant introuvable",403), HttpStatus.FORBIDDEN);
+            return  new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.etudiant",null, Locale.FRENCH),403), HttpStatus.FORBIDDEN);
         Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants.get());
         Enregistrement enregistrement = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(inscription);
         Niveau niveau = enregistrement.getIdNiveau();
