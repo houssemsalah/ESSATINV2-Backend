@@ -1,6 +1,7 @@
 package tn.essatin.erp.rest.financier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.management.openmbean.OpenType;
 import javax.validation.Valid;
+import java.util.Locale;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -20,10 +22,13 @@ import java.util.Optional;
 public class EnseignantRest {
     final EnseignantDao enseignantDao;
     final PersonneDao personneDao;
+    final MessageSource messageSource;
+
     @Autowired
-    public EnseignantRest(EnseignantDao enseignantDao, PersonneDao personneDao) {
+    public EnseignantRest(EnseignantDao enseignantDao, PersonneDao personneDao,MessageSource messageSource) {
         this.enseignantDao = enseignantDao;
         this.personneDao = personneDao;
+        this.messageSource=messageSource;
     }
     @GetMapping("/getallenseignant")
     public ResponseEntity<?> getAll() {
@@ -33,7 +38,7 @@ public class EnseignantRest {
     public  ResponseEntity<?> getEnseingantById(@PathVariable int id){
         Optional<Enseignant> enseignant = enseignantDao.findById(id);
         if (enseignant.isEmpty()){
-            return new ResponseEntity<>(new MessageResponse("Enseignant introuvable"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.enseignant", null, Locale.FRENCH)), HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(enseignant.get(), HttpStatus.OK);
     }

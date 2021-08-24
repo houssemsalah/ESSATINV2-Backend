@@ -32,9 +32,7 @@ public class RecuEtudiant {
         double montant=0.0;
         for(ModaliteTransaction modaliteTransaction:transaction.getModaliteTransactionList())
             montant+=modaliteTransaction.getMontant();
-        ByteArrayOutputStream response = new ByteArrayOutputStream();
-        Document document = new Document();
-        Image img ;
+
         String nom = transaction.getClient().getNom();
         String prenom = transaction.getClient().getPrenom();
         String sexe = transaction.getClient().getSexe();
@@ -46,17 +44,17 @@ public class RecuEtudiant {
         Cycle cycle = specialite.getCycle();
         String niveauxC = niveau.getDesignation();
         String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
-
         String sex ;
+        ByteArrayOutputStream response = new ByteArrayOutputStream();
+        Document document = new Document();
+        document.setPageSize(PageSize.A5);
+        document.setMargins(15f, 15f, 10f, 10f);
         try {
             PdfWriter.getInstance(document, response);
-            document.setPageSize(PageSize.A5);
-            document.setMargins(15f, 15f, 10f, 10f);
             document.open();
-            img = Image.getInstance("logoEssat.png");
-            img.scaleAbsoluteHeight(50);
-            img.scaleAbsoluteWidth(50);
-
+            Image img = Image.getInstance("logoEssat.png");
+            img.scaleAbsoluteHeight(30);
+            img.scaleAbsoluteWidth(30);
             PdfPTable signature = new PdfPTable(7);
             signature.getDefaultCell().setFixedHeight(20);
             signature.setWidthPercentage(100);
