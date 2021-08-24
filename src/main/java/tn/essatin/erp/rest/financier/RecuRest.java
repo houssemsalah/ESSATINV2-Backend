@@ -1,6 +1,7 @@
 package tn.essatin.erp.rest.financier;
 
 
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,14 @@ import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.financier.Transaction;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.payload.response.TransactionAvecModalite;
+import tn.essatin.erp.util.ApiInfo;
 import tn.essatin.erp.util.DocumentGenerators.FeuilleDeDemandeDeStage;
 import tn.essatin.erp.util.DocumentGenerators.RecuEtudiant;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -44,10 +48,12 @@ public class RecuRest {
     final NiveauDao niveauDao;
     final SessionDao sessionDao;
     final ModaliteTransactionDao modaliteTransactionDao;
+    final MessageSource messageSource;
+
 
     public RecuRest(PersonneDao personneDao, EtudiantsDao etudiantsDao, InscriptionDao inscriptionDao,
                     EnregistrementDao enregistrementDao, NiveauDao niveauDao, SessionDao sessionDao,
-                    TransactionDao transactionDao,ModaliteTransactionDao modaliteTransactionDa) {
+                    TransactionDao transactionDao,ModaliteTransactionDao modaliteTransactionDa, MessageSource messageSource) {
         this.personneDao = personneDao;
         this.etudiantsDao = etudiantsDao;
         this.inscriptionDao = inscriptionDao;
@@ -56,9 +62,31 @@ public class RecuRest {
         this.sessionDao = sessionDao;
         this.transactionDao = transactionDao;
         this.modaliteTransactionDao = modaliteTransactionDa;
+        this.messageSource = messageSource;
     }
 
-    @GetMapping("/pdfbyidtransaction/{id}")
+    @GetMapping("/")
+    public ResponseEntity<?> infoApi() {
+        List<ApiInfo> infos = new ArrayList<>();
+        List<MessageResponse> responses;
+        ApiInfo info;
+
+        /////////////////////
+
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.transaction", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.etudiant", null, Locale.FRENCH), 403));
+
+        info = new ApiInfo("/api/recu/pdfbyidtransaction/{id}", "Get",
+                "retourne un JSON avec la liste de tout les PrixNiveauParSession dans la base",
+                "/api/recu/pdfbyidtransaction/5}",
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        return new ResponseEntity<>(infos, HttpStatus.OK);
+    }
+
+        @GetMapping("/pdfbyidtransaction/{id}")
     public ResponseEntity<?>pdfByIdTransaction(@PathVariable int id){
         Optional<Transaction> transaction = transactionDao.findById(id);
         if(transaction.isEmpty())

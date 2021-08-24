@@ -61,7 +61,7 @@ public class EmployerRest {
         info = new ApiInfo("/api/employer/getall", "Get",
                 "retourne un JSON avec la liste de tout les employer dans la base",
                 "/api/employer/getall",
-                "une texte JSON avec une liste des employer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
@@ -69,7 +69,7 @@ public class EmployerRest {
         info = new ApiInfo("/api/employer/getemployer/{id}", "Get",
                 "retourne un JSON avec la liste des employer par leur id",
                 "/api/employer/getemployer/3",
-                "une texte JSON avec une liste des employer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
@@ -81,7 +81,7 @@ public class EmployerRest {
                 "y3adi ro7ah", ESituationMaritale.DIVORCEE, 3, "", LocalDate.now(),
                 "785412054785", "ossteth ad edonya", 401,  ETypeEmployer.ENSEIGNANT);
         info = new ApiInfo("/api/employer/ajouteremployer", "Post","ajouter un employer", ajouterEmployerRequest,
-                "une texte JSON aves des champs pour ajouter un employer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
@@ -99,15 +99,15 @@ public class EmployerRest {
         info = new ApiInfo("/api/employer/modifieremployer", "Post",
                 "Modifier un employer",
                 modifierEmployerRequest,
-                "une texte JSON aves des champs pour modifier un employer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
 
-         responses.add(new MessageResponse("TypeIdentificateur invalide", 403));
-        responses.add(new MessageResponse("Nationnalité invalide", 403));
-         responses.add(new MessageResponse("Cette personne existe deja dans la base de donnee", 403));
-        responses.add(new MessageResponse("Cet employer est deja présent dans la base", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.incorrect.typeIdentificateur", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.incorrect.nationalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.existe.personne", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.existe.employer", null, Locale.FRENCH), 403));
 
         InscriptionEmployerRequest inscriptionEmployerRequest = new InscriptionEmployerRequest("Eladel", "Nahla",
                 "nahla@essat-gabes.tn",
@@ -121,13 +121,13 @@ public class EmployerRest {
         info = new ApiInfo("/api/employer/inscription", "Post",
                 "inscription d'un employer et un personne meme temps",
                 inscriptionEmployerRequest,
-                "une texte JSON pour insecrire un employer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
 
-        responses.add(new MessageResponse("Personne introuvable", 403));
-        responses.add(new MessageResponse("Cet employer est deja présent dans la base", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.personne", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.existe.employer", null, Locale.FRENCH), 403));
 
 
         InscriptionEmployerByIdPersonneRequest inscriptionEmployerByIdPersonneRequest = new InscriptionEmployerByIdPersonneRequest(80,
@@ -139,7 +139,7 @@ public class EmployerRest {
         info = new ApiInfo("/api/employer/inscriptionbyidpersonne", "Post",
                 "inscription d'un employer par id personne",
                 inscriptionEmployerByIdPersonneRequest,
-                "une texte JSON pour insecrire un employer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
 

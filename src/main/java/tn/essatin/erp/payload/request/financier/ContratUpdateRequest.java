@@ -1,5 +1,8 @@
 package tn.essatin.erp.payload.request.financier;
 
+import tn.essatin.erp.model.financier.ETypeContrat;
+import tn.essatin.erp.model.financier.EUniteSalaire;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -9,19 +12,19 @@ public class ContratUpdateRequest {
     @Min(value = 1, message = "l'ID ne peut etre inferieur a 1")
     int id;
     @NotBlank(message = "Ennumeration de type 'ETypeContrat'")
-    private final String typeContrat;
+    private ETypeContrat typeContrat;
     @NotBlank(message = "Ennumeration de type 'EUniteSalaire'")
-    private final String uniteSalaire;
+    private EUniteSalaire uniteSalaire;
     @NotNull(message = "prixUnite ne peut etre null")
-    private final Double prixUnite;
-    private final LocalDate dateDebutContrat;
-    private final LocalDate dateFinContrat;
-    private final LocalDate dateSignatureContrat;
-    private final LocalDate dateResiliationContrat;
-    private final String observation;
+    private  Double prixUnite;
+    private  LocalDate dateDebutContrat;
+    private  LocalDate dateFinContrat;
+    private  LocalDate dateSignatureContrat;
+    private  LocalDate dateResiliationContrat;
+    private  String observation;
 
-    public ContratUpdateRequest(int id, String typeContrat, String uniteSalaire, Double prixUnite,
-                                LocalDate dateDebutContrat, LocalDate dateFinContrat,
+    public ContratUpdateRequest(int id, ETypeContrat typeContrat, EUniteSalaire uniteSalaire,
+                                Double prixUnite, LocalDate dateDebutContrat, LocalDate dateFinContrat,
                                 LocalDate dateSignatureContrat, LocalDate dateResiliationContrat,
                                 String observation) {
         this.id = id;
@@ -35,39 +38,75 @@ public class ContratUpdateRequest {
         this.observation = observation;
     }
 
-    public String getTypeContrat() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public ETypeContrat getTypeContrat() {
         return typeContrat;
     }
 
-    public String getUniteSalaire() {
+    public void setTypeContrat(ETypeContrat typeContrat) {
+        this.typeContrat = typeContrat;
+    }
+
+    public EUniteSalaire getUniteSalaire() {
         return uniteSalaire;
+    }
+
+    public void setUniteSalaire(EUniteSalaire uniteSalaire) {
+        this.uniteSalaire = uniteSalaire;
     }
 
     public Double getPrixUnite() {
         return prixUnite;
     }
 
+    public void setPrixUnite(Double prixUnite) {
+        this.prixUnite = prixUnite;
+    }
+
     public LocalDate getDateDebutContrat() {
         return dateDebutContrat;
+    }
+
+    public void setDateDebutContrat(LocalDate dateDebutContrat) {
+        this.dateDebutContrat = dateDebutContrat;
     }
 
     public LocalDate getDateFinContrat() {
         return dateFinContrat;
     }
 
+    public void setDateFinContrat(LocalDate dateFinContrat) {
+        this.dateFinContrat = dateFinContrat;
+    }
+
     public LocalDate getDateSignatureContrat() {
         return dateSignatureContrat;
+    }
+
+    public void setDateSignatureContrat(LocalDate dateSignatureContrat) {
+        this.dateSignatureContrat = dateSignatureContrat;
     }
 
     public LocalDate getDateResiliationContrat() {
         return dateResiliationContrat;
     }
 
+    public void setDateResiliationContrat(LocalDate dateResiliationContrat) {
+        this.dateResiliationContrat = dateResiliationContrat;
+    }
+
     public String getObservation() {
         return observation;
     }
 
-    public int getId() {
-        return id;
+    public void setObservation(String observation) {
+        this.observation = observation;
     }
 }

@@ -1,5 +1,6 @@
 package tn.essatin.erp.rest.financier;
 
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,10 @@ import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.ApiInfo;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -27,11 +30,14 @@ public class ContratRest {
     final ContratDao contratDao;
     final EmployerDao employerDao;
     final PersonneDao personneDao;
+    final MessageSource messageSource;
 
-    public ContratRest(ContratDao contratDao, EmployerDao employerDao,PersonneDao personneDao) {
+
+    public ContratRest(ContratDao contratDao, EmployerDao employerDao,PersonneDao personneDao, MessageSource messageSource) {
         this.contratDao = contratDao;
         this.employerDao = employerDao;
         this.personneDao=personneDao;
+        this.messageSource=messageSource;
     }
     @GetMapping("/")
     public ResponseEntity<?> infoApi() {
@@ -47,7 +53,7 @@ public class ContratRest {
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Contrat introuvable!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.contrat", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/getbyid/{id}", "Get",
                 "retourne un JSON avec la liste de tout les contrat par id",
                 "/api/contrat/getbyid/2",
@@ -55,32 +61,31 @@ public class ContratRest {
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Employer Introuvable!", 403));
-        responses.add(new MessageResponse("ETypeContrat Introuvable!", 403));
-        responses.add(new MessageResponse("EUniteSalaire Introuvable!", 403));
-
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403));
+        ContratRequest contratRequest = new ContratRequest(ETypeContrat.CDI, EUniteSalaire.MOIS, 400.0, LocalDate.now(),
+                null, LocalDate.now(),null, "agent administratif", 10);
 
         info = new ApiInfo("/api/contrat/addcontrat", "Post",
                 "Ajouter un contrat",
-                "/api/contrat/addcontrat",
+                contratRequest,
                 "une texte JSON aves des champs pour ajouter un contrat", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Employer Introuvable!", 403));
-        responses.add(new MessageResponse("ETypeContrat Introuvable!", 403));
-        responses.add(new MessageResponse("EUniteSalaire Introuvable!", 403));
-
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403));
+        ContratUpdateRequest contratUpdateRequest = new ContratUpdateRequest(31,ETypeContrat.VACATION,
+                EUniteSalaire.HEURES, 20.0, LocalDate.now(), null, LocalDate.now(),
+                null, "enseignant");
 
         info = new ApiInfo("/api/contrat/modifiercontrat", "Post",
                 "Modifier un contrat",
-                "/api/contrat/modifiercontrat",
+                contratUpdateRequest,
                 "une texte JSON aves des champs pour modifier un contrat", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Employer Introuvable!", 403));
-        responses.add(new MessageResponse("cette Employer n'a aucun contrat!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("aucun.contrat.employer", null, Locale.FRENCH), 403));
 
 
         info = new ApiInfo("/api/contrat/getbyemployer/{id}", "Get",
@@ -90,8 +95,8 @@ public class ContratRest {
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Employer Introuvable!", 403));
-        responses.add(new MessageResponse("cette Employer n'a aucun contrat!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("aucun.contrat.employer", null, Locale.FRENCH), 403));
 
 
         info = new ApiInfo("/api/contrat/getlastcontratbyemployer/{id}", "Get",
@@ -127,21 +132,8 @@ public class ContratRest {
             return new ResponseEntity<>(
                     new MessageResponse("Employer introuvable", 403), HttpStatus.FORBIDDEN);
         }
-        ETypeContrat type;
-        EUniteSalaire unite;
-        try {
-             type = ETypeContrat.valueOf(contratRequest.getTypeContrat());
-        } catch (Exception E) {
-            return new ResponseEntity<>(
-                    new MessageResponse("ETypeContrat introuvable", 403), HttpStatus.FORBIDDEN);
-        }
-        try{
-        unite = EUniteSalaire.valueOf(contratRequest.getUniteSalaire());
-        } catch (Exception E) {
-            return new ResponseEntity<>(
-                    new MessageResponse("EUniteSalaire introuvable", 403), HttpStatus.FORBIDDEN);
-        }
-        Contrat contrat = new Contrat(type, unite,
+
+        Contrat contrat = new Contrat(contratRequest.getTypeContrat(), contratRequest.getUniteSalaire(),
                 contratRequest.getPrixUnite(), contratRequest.getDateDebutContrat(),
                 contratRequest.getDateFinContrat(),
                 contratRequest.getDateSignatureContrat(),
@@ -165,22 +157,9 @@ public class ContratRest {
         }
         Contrat contrat = optContrat.get();
 
-        ETypeContrat type;
-        EUniteSalaire unite;
-        try {
-            type = ETypeContrat.valueOf(contratUpdateRequest.getTypeContrat());
-        } catch (Exception E) {
-            return new ResponseEntity<>(
-                    new MessageResponse("ETypeContrat introuvable", 403), HttpStatus.FORBIDDEN);
-        }
-        try{
-            unite = EUniteSalaire.valueOf(contratUpdateRequest.getUniteSalaire());
-        } catch (Exception E) {
-            return new ResponseEntity<>(
-                    new MessageResponse("EUniteSalaire introuvable", 403), HttpStatus.FORBIDDEN);
-        }
-        contrat.setTypeContrat(type) ;
-        contrat.setUniteSalaire(unite) ;
+
+        contrat.setTypeContrat(contratUpdateRequest.getTypeContrat()) ;
+        contrat.setUniteSalaire(contratUpdateRequest.getUniteSalaire()) ;
         contrat.setPrixUnite(contratUpdateRequest.getPrixUnite()); ;
         contrat.setDateDebutContrat(contratUpdateRequest.getDateDebutContrat()) ;
         contrat.setDateFinContrat(contratUpdateRequest.getDateFinContrat()) ;
