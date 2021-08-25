@@ -76,11 +76,12 @@ public class RecuRest {
         Enregistrement enregistrement = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(inscription);
         Niveau niveau = enregistrement.getIdNiveau();
         List<ModaliteTransaction> modaliteTransactionList = modaliteTransactionDao.findModaliteTransactionByTransaction(transaction.get());
-
         ByteArrayOutputStream os = RecuEtudiant.createDoc(new TransactionAvecModalite(transaction.get(),modaliteTransactionList),niveau);
+        os = RecuEtudiant.createDoc(os);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 
 
