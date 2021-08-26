@@ -25,7 +25,6 @@ public class DocumentFunction {
     public static final Font FONT_GRAS = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
     public static final Font FONT_GRAS_OBLIQUE = FontFactory.getFont(FontFactory.TIMES_BOLDITALIC, 14, BaseColor.BLACK);
     public static final Font FONT_OBLIQUE = FontFactory.getFont(FontFactory.TIMES_ITALIC, 14, BaseColor.BLACK);
-
     public static final Chunk ligneHorizentale = new Chunk(new LineSeparator());
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
@@ -193,16 +192,74 @@ public class DocumentFunction {
         Cycle cycle = specialite.getCycle();
         String niveauxC = niveau.getDesignation();
         String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
-        Phrase niv = new Phrase(niveauxC,DocumentFunction.FONT_GRAS_OBLIQUE);
+        Phrase niv = new Phrase(niveauxC,FONT_GRAS_OBLIQUE);
         if (Integer.parseInt(niveauxC) == 1) {
             niv.add(DocumentFunction.exposant("ère"));
-            niv.add(" Année ");
         } else {
             niv.add(DocumentFunction.exposant("ème"));
-            niv.add(" Années ");
         }
-        niv.add(new Chunk(designationNiveaux,DocumentFunction.FONT_GRAS_OBLIQUE));
+        niv.add(" Année ");
+        niv.add(new Chunk(designationNiveaux,FONT_GRAS_OBLIQUE));
         return niv;
     }
 
+
+    public static Chunk exposant(String text, boolean isGras) {
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
+        else
+            f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
+        Font supFont = new Font(f);
+        supFont.setSize(f.getSize() / 2f);
+        Chunk c = new Chunk(text, supFont);
+        c.setTextRise(7f);
+        return c;
+    }
+
+    public static Chunk titre(String text, boolean isGras) {
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont(FontFactory.TIMES_BOLD, 18, BaseColor.BLACK);
+        else
+            f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 18, BaseColor.BLACK);
+        Font supFont = new Font(f);
+        return new Chunk(text, supFont);
+    }
+
+    public static Chunk textNormalMinMin(String text,boolean isGras) {
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont(FontFactory.TIMES_BOLD, 8, BaseColor.BLACK);
+        else
+            f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 8, BaseColor.BLACK);
+        Font supFont = new Font(f);
+        return new Chunk(text, supFont);
+    }
+
+    public static Chunk textNormal(String text,boolean isGras) {
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
+        else
+            f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
+        Font supFont = new Font(f);
+        return new Chunk(text, supFont);
+    }
+
+    public static Chunk textNormalMin(String text,boolean isGras) {
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont(FontFactory.TIMES_BOLD, 10, BaseColor.BLACK);
+        else
+            f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, BaseColor.BLACK);
+        Font supFont = new Font(f);
+        return new Chunk(text, supFont);
+    }
+
+    public static Phrase text(Chunk... chunks) {
+        Phrase phrase = new Phrase();
+        Collections.addAll(phrase, chunks);
+        return phrase;
+    }
 }
