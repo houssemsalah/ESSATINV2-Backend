@@ -59,7 +59,7 @@ public class DechargeAnnulation {
             entete.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
             entete.getDefaultCell().setFixedHeight(50);
             entete.addCell(img);
-            entete.addCell(text(titre("Décharge", true), textNormalMin("\n\nN°")));
+            entete.addCell(text(titre("Décharge", true)));
             entete.addCell(new Phrase(mini("Ecole Supérieure des Sciences Appliquées et de la Technologie Privée de Gabès")));
             document.add(entete);
             document.add(new Phrase("\n\n"));
@@ -92,6 +92,7 @@ public class DechargeAnnulation {
                     textNormal(", suite à une annulation pour le motif suivant:\n\n", false),
                     textNormal(motifAnnulationRejetModalite.getMotife() + "\n\n", false)
             ));
+            document.add(paragraph);
             float[] ts2 = {200f};
             PdfPTable pied = new PdfPTable(1);
             pied.setTotalWidth(ts2);

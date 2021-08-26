@@ -150,7 +150,7 @@ public class ModaliteRest {
         modaliteTransaction.get().setStatus(EStatus.REJECTED);
         motifAnnulationRejetModaliteDao.save(motifAnnulationRejetModalite);
         modaliteTransactionDao.save(modaliteTransaction.get());
-        return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("message.modalite.rejete.success", null, Locale.FRENCH), 200), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("message.modalite.annuler.success", null, Locale.FRENCH), 200), HttpStatus.OK);
     }
 
     @GetMapping("/detailleannulationrejet/{idModalite}")
@@ -159,7 +159,7 @@ public class ModaliteRest {
         if (modaliteTransaction.isEmpty()) {
             return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
-        if (!modaliteTransaction.get().getStatus().equals(EStatus.CANCELED) || !modaliteTransaction.get().getStatus().equals(EStatus.REJECTED)) {
+        if (!modaliteTransaction.get().getStatus().equals(EStatus.CANCELED) && !modaliteTransaction.get().getStatus().equals(EStatus.REJECTED)) {
             return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.niannulenirejete.modalite", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
         Optional<MotifAnnulationRejetModalite> motifAnnulationRejetModalite = motifAnnulationRejetModaliteDao.findByModaliteTransaction(modaliteTransaction.get());
@@ -175,7 +175,7 @@ public class ModaliteRest {
         if (modaliteTransaction.isEmpty()) {
             return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
-        if (!modaliteTransaction.get().getStatus().equals(EStatus.CANCELED) || !modaliteTransaction.get().getStatus().equals(EStatus.REJECTED)) {
+        if (!modaliteTransaction.get().getStatus().equals(EStatus.CANCELED) && !modaliteTransaction.get().getStatus().equals(EStatus.REJECTED)) {
             return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.niannulenirejete.modalite", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
         Optional<MotifAnnulationRejetModalite> motifAnnulationRejetModalite = motifAnnulationRejetModaliteDao.findByModaliteTransaction(modaliteTransaction.get());
