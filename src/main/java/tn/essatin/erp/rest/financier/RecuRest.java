@@ -50,7 +50,6 @@ public class RecuRest {
     final ModaliteTransactionDao modaliteTransactionDao;
     final MessageSource messageSource;
 
-
     public RecuRest(PersonneDao personneDao, EtudiantsDao etudiantsDao, InscriptionDao inscriptionDao,
                     EnregistrementDao enregistrementDao, NiveauDao niveauDao, SessionDao sessionDao,
                     TransactionDao transactionDao,ModaliteTransactionDao modaliteTransactionDa, MessageSource messageSource) {
@@ -104,12 +103,6 @@ public class RecuRest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
-
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-
-
-
-
-
     }
 }
