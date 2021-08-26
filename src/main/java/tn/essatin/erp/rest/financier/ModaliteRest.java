@@ -147,7 +147,7 @@ public class ModaliteRest {
             return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.compteFinancier", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         }
         MotifAnnulationRejetModalite motifAnnulationRejetModalite = new MotifAnnulationRejetModalite(financier.get().getIdPersonne(), LocalDate.now(), modaliteTransaction.get(), annulerRejeterModaliteRequest.getMotif());
-        modaliteTransaction.get().setStatus(EStatus.REJECTED);
+        modaliteTransaction.get().setStatus(EStatus.CANCELED);
         motifAnnulationRejetModaliteDao.save(motifAnnulationRejetModalite);
         modaliteTransactionDao.save(modaliteTransaction.get());
         return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("message.modalite.annuler.success", null, Locale.FRENCH), 200), HttpStatus.OK);
@@ -169,8 +169,10 @@ public class ModaliteRest {
         return new ResponseEntity<>(motifAnnulationRejetModalite.get(), HttpStatus.OK);
     }
 
-    @GetMapping("/dechargeannulationetudiant/{idModalite}")
-    public ResponseEntity<?> DechargeEtudiantAnnulation(@PathVariable int idModalite) {
+    @GetMapping("/dechargeannulationetudiant/{idModalite}/{entete}")
+    public ResponseEntity<?> DechargeEtudiantAnnulation(@PathVariable int idModalite,@PathVariable String entete) {
+        boolean isEntet = true;
+        isEntet = !entete.equals("no") && !entete.equals("0");
         Optional<ModaliteTransaction> modaliteTransaction = modaliteTransactionDao.findById(idModalite);
         if (modaliteTransaction.isEmpty()) {
             return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
@@ -189,11 +191,10 @@ public class ModaliteRest {
             return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.etudiant", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants.get());
         Enregistrement enregistrementEtudiant = enregistrementDao.findByIdInscriptionAndIdSession(inscription,session);
-        ByteArrayOutputStream os = DechargeAnnulation.createDocEtudiant(motifAnnulationRejetModalite.get(),enregistrementEtudiant.getIdNiveau());
+        ByteArrayOutputStream os = DechargeAnnulation.createDocEtudiant(motifAnnulationRejetModalite.get(),enregistrementEtudiant.getIdNiveau(),isEntet);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
-
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 

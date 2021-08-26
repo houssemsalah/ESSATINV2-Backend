@@ -1,9 +1,7 @@
 package tn.essatin.erp.util.DocumentGenerators;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import tn.essatin.erp.model.Scolarite.Cycle;
 import tn.essatin.erp.model.Scolarite.Niveau;
@@ -11,10 +9,12 @@ import tn.essatin.erp.model.Scolarite.Parcours;
 import tn.essatin.erp.model.Scolarite.Specialite;
 import tn.essatin.erp.model.Session;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 
 public class DocumentFunction {
@@ -192,14 +192,14 @@ public class DocumentFunction {
         Cycle cycle = specialite.getCycle();
         String niveauxC = niveau.getDesignation();
         String designationNiveaux = cycle.getDescription() + " " + parcours.getDesignation();
-        Phrase niv = new Phrase(niveauxC,FONT_GRAS_OBLIQUE);
+        Phrase niv = new Phrase(niveauxC, FONT_GRAS_OBLIQUE);
         if (Integer.parseInt(niveauxC) == 1) {
             niv.add(DocumentFunction.exposant("ère"));
         } else {
             niv.add(DocumentFunction.exposant("ème"));
         }
         niv.add(" Année ");
-        niv.add(new Chunk(designationNiveaux,FONT_GRAS_OBLIQUE));
+        niv.add(new Chunk(designationNiveaux, FONT_GRAS_OBLIQUE));
         return niv;
     }
 
@@ -227,7 +227,7 @@ public class DocumentFunction {
         return new Chunk(text, supFont);
     }
 
-    public static Chunk textNormalMinMin(String text,boolean isGras) {
+    public static Chunk textNormalMinMin(String text, boolean isGras) {
         Font f;
         if (isGras)
             f = FontFactory.getFont(FontFactory.TIMES_BOLD, 8, BaseColor.BLACK);
@@ -237,7 +237,7 @@ public class DocumentFunction {
         return new Chunk(text, supFont);
     }
 
-    public static Chunk textNormal(String text,boolean isGras) {
+    public static Chunk textNormal(String text, boolean isGras) {
         Font f;
         if (isGras)
             f = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
@@ -247,7 +247,49 @@ public class DocumentFunction {
         return new Chunk(text, supFont);
     }
 
-    public static Chunk textNormalMin(String text,boolean isGras) {
+    public static Chunk textNormal(String text, boolean isGras, int size) {
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont(FontFactory.TIMES_BOLD, size, BaseColor.BLACK);
+        else
+            f = FontFactory.getFont(FontFactory.TIMES_ROMAN, size, BaseColor.BLACK);
+        Font supFont = new Font(f);
+        return new Chunk(text, supFont);
+    }
+
+    public static Chunk textNormal(String text, boolean isGras, BaseColor baseColor) {
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, baseColor);
+        else
+            f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, baseColor);
+        Font supFont = new Font(f);
+        return new Chunk(text, supFont);
+    }
+
+    public static Chunk textNormal(String text, boolean isGras, int size, BaseColor baseColor) {
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont(FontFactory.TIMES_BOLD, size, baseColor);
+        else
+            f = FontFactory.getFont(FontFactory.TIMES_ROMAN, size, baseColor);
+        Font supFont = new Font(f);
+        return new Chunk(text, supFont);
+    }
+
+    public static Chunk textNormalArialUni(String text, boolean isGras, int size, BaseColor baseColor) {
+        FontFactory.register("src/main/resources/font/Traditional-Arabic_font.ttf");
+        Font f;
+        if (isGras)
+            f = FontFactory.getFont("src/main/resources/font/Traditional-Arabic_font.ttf", BaseFont.IDENTITY_H,
+                    true, size, Font.FontStyle.BOLD.ordinal(), baseColor);
+        else
+            f = FontFactory.getFont("src/main/resources/font/arialuni_font.ttf", BaseFont.IDENTITY_H,
+                    true, size, Font.FontStyle.NORMAL.ordinal(), baseColor);
+        return new Chunk(text, f);
+    }
+
+    public static Chunk textNormalMin(String text, boolean isGras) {
         Font f;
         if (isGras)
             f = FontFactory.getFont(FontFactory.TIMES_BOLD, 10, BaseColor.BLACK);
@@ -261,5 +303,103 @@ public class DocumentFunction {
         Phrase phrase = new Phrase();
         Collections.addAll(phrase, chunks);
         return phrase;
+    }
+
+    public static void addPapierEntete(PdfWriter writer) throws DocumentException, IOException {
+        PdfContentByte canvas = writer.getDirectContentUnder();
+        Image img = Image.getInstance("logoEssat.png");
+        float[] ts = {4f, 6f, 4f};
+        PdfPTable entete = new PdfPTable(ts);
+        entete.setTotalWidth(PageSize.A4.getWidth()-40);
+        entete.getDefaultCell().setBorder(0);
+        entete.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        entete.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+        entete.getDefaultCell().setFixedHeight(100);
+        BaseColor essat = new BaseColor(33, 140, 185);
+        entete.addCell(text(
+                textNormal("République Tunisienne\n".toUpperCase(Locale.ROOT), true, 8, essat),
+                textNormal("Ministère de l'Enseignament Supérieure\n", false, 8, essat),
+                textNormal("et de la Recherche Scientifique\n", false, 8, essat),
+                textNormal("L'École Supperieure des Sciences Appliquées\n", false, 8, essat),
+                textNormal("et de la Téchnologie Privée de Gabès\n", false, 8, essat),
+                textNormal("Agrément N°: 05/2007", false, 8, essat)
+        ));
+        entete.addCell(img);
+        PdfPCell pdfPCell = new PdfPCell(text(
+                textNormalArialUni("الجمهورية التونسية\n", false, 9, essat),
+                textNormalArialUni("وزارة التعليـــــم العــــــالي\n", false, 8, essat),
+                textNormalArialUni("و البحــــث العلمـــــي\n", false, 8, essat),
+                textNormalArialUni("المدرسة العليا للعلوم التطبيقية\n", false, 8, essat),
+                textNormalArialUni("و التكنولوجيا الخاصة بقابس\n", false, 8, essat),
+                textNormalArialUni("التأشيرة عدد: 05/2007", false, 8, essat)
+        ));
+        pdfPCell.setRunDirection(PdfWriter.RUN_DIRECTION_RTL);
+        pdfPCell.setBorder(0);
+        pdfPCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        pdfPCell.setFixedHeight(100);
+        pdfPCell.setLeading(10,0);
+        entete.addCell(pdfPCell);
+        entete.writeSelectedRows(0, -1, 20, PageSize.A4.getHeight() - 20, canvas);
+
+        float[] tsf = {2f, 5.5f, 4.5f};
+        PdfPTable piedDePage = new PdfPTable(tsf);
+        piedDePage.setTotalWidth(PageSize.A4.getWidth() - 50);
+        piedDePage.getDefaultCell().setBorder(0);
+        piedDePage.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
+        piedDePage.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
+        piedDePage.getDefaultCell().setFixedHeight(10);
+        piedDePage.getDefaultCell().setPaddingBottom(0);
+        piedDePage.getDefaultCell().setPaddingLeft(0);
+        piedDePage.getDefaultCell().setPaddingRight(0);
+        piedDePage.getDefaultCell().setPaddingTop(0);
+        PdfPCell e = new PdfPCell(text(textNormal("ESSAT", true, 13, essat)));
+        e.setBorder(0);
+        e.setHorizontalAlignment(Element.ALIGN_CENTER);
+        e.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        e.setFixedHeight(13);
+        e.setPaddingBottom(0);
+        e.setPaddingLeft(0);
+        e.setPaddingRight(0);
+        e.setPaddingTop(0);
+        piedDePage.addCell(e);
+        piedDePage.addCell("");
+        PdfPCell addr = new PdfPCell(text(
+                textNormal("ESSAT Privée de Gabés, BP:91,Bureau Postal Mtorrech 6014 Gabés  \n", false, 7, essat),
+                textNormal("Tel:75 294 660 - Fax : 75 294 690  \n", false, 9, essat),
+                textNormal("contact@essat-gabes.com     -     www.essat-gabes.com  ", false, 9, essat)
+        ));
+        addr.setBorder(0);
+        addr.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        addr.setVerticalAlignment(Element.ALIGN_BOTTOM);
+        addr.setRowspan(3);
+        addr.setFixedHeight(10);
+        addr.setPaddingBottom(0);
+        addr.setPaddingLeft(0);
+        addr.setPaddingRight(0);
+        addr.setPaddingTop(0);
+        piedDePage.addCell(addr);
+        PdfPCell p = new PdfPCell(text(textNormal("Privée de Gabès", false, 12, essat)));
+        p.setBorder(0);
+        p.setHorizontalAlignment(Element.ALIGN_CENTER);
+        p.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        p.setFixedHeight(13);
+        p.setPaddingBottom(0);
+        p.setPaddingLeft(0);
+        p.setPaddingRight(0);
+        p.setPaddingTop(0);
+        piedDePage.addCell(p);
+
+        piedDePage.addCell("");
+        Image trai = Image.getInstance("src/main/resources/Images/trai.png");
+        PdfPCell trai1 = new PdfPCell(trai, true);
+        trai1.setBorder(0);
+        trai1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        trai1.setVerticalAlignment(Element.ALIGN_BOTTOM);
+        trai1.setFixedHeight(10);
+        trai1.setColspan(2);
+        piedDePage.addCell(trai1);
+        piedDePage.writeSelectedRows(0, -1, 25, piedDePage.getTotalHeight() + 30, canvas);
+
     }
 }
