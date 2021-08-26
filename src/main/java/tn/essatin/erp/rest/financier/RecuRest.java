@@ -90,20 +90,21 @@ public class RecuRest {
     public ResponseEntity<?>pdfByIdTransaction(@PathVariable int id){
         Optional<Transaction> transaction = transactionDao.findById(id);
         if(transaction.isEmpty())
-            return  new ResponseEntity<>(new MessageResponse("Transaction introuvable",403), HttpStatus.FORBIDDEN);
+            return  new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.transaction",null, Locale.FRENCH),403), HttpStatus.FORBIDDEN);
         Personne personne = transaction.get().getClient();
         Optional<Etudiants> etudiants = etudiantsDao.findByIdPersonne(personne);
         if(etudiants.isEmpty())
-            return  new ResponseEntity<>(new MessageResponse("Etudiant introuvable",403), HttpStatus.FORBIDDEN);
+            return  new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.etudiant",null, Locale.FRENCH),403), HttpStatus.FORBIDDEN);
         Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants.get());
         Enregistrement enregistrement = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(inscription);
         Niveau niveau = enregistrement.getIdNiveau();
         List<ModaliteTransaction> modaliteTransactionList = modaliteTransactionDao.findModaliteTransactionByTransaction(transaction.get());
-
         ByteArrayOutputStream os = RecuEtudiant.createDoc(new TransactionAvecModalite(transaction.get(),modaliteTransactionList),niveau);
+        os = RecuEtudiant.createDoc(os);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
+
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 
 
