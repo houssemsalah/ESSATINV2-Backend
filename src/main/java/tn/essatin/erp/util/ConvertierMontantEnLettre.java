@@ -21,15 +21,14 @@ public class ConvertierMontantEnLettre {
 
         entierS += (entier == 1 || entier == 0) ? " Dinar" : " Dinars" ;
         decimalS += (decimal == 1) ? " Millime" : " Millimes" ;
-        String valeurTotale = ""+((entier == 0 && decimal != 0)?"":entierS)+((entier>0 && decimal>0)?" et ":"")+((decimal==0)?"":decimalS);
-        return valeurTotale;
+        return ""+((entier == 0 && decimal != 0)?"":entierS)+((entier>0 && decimal>0)?" et ":"")+((decimal==0)?"":decimalS);
     }
 
     private static String upperCaseFirst(String val) {
         char[] arr = val.toCharArray();
         arr[0] = Character.toUpperCase(arr[0]);
         for (int i=1;i<arr.length;i++){
-            if(arr[i-1]==' ')
+            if(arr[i-1]==' '||arr[i-1]=='-')
                 arr[i] = Character.toUpperCase(arr[i]);
         }
         return new String(arr);

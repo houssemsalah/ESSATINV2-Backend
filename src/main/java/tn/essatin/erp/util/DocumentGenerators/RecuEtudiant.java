@@ -13,6 +13,7 @@ import tn.essatin.erp.util.ConvertierMontantEnLettre;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
+import java.util.Collections;
 
 
 public class RecuEtudiant {
@@ -73,8 +74,7 @@ public class RecuEtudiant {
 
     private static Phrase text(Chunk... chunks) {
         Phrase phrase = new Phrase();
-        for (Chunk chunk : chunks)
-            phrase.add(chunk);
+        Collections.addAll(phrase, chunks);
         return phrase;
     }
 
@@ -127,7 +127,7 @@ public class RecuEtudiant {
             entete.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
             entete.getDefaultCell().setFixedHeight(50);
             entete.addCell(img);
-            entete.addCell(new Phrase(titre("Reçu de paiement")));
+            entete.addCell(text(titre("Reçu de paiement"), textNormalMin("\n\nN°"), textNormalMin(String.format("%010d", transaction.getId()))));
             entete.addCell(new Phrase(mini("Ecole Supérieure des Sciences Appliquées et de la Technologie Privée de Gabès")));
             document.add(entete);
             if (transaction.getModaliteTransactionList().size() == 1)
@@ -138,16 +138,20 @@ public class RecuEtudiant {
             paragraph.setAlignment(Element.ALIGN_JUSTIFIED);
             paragraph.setIndentationLeft(30f);
             paragraph.setIndentationRight(30f);
-            paragraph.setLeading(20);
+            if (transaction.getModaliteTransactionList().size() == 1)
+                paragraph.setLeading(20);
+            else
+                paragraph.setLeading(15);
             paragraph.add(text(
-                    textNormal("Reçue de payement des frais de scolarité de "),
+                    textNormal("Reçu de payement des frais de scolarité de "),
                     textGras(prenom + " " + nom),
-                    textNormal(isHommeE ? " inscrit en " : " inscrite en "),
+                    textNormal(isHommeE ? ", inscrit en " : ", inscrite en "),
                     textGras(niveauxC),
-                    exposant((niveauxC.equalsIgnoreCase("1"))?"ère":"ème",true),
-                    textGras(" "+designationNiveaux),
-                    textNormal(" pour la somme de "),
-                    textGras(ConvertierMontantEnLettre.enTouteLettre(montant) + " (" + montant + ") ")
+                    exposant((niveauxC.equalsIgnoreCase("1")) ? "ère" : "ème", true),
+                    textGras(" année " + designationNiveaux),
+                    textNormal(", remis contre la somme de "),
+                    textGras(ConvertierMontantEnLettre.enTouteLettre(montant) + " (" + montant + " DT)"),
+                    textNormal(", ")
 
 
             ));
@@ -159,10 +163,10 @@ public class RecuEtudiant {
                 } else {
                     p1.add(textNormal("sous forme de "));
                     p1.add(textGras(transaction.getModaliteTransactionList().get(0).getType().toString()));
-                    p1.add(textNormal(" avec le numéro: "));
+                    p1.add(textNormal(" portant le numéro: "));
                     p1.add(textGras(transaction.getModaliteTransactionList().get(0).getNumero()));
                     if (transaction.getModaliteTransactionList().get(0).getType().equals(ETypeModaliteTransaction.CHEQUE) && transaction.getModaliteTransactionList().get(0).getDate() != null) {
-                        p1.add(textNormal(" disponible a partir du: "));
+                        p1.add(textNormal(" disponible à partir du: "));
                         p1.add(textGras(transaction.getModaliteTransactionList().get(0).getDate().format(DocumentFunction.FORMATTER)));
                     }
                     if (transaction.getModaliteTransactionList().get(0).getType().equals(ETypeModaliteTransaction.VIREMENT_BANCAIRE) && transaction.getModaliteTransactionList().get(0).getDate() != null) {
@@ -179,7 +183,7 @@ public class RecuEtudiant {
             listModalite.setAlignment(Element.ALIGN_JUSTIFIED);
             listModalite.setIndentationLeft(40f);
             listModalite.setIndentationRight(30f);
-            listModalite.setLeading(20);
+            listModalite.setLeading(15);
             if (transaction.getModaliteTransactionList().size() > 1) {
                 for (ModaliteTransaction modaliteTransaction : transaction.getModaliteTransactionList()) {
                     if (modaliteTransaction.getType().equals(ETypeModaliteTransaction.ESPECES)) {
@@ -187,7 +191,7 @@ public class RecuEtudiant {
                                 textNormalMin("- "),
                                 textGrasMin(modaliteTransaction.getType().toString()),
                                 textNormalMin(": "),
-                                textGrasMin(ConvertierMontantEnLettre.enTouteLettre(modaliteTransaction.getMontant()) + " (" + modaliteTransaction.getMontant() + ")"),
+                                textGrasMin(ConvertierMontantEnLettre.enTouteLettre(modaliteTransaction.getMontant()) + " (" + modaliteTransaction.getMontant() + " DT)"),
                                 textNormalMin(".\n")
                         ));
                     }
@@ -198,12 +202,12 @@ public class RecuEtudiant {
                                 textNormalMin(" N°"),
                                 textGrasMin(modaliteTransaction.getNumero()),
                                 textNormalMin(": "),
-                                textGrasMin(ConvertierMontantEnLettre.enTouteLettre(modaliteTransaction.getMontant()) + " (" + modaliteTransaction.getMontant() + ")")
+                                textGrasMin(ConvertierMontantEnLettre.enTouteLettre(modaliteTransaction.getMontant()) + " (" + modaliteTransaction.getMontant() + " DT)")
 
                         ));
                         if (transaction.getModaliteTransactionList().get(0).getDate() != null) {
                             listModalite.add(text(
-                                    textNormalMin(" disponible a partir du: "),
+                                    textNormalMin(" disponible à partir du: "),
                                     textGrasMin(transaction.getModaliteTransactionList().get(0).getDate().format(DocumentFunction.FORMATTER))
                             ));
                         }
@@ -216,7 +220,7 @@ public class RecuEtudiant {
                                 textNormalMin(" N°"),
                                 textGrasMin(modaliteTransaction.getNumero()),
                                 textNormalMin(": "),
-                                textGrasMin(ConvertierMontantEnLettre.enTouteLettre(modaliteTransaction.getMontant()) + " (" + modaliteTransaction.getMontant() + ")")
+                                textGrasMin(ConvertierMontantEnLettre.enTouteLettre(modaliteTransaction.getMontant()) + " (" + modaliteTransaction.getMontant() + " DT)")
 
                         ));
                         if (transaction.getModaliteTransactionList().get(0).getDate() != null) {
@@ -230,7 +234,7 @@ public class RecuEtudiant {
                 }
             }
             document.add(listModalite);
-            float[] ts2 = { 200f};
+            float[] ts2 = {200f};
             PdfPTable pied = new PdfPTable(1);
             pied.setTotalWidth(ts2);
             pied.getDefaultCell().setBorder(0);
@@ -240,11 +244,11 @@ public class RecuEtudiant {
             pied.addCell("");
             pied.addCell(text(
                     textNormalMin("Reçu par "),
-                    textGrasMin(transaction.getFinancier().getPersonne().getPrenom()+" "+transaction.getFinancier().getPersonne().getNom()),
+                    textGrasMin(transaction.getFinancier().getPersonne().getPrenom() + " " + transaction.getFinancier().getPersonne().getNom()),
                     textNormalMin("\nLe: "),
                     textNormalMin(LocalDate.now().format(DocumentFunction.FORMATTER))
             ));
-            pied.writeSelectedRows(0,-1,document.leftMargin()+220, 30+ pied.getTotalHeight(),canvas);
+            pied.writeSelectedRows(0, -1, document.leftMargin() + 220, 30 + pied.getTotalHeight(), canvas);
 
 
             document.close();
@@ -254,7 +258,8 @@ public class RecuEtudiant {
         }
         return response;
     }
-    public static ByteArrayOutputStream createDoc(ByteArrayOutputStream doc){
+
+    public static ByteArrayOutputStream createDoc(ByteArrayOutputStream doc) {
 
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Document document = new Document();
@@ -262,16 +267,20 @@ public class RecuEtudiant {
         document.setPageSize(pageSize);
         try {
             PdfWriter writer = PdfWriter.getInstance(document, response);
+            document.addAuthor("ESSAT-In Application");
+            document.addCreator("Mohamed Nasr");
+            document.addCreationDate();
+            document.addLanguage("fr_FR");
+            document.addTitle("Reçue de payement");
             document.open();
             PdfContentByte cb = writer.getDirectContent();
             PdfReader reader = new PdfReader(doc.toByteArray());
-
             PdfImportedPage page = writer.getImportedPage(reader, 1);
             cb.addTemplate(page, 0, -1, 1, 0, 0, PageSize.A6.rotate().getHeight());
             document.newPage();
             cb.addTemplate(page, 0, -1, 1, 0, 0, PageSize.A6.rotate().getHeight());
             document.close();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         return response;
