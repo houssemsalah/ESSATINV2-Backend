@@ -14,9 +14,9 @@ import java.util.List;
 
 public class ContratRequest {
     @NotBlank(message = "Ennumeration de type 'ETypeContrat'")
-    private String typeContrat;
+    private ETypeContrat typeContrat;
     @NotBlank(message = "Ennumeration de type 'EUniteSalaire'")
-    private String uniteSalaire;
+    private EUniteSalaire uniteSalaire;
     @NotNull(message="prixUnite ne peut etre null")
     private Double prixUnite;
     private LocalDate dateDebutContrat;
@@ -30,9 +30,7 @@ public class ContratRequest {
         return idEmployer;
     }
 
-
-
-    public ContratRequest(String typeContrat, String uniteSalaire,
+    public ContratRequest(ETypeContrat typeContrat, EUniteSalaire uniteSalaire,
                           Double prixUnite, LocalDate dateDebutContrat, LocalDate dateFinContrat,
                           LocalDate dateSignatureContrat, LocalDate dateResiliationContrat, String observation, int idEmployer) {
         this.typeContrat = typeContrat;
@@ -46,35 +44,71 @@ public class ContratRequest {
         this.idEmployer = idEmployer;
     }
 
-    public String getTypeContrat() {
+    public ETypeContrat getTypeContrat() {
         return typeContrat;
     }
 
-    public String getUniteSalaire() {
+    public void setTypeContrat(ETypeContrat typeContrat) {
+        this.typeContrat = typeContrat;
+    }
+
+    public EUniteSalaire getUniteSalaire() {
         return uniteSalaire;
+    }
+
+    public void setUniteSalaire(EUniteSalaire uniteSalaire) {
+        this.uniteSalaire = uniteSalaire;
     }
 
     public Double getPrixUnite() {
         return prixUnite;
     }
 
+    public void setPrixUnite(Double prixUnite) {
+        this.prixUnite = prixUnite;
+    }
+
     public LocalDate getDateDebutContrat() {
         return dateDebutContrat;
+    }
+
+    public void setDateDebutContrat(LocalDate dateDebutContrat) {
+        this.dateDebutContrat = dateDebutContrat;
     }
 
     public LocalDate getDateFinContrat() {
         return dateFinContrat;
     }
 
+    public void setDateFinContrat(LocalDate dateFinContrat) {
+        this.dateFinContrat = dateFinContrat;
+    }
+
     public LocalDate getDateSignatureContrat() {
         return dateSignatureContrat;
+    }
+
+    public void setDateSignatureContrat(LocalDate dateSignatureContrat) {
+        this.dateSignatureContrat = dateSignatureContrat;
     }
 
     public LocalDate getDateResiliationContrat() {
         return dateResiliationContrat;
     }
 
+    public void setDateResiliationContrat(LocalDate dateResiliationContrat) {
+        this.dateResiliationContrat = dateResiliationContrat;
+    }
+
     public String getObservation() {
         return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
+    }
+
+    public void setIdEmployer(int idEmployer) {
+        this.idEmployer = idEmployer;
     }
 }

@@ -1,5 +1,6 @@
 package tn.essatin.erp.rest.financier;
 
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +25,7 @@ import tn.essatin.erp.util.StudentDebt;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -42,13 +40,15 @@ public class EtudiantFinanceRest {
     final InscriptionDao inscriptionDao;
     final DateDesactivationEtudiantsDao dateDesactivationEtudiantsDao;
     final EtatInscriptionDao etatInscriptionDao;
+    final MessageSource messageSource;
+
 
     public EtudiantFinanceRest(
             EnregistrementDao enregistrementDao, StudentDebt studentDebt,
             SessionDao sessionDao, TransactionDao transactionDao,
             ModaliteTransactionDao modaliteTransactionDao,
             InscriptionDao inscriptionDao, DateDesactivationEtudiantsDao dateDesactivationEtudiantsDao,
-            EtatInscriptionDao etatInscriptionDao) {
+            EtatInscriptionDao etatInscriptionDao, MessageSource messageSource) {
         this.enregistrementDao = enregistrementDao;
         this.studentDebt = studentDebt;
         this.sessionDao = sessionDao;
@@ -57,6 +57,7 @@ public class EtudiantFinanceRest {
         this.inscriptionDao = inscriptionDao;
         this.dateDesactivationEtudiantsDao = dateDesactivationEtudiantsDao;
         this.etatInscriptionDao = etatInscriptionDao;
+        this.messageSource = messageSource;
     }
 
     @GetMapping("/")
@@ -67,70 +68,70 @@ public class EtudiantFinanceRest {
 
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Enregistrement introuvable!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.enregistrement", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/etudiantfinance/restapayer/{idEnregistrement}", "Get",
                 "retourne un JSON avec la valeur qui reste a payer en Dinar Tunisien",
                 "/api/etudiantfinance/restapayer/1",
-                "texte JSON avec le champ valeur qui represente la valeur du reste a payer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Session Introuvable", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.session", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/etudiantfinance/getenregistrementavecresrbyidsession/{idSession}", "Get",
                 "retourne un JSON avec la liste des enregistrement(Etudiants) avec reste a payer dans une session",
                 "/api/etudiantfinance/getenregistrementavecresrbyidsession/5",
-                "une texte JSON avec une liste d'enregistrements", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Enregistrement introuvable!", 403));
-        responses.add(new MessageResponse("Pas de transactions pour cet etudiant", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.enregistrement", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("aucun.transaction.etudiant", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/etudiantfinance/getdetaillepayementbyidenregistrement/{idEnregistrement}", "Get",
                 "retourne un JSON avec la liste des modalité de transacton éféctué par un étudiant (y compris les id transaction impliqué)",
                 "/api/etudiantfinance/getdetaillepayementbyidenregistrement/1",
-                "une texte JSON avec une liste de ModaliteTransactions", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Transaction introuvable", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.transaction", null, Locale.FRENCH), 403));
 
         info = new ApiInfo("/api/etudiantfinance/getdetaillepayementbyidtransaction/{idTransaction}", "Get",
                 "retourne un JSON avec la liste des modalité de transacton éféctué pour une transaction ",
                 "/api/etudiantfinance/getdetaillepayementbyidtransaction/23",
-                "une texte JSON avec une liste de ModaliteTransactions", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Enregistrement introuvable!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.enregistrement", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/etudiantfinance/pourcentagepayer/{idEnregistrement}", "Get",
                 "retourne un JSON avec la valeur qui a deja été payer en %",
                 "/api/etudiantfinance/pourcentagepayer/1",
-                "texte JSON avec le champ valeur qui represente la valeur en % de la valeur deja payer", responses);
+                "JSON text Messager", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Enregistrement introuvable!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.enregistrement", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/etudiantfinance/adesimpayerdansuneautresession/{idEnregistrement}", "Get",
                 "retourne un JSON avec la valeur true ou false pour savoir si l'enregistrement correspond a un etudiant avec des impayer",
                 "/api/etudiantfinance/adesimpayerdansuneautresession/1",
-                "texte JSON avec le champ valeur qui represente la valeur true si l'etudiant a des impayer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Enregistrement introuvable!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.enregistrement", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/etudiantfinance/listdesenregistrementsavecimpayerdansautresession/{idEnregistrement}", "Get",
                 "retourne un JSON avec la liste des enregistrement(differante de l'enregistrement en cour) avec reste a payer dans d'autre session",
                 "/api/etudiantfinance/listdesenregistrementsavecimpayerdansautresession/1",
-                "une texte JSON avec une liste d'enregistrements", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Enregistrement introuvable!", 403));
-        responses.add(new MessageResponse("Pas de transactions pour cet etudiant", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.enregistrement", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("aucun.transaction.etudiant", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/etudiantfinance/getdetaillepayementbyidenregistrementnew/{idEnregistrement}", "Get",
                 "retourne un JSON avec la liste des transactions éféctué par un étudiant (y compris les modalite de transaction impliqué; REMARQUE: les Modalité ont un champ transaction null pour evité d'affiché la transaction 2 fois)",
                 "/api/etudiantfinance/getdetaillepayementbyidenregistrementnew/1",
-                "une texte JSON avec une liste de transaction", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
 

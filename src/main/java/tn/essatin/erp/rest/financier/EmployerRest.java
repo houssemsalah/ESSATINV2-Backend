@@ -1,6 +1,7 @@
 package tn.essatin.erp.rest.financier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,10 @@ import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.ApiInfo;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -34,15 +37,19 @@ public class EmployerRest {
     final TypeIdentificateurDao typeIdentificateurDao;
     final NationaliteDao nationaliteDao;
     final ContratDao contratDao;
+    final MessageSource messageSource;
+
 
     @Autowired
     public EmployerRest(EmployerDao employerDao, PersonneDao personneDao,
-                        TypeIdentificateurDao typeIdentificateurDao, NationaliteDao nationaliteDao, ContratDao contratDao) {
+                        TypeIdentificateurDao typeIdentificateurDao, NationaliteDao nationaliteDao,
+                        ContratDao contratDao, MessageSource messageSource) {
         this.employerDao = employerDao;
         this.personneDao = personneDao;
         this.typeIdentificateurDao = typeIdentificateurDao;
         this.nationaliteDao = nationaliteDao;
         this.contratDao = contratDao;
+        this.messageSource = messageSource;
     }
     @GetMapping("/")
     public ResponseEntity<?> infoApi() {
@@ -54,51 +61,85 @@ public class EmployerRest {
         info = new ApiInfo("/api/employer/getall", "Get",
                 "retourne un JSON avec la liste de tout les employer dans la base",
                 "/api/employer/getall",
-                "une texte JSON avec une liste des employer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Employer introuvable!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/employer/getemployer/{id}", "Get",
                 "retourne un JSON avec la liste des employer par leur id",
                 "/api/employer/getemployer/3",
-                "une texte JSON avec une liste des employer", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Personne Introuvable!", 403));
-        responses.add(new MessageResponse("Situation marietal incorecte", 403));
-        responses.add(new MessageResponse("Type Employer incorecte", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.personne", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.incorrect.situationMarietal", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.incorrect.typeEmployer", null, Locale.FRENCH), 403));
 
-
-        info = new ApiInfo("/api/employer/ajouteremployer", "Post",
-                "Ajouter un empoyer",
-                "/api/employer/ajouteremployer",
-                "une texte JSON aves des champs pour ajouter un employer", responses);
+        AjouterEmployerRequest ajouterEmployerRequest = new AjouterEmployerRequest("126748596",
+                "y3adi ro7ah", ESituationMaritale.DIVORCEE, 3, "", LocalDate.now(),
+                "785412054785", "ossteth ad edonya", 401,  ETypeEmployer.ENSEIGNANT);
+        info = new ApiInfo("/api/employer/ajouteremployer", "Post","ajouter un employer", ajouterEmployerRequest,
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Employer Introuvable!", 403));
-        responses.add(new MessageResponse("Personne Introuvable!", 403));
-        responses.add(new MessageResponse("ETypeContrat Introuvable!", 403));
-        responses.add(new MessageResponse("EUniteSalaire Introuvable!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.personne", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.incorrect.typeEmployer", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.uniteSalaire", null, Locale.FRENCH), 403));
 
+        ModifierEmployerRequest modifierEmployerRequest=new ModifierEmployerRequest(
+                1,"123456789",
+                "Fallou7",ESituationMaritale.CELIBATAIRE,
+                5,"", LocalDate.now(),"12345678912345",
+                "Service Juridique",555,ETypeEmployer.ADMINISTRATIF);
 
         info = new ApiInfo("/api/employer/modifieremployer", "Post",
                 "Modifier un employer",
-                "/api/employer/modifieremployer",
-                "une texte JSON aves des champs pour modifier un employer", responses);
+                modifierEmployerRequest,
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Employer Introuvable!", 403));
-        responses.add(new MessageResponse("cette Employer n'a aucun contrat!", 403));
+
+        responses.add(new MessageResponse(messageSource.getMessage("error.incorrect.typeIdentificateur", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.incorrect.nationalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.existe.personne", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.existe.employer", null, Locale.FRENCH), 403));
+
+        InscriptionEmployerRequest inscriptionEmployerRequest = new InscriptionEmployerRequest("Eladel", "Nahla",
+                "nahla@essat-gabes.tn",
+                "Kebili","96747848", LocalDate.now().minusYears(20),
+                "Kebili", 1 ,"0365498", "femme",1,
+                "8754123698","5adem jdid", ESituationMaritale.CELIBATAIRE,
+                0,"", LocalDate.now(), "7854789632145014","bch t9ari", ETypeEmployer.ENSEIGNANT,
+                ETypeContrat.CDI, EUniteSalaire.MOIS, 900.0, LocalDate.now(), null, LocalDate.now(),
+                null, "7ata chay");
+
+        info = new ApiInfo("/api/employer/inscription", "Post",
+                "inscription d'un employer et un personne meme temps",
+                inscriptionEmployerRequest,
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        responses = new ArrayList<>();
+
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.personne", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.existe.employer", null, Locale.FRENCH), 403));
 
 
-        info = new ApiInfo("/api/employer/inscription", "Get",
-                "retourne un JSON avec la liste de tout les contrat par id d'employer",
-                "/api/contrat/getbyemployer/2",
-                "une texte JSON aves une liste de contart", responses);
+        InscriptionEmployerByIdPersonneRequest inscriptionEmployerByIdPersonneRequest = new InscriptionEmployerByIdPersonneRequest(80,
+                "7854698745", "bch yabda ye5dem",ESituationMaritale.CELIBATAIRE,
+                0,"",LocalDate.now(),"785478547895","yched blaset amal",
+                ETypeEmployer.ADMINISTRATIF,ETypeContrat.CDI, EUniteSalaire.MOIS,500.0, LocalDate.now(),
+                null,LocalDate.now(),null ,"je sais pas");
+
+        info = new ApiInfo("/api/employer/inscriptionbyidpersonne", "Post",
+                "inscription d'un employer par id personne",
+                inscriptionEmployerByIdPersonneRequest,
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
 
@@ -122,31 +163,22 @@ public class EmployerRest {
 
     @PostMapping("/ajouteremployer")
     public ResponseEntity<?> ajouterEmployer(@Valid @RequestBody AjouterEmployerRequest ajouterEmployerRequest) {
-        ESituationMaritale situationMaritale;
-        ETypeEmployer typeEmployer;
+
         Optional<Personne> personne = personneDao.findById(ajouterEmployerRequest.getIdpersonne());
         if (personne.isEmpty())
             return new ResponseEntity<>(new MessageResponse("Personne introuvable", 403), HttpStatus.FORBIDDEN);
-        try {
-            situationMaritale = ESituationMaritale.valueOf(ajouterEmployerRequest.getSituationMaritale());
-        } catch (Exception E) {
-            return new ResponseEntity<>(new MessageResponse("Situation marietal incorecte", 403), HttpStatus.FORBIDDEN);
-        }
-        try {
-            typeEmployer = ETypeEmployer.valueOf(ajouterEmployerRequest.getTypeEmployer());
-        } catch (Exception E) {
-            return new ResponseEntity<>(new MessageResponse("Type Employer incorecte",403), HttpStatus.FORBIDDEN);
-        }
+
+
         Employer employer = new Employer(ajouterEmployerRequest.getNumeroCNSS(),
                 ajouterEmployerRequest.getObservation(),
-                situationMaritale,
+                ajouterEmployerRequest.getSituationMaritale(),
                 ajouterEmployerRequest.getNbEnfant(),
                 ajouterEmployerRequest.getImage(),
                 ajouterEmployerRequest.getDateEntree(),
                 ajouterEmployerRequest.getRipIBAN(),
                 ajouterEmployerRequest.getPoste(),
                 personne.get(),
-                typeEmployer);
+                ajouterEmployerRequest.getTypeEmployer());
         employerDao.save(employer);
         return new ResponseEntity<>(new MessageResponse(
                 "L'employer " + employer.getPersonne().getIdPersonne()
@@ -157,8 +189,7 @@ public class EmployerRest {
 
     @PostMapping("/modifieremployer")
     public ResponseEntity<?> modifierEmployer(@Valid @RequestBody ModifierEmployerRequest modifierEmployerRequest) {
-        ESituationMaritale situationMaritale;
-        ETypeEmployer typeEmployer;
+
         Optional<Employer> oemployer = employerDao.findById(modifierEmployerRequest.getId());
         if (oemployer.isEmpty()) {
             return new ResponseEntity<>(new MessageResponse("Employer Introuvable", 403), HttpStatus.FORBIDDEN);
@@ -166,27 +197,19 @@ public class EmployerRest {
         Optional<Personne> personne = personneDao.findById(modifierEmployerRequest.getIdPersonne());
         if (personne.isEmpty())
             return new ResponseEntity<>(new MessageResponse("Personne introuvable", 403), HttpStatus.FORBIDDEN);
-        try {
-            situationMaritale = ESituationMaritale.valueOf(modifierEmployerRequest.getSituationMaritale());
-        } catch (Exception E) {
-            return new ResponseEntity<>(new MessageResponse("Situation marietal incorecte", 403), HttpStatus.FORBIDDEN);
-        }
-        try {
-            typeEmployer = ETypeEmployer.valueOf(modifierEmployerRequest.getTypeEmployer());
-        } catch (Exception E) {
-            return new ResponseEntity<>(new MessageResponse("Type Employer incorecte", 403), HttpStatus.FORBIDDEN);
-        }
+
+
         Employer employer = oemployer.get();
         employer.setNumeroCNSS(modifierEmployerRequest.getNumeroCNSS());
         employer.setObservation(modifierEmployerRequest.getObservation());
-        employer.setSituationMaritale(situationMaritale);
+        employer.setSituationMaritale(modifierEmployerRequest.getSituationMaritale());
         employer.setNbEnfant(modifierEmployerRequest.getNbEnfant());
         employer.setImage(modifierEmployerRequest.getImage());
         employer.setDateEntree(modifierEmployerRequest.getDateEntree());
         employer.setRipIBAN(modifierEmployerRequest.getRipIBAN());
         employer.setPoste(modifierEmployerRequest.getPoste());
         employer.setPersonne(personne.get());
-        employer.setTypeEmployer(typeEmployer);
+        employer.setTypeEmployer(modifierEmployerRequest.getTypeEmployer());
         employerDao.save(employer);
         return new ResponseEntity<>(new MessageResponse(
                 "L'employer " + employer.getPersonne().getIdPersonne()
@@ -197,38 +220,15 @@ public class EmployerRest {
 
     @PostMapping("/inscription")
     public ResponseEntity<?> inscriptionEmployer(@Valid @RequestBody InscriptionEmployerRequest inscriptionEmployerRequest) {
-        ESituationMaritale situationMaritale;
-        ETypeEmployer typeEmployer;
-        try {
-            situationMaritale = ESituationMaritale.valueOf(inscriptionEmployerRequest.getSituationMaritale());
-        } catch (Exception E) {
-            return new ResponseEntity<>(new MessageResponse("Situation marietal incorecte", 403), HttpStatus.FORBIDDEN);
-        }
-        try {
-            typeEmployer = ETypeEmployer.valueOf(inscriptionEmployerRequest.getTypeEmployer());
-        } catch (Exception E) {
-            return new ResponseEntity<>(new MessageResponse("Type Employer incorecte", 403), HttpStatus.FORBIDDEN);
-        }
+
         Optional<TypeIdentificateur> typeIdentificateur = typeIdentificateurDao.findById(inscriptionEmployerRequest.getIdTypeIdentificateur());
         if (typeIdentificateur.isEmpty())
             return new ResponseEntity<>(new MessageResponse("TypeIdentificateur invalide", 403), HttpStatus.FORBIDDEN);
         Optional<Nationalite> nationalite = nationaliteDao.findById(inscriptionEmployerRequest.getIdNationalite());
         if (nationalite.isEmpty())
             return new ResponseEntity<>(new MessageResponse("Nationnalité invalide", 403), HttpStatus.FORBIDDEN);
-        ETypeContrat type;
-        EUniteSalaire unite;
-        try {
-            type = ETypeContrat.valueOf(inscriptionEmployerRequest.getTypeContrat());
-        } catch (Exception E) {
-            return new ResponseEntity<>(
-                    new MessageResponse("ETypeContrat introuvable", 403), HttpStatus.FORBIDDEN);
-        }
-        try {
-            unite = EUniteSalaire.valueOf(inscriptionEmployerRequest.getUniteSalaire());
-        } catch (Exception E) {
-            return new ResponseEntity<>(
-                    new MessageResponse("EUniteSalaire introuvable", 403), HttpStatus.FORBIDDEN);
-        }
+
+
         Optional<Personne> p = personneDao.findByNumeroIdentificateur(inscriptionEmployerRequest.getIdidentif());
         if (p.isPresent()) {
             return new ResponseEntity<>(new MessageResponse("Cette personne existe deja dans la base de donnee", 403), HttpStatus.FORBIDDEN);
@@ -248,16 +248,16 @@ public class EmployerRest {
         personneDao.save(personne);
         Employer employer = new Employer(inscriptionEmployerRequest.getNumeroCNSS(),
                 inscriptionEmployerRequest.getObservationEmployer(),
-                situationMaritale,
+                inscriptionEmployerRequest.getSituationMaritale(),
                 inscriptionEmployerRequest.getNbEnfant(),
                 inscriptionEmployerRequest.getImage(),
                 inscriptionEmployerRequest.getDateEntree(),
                 inscriptionEmployerRequest.getRipIBAN(),
                 inscriptionEmployerRequest.getPoste(),
                 personne,
-                typeEmployer);
+                inscriptionEmployerRequest.getTypeEmployer());
         employerDao.save(employer);
-        Contrat contrat = new Contrat(type, unite,
+        Contrat contrat = new Contrat(inscriptionEmployerRequest.getTypeContrat(), inscriptionEmployerRequest.getUniteSalaire(),
                 inscriptionEmployerRequest.getPrixUnite(), inscriptionEmployerRequest.getDateDebutContrat(),
                 inscriptionEmployerRequest.getDateFinContrat(),
                 inscriptionEmployerRequest.getDateSignatureContrat(),
@@ -276,33 +276,7 @@ public class EmployerRest {
     @PostMapping("/inscriptionbyidpersonne")
     public ResponseEntity<?> inscriptionEmployerByIdPersonne(
             @Valid @RequestBody InscriptionEmployerByIdPersonneRequest inscriptionEmployerByIdPersonneRequest) {
-        ESituationMaritale situationMaritale;
-        ETypeEmployer typeEmployer;
-        try {
-            situationMaritale = ESituationMaritale.valueOf(inscriptionEmployerByIdPersonneRequest.getSituationMaritale());
-        } catch (Exception E) {
-            return new ResponseEntity<>(new MessageResponse("Situation marietal incorecte"), HttpStatus.FORBIDDEN);
-        }
-        try {
-            typeEmployer = ETypeEmployer.valueOf(inscriptionEmployerByIdPersonneRequest.getTypeEmployer());
-        } catch (Exception E) {
-            return new ResponseEntity<>(new MessageResponse("Type Employer incorecte"), HttpStatus.FORBIDDEN);
-        }
 
-        ETypeContrat type;
-        EUniteSalaire unite;
-        try {
-            type = ETypeContrat.valueOf(inscriptionEmployerByIdPersonneRequest.getTypeContrat());
-        } catch (Exception E) {
-            return new ResponseEntity<>(
-                    new MessageResponse("ETypeContrat introuvable", 403), HttpStatus.FORBIDDEN);
-        }
-        try {
-            unite = EUniteSalaire.valueOf(inscriptionEmployerByIdPersonneRequest.getUniteSalaire());
-        } catch (Exception E) {
-            return new ResponseEntity<>(
-                    new MessageResponse("EUniteSalaire introuvable", 403), HttpStatus.FORBIDDEN);
-        }
         Optional<Personne> p = personneDao.findById(inscriptionEmployerByIdPersonneRequest.getIdPersonne());
         if (p.isEmpty()) {
             return new ResponseEntity<>(new MessageResponse("Personne introuvable", 403), HttpStatus.FORBIDDEN);
@@ -315,16 +289,16 @@ public class EmployerRest {
 
         Employer employer = new Employer(inscriptionEmployerByIdPersonneRequest.getNumeroCNSS(),
                 inscriptionEmployerByIdPersonneRequest.getObservationEmployer(),
-                situationMaritale,
+                inscriptionEmployerByIdPersonneRequest.getSituationMaritale(),
                 inscriptionEmployerByIdPersonneRequest.getNbEnfant(),
                 inscriptionEmployerByIdPersonneRequest.getImage(),
                 inscriptionEmployerByIdPersonneRequest.getDateEntree(),
                 inscriptionEmployerByIdPersonneRequest.getRipIBAN(),
                 inscriptionEmployerByIdPersonneRequest.getPoste(),
                 p.get(),
-                typeEmployer);
+                inscriptionEmployerByIdPersonneRequest.getTypeEmployer());
         employerDao.save(employer);
-        Contrat contrat = new Contrat(type, unite,
+        Contrat contrat = new Contrat(inscriptionEmployerByIdPersonneRequest.getTypeContrat(), inscriptionEmployerByIdPersonneRequest.getUniteSalaire(),
                 inscriptionEmployerByIdPersonneRequest.getPrixUnite(), inscriptionEmployerByIdPersonneRequest.getDateDebutContrat(),
                 inscriptionEmployerByIdPersonneRequest.getDateFinContrat(),
                 inscriptionEmployerByIdPersonneRequest.getDateSignatureContrat(),

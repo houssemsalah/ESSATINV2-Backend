@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.financier.TransactionDao;
-import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.financier.Transaction;
 import tn.essatin.erp.payload.response.MessageResponse;
 

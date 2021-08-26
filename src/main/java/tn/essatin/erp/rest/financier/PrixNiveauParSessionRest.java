@@ -1,5 +1,6 @@
 package tn.essatin.erp.rest.financier;
 
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +13,7 @@ import tn.essatin.erp.model.financier.PrixNiveauParSession;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.ApiInfo;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -24,12 +22,15 @@ public class PrixNiveauParSessionRest {
     final PrixNiveauParSessionDao prixNiveauParSessionDao;
     final SessionDao sessionDao;
     final NiveauDao niveauDao;
+    final MessageSource messageSource;
+
 
     public PrixNiveauParSessionRest(PrixNiveauParSessionDao prixNiveauParSessionDao, SessionDao sessionDao,
-                                    NiveauDao niveauDao) {
+                                    NiveauDao niveauDao, MessageSource messageSource) {
         this.prixNiveauParSessionDao = prixNiveauParSessionDao;
         this.sessionDao = sessionDao;
         this.niveauDao = niveauDao;
+        this.messageSource = messageSource;
     }
 
     @GetMapping("/")
@@ -43,27 +44,26 @@ public class PrixNiveauParSessionRest {
         info = new ApiInfo("/api/prixniveauparsession/getall", "Get",
                 "retourne un JSON avec la liste de tout les PrixNiveauParSession dans la base",
                 "/api/prixniveauparsession/getall",
-                "une texte JSON avec une liste de PrixNiveauParSession", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Session Introuvable!", 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.session", null, Locale.FRENCH), 403));
         info = new ApiInfo("/api/prixniveauparsession/getbysession/{idSession}", "Get",
                 "retourne un JSON avec la liste de tout les PrixNiveauParSession pour une session",
                 "/api/prixniveauparsession/getbysession/6",
-                "une texte JSON avec une liste de PrixNiveauParSession", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
         responses = new ArrayList<>();
-        responses.add(new MessageResponse("Session Introuvable!", 403));
-        responses.add(new MessageResponse("Niveau Introuvable!", 403));
-        responses.add(new MessageResponse("prixNiveauParSessions Introuvable!", 403));
-
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.session", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.niveau", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.prixNiveauParSession", null, Locale.FRENCH), 403));
 
         info = new ApiInfo("/api/prixniveauparsession/getbysessionetniveau/{idSession}/{idNiveaux}", "Get",
                 "retourne un JSON avec le PrixNiveauParSession demander",
                 "/api/prixniveauparsession/getbysessionetniveau/6/28",
-                "une texte JSON un PrixNiveauParSession", responses);
+                "JSON text Message", responses);
         infos.add(info);
         /////////////////////
 
