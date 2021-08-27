@@ -27,12 +27,15 @@ import tn.essatin.erp.model.financier.MotifAnnulationRejetModalite;
 import tn.essatin.erp.payload.request.financier.AnnulerRejeterModaliteRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.payload.response.TransactionAvecModalite;
+import tn.essatin.erp.util.ApiInfo;
 import tn.essatin.erp.util.DocumentGenerators.DechargeAnnulation;
 import tn.essatin.erp.util.DocumentGenerators.RecuEtudiant;
 
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -62,6 +65,95 @@ public class ModaliteRest {
         this.inscriptionDao=inscriptionDao;
         this.etudiantsDao = etudiantsDao;
         this.messageSource = messageSource;
+    }
+    @GetMapping("/")
+    public ResponseEntity<?> infoApi() {
+        List<ApiInfo> infos = new ArrayList<>();
+        List<MessageResponse> responses;
+        ApiInfo info;
+        /////////////////////
+        responses = new ArrayList<>();
+        info = new ApiInfo("/api/modalite/getallmodalite", "Get",
+                "retourne un JSON avec la liste de tout les modalites de transaction dans la base",
+                "/api/modalite/getallmodalite",
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403));
+        info = new ApiInfo("/api/modalite/getmodalite/{id}", "Get",
+                "retourne un JSON avec la liste des modalites par leur id",
+                "/api/employer/getemployer/3",
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejaannule.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.notcheck.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejarejete.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejavalide.modalite", null, Locale.FRENCH), 403));
+
+        info = new ApiInfo("/api/modalite/validercheque/{idModalite}", "Get",
+                "retourne un JSON avec la liste des modalites par leur id",
+                "/api/modalite/validercheque/6",
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejaannule.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.notcheck.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejarejete.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejavalide.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.compteFinancier", null, Locale.FRENCH), 403));
+
+        AnnulerRejeterModaliteRequest annulerRejeterModaliteRequest = new AnnulerRejeterModaliteRequest(2,2,"Le chéque va etre remplacé par une operation en espéce");
+        info = new ApiInfo("/api/modalite/rejetecheque", "Post",
+                "un JSON pour rejeter un chéque", annulerRejeterModaliteRequest,
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejaannule.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.notcheck.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejarejete.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.dejavalide.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.compteFinancier", null, Locale.FRENCH), 403));
+
+        AnnulerRejeterModaliteRequest annulerRejeterModaliteRequest1 = new AnnulerRejeterModaliteRequest(4,2,"");
+                info = new ApiInfo("/api/modalite/annulermodalite", "Post",
+                "un JSON pour annuler un modalité", annulerRejeterModaliteRequest1,
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.niannulenirejete.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.motifannulationrejet", null, Locale.FRENCH), 403));
+
+        info = new ApiInfo("/api/modalite/detailleannulationrejet/{idModalite}", "Get",
+                "retourne un JSON avec les details d'annulation d'un modalité et le rejet d'un chéque",
+                "/api/modalite/detailleannulationrejet/7",
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.niannulenirejete.modalite", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.motifannulationrejet", null, Locale.FRENCH), 403));
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.etudiant", null, Locale.FRENCH), 403));
+
+        info = new ApiInfo("/api/modalite/dechargeannulationetudiant/{idModalite}/{entete}", "Get",
+                "retourne un decharge d'annulation d'un modalite pour un etudiant",
+                "/api/modalite/dechargeannulationetudiant/26/yes",
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+
+        return new ResponseEntity<>(infos, HttpStatus.OK);
+
     }
 
     @GetMapping("/getallmodalite")
