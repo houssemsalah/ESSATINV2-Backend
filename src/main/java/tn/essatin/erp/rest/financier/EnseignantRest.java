@@ -10,9 +10,12 @@ import tn.essatin.erp.dao.financier.EnseignantDao;
 import tn.essatin.erp.model.financier.Enseignant;
 import tn.essatin.erp.payload.request.financier.SalarierRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
+import tn.essatin.erp.util.ApiInfo;
 
 import javax.management.openmbean.OpenType;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -29,6 +32,30 @@ public class EnseignantRest {
         this.enseignantDao = enseignantDao;
         this.personneDao = personneDao;
         this.messageSource=messageSource;
+    }
+    @GetMapping("/")
+    public ResponseEntity<?> infoApi() {
+        List<ApiInfo> infos = new ArrayList<>();
+        List<MessageResponse> responses;
+        ApiInfo info;
+        /////////////////////
+        responses = new ArrayList<>();
+        info = new ApiInfo("/api/enseignant/getallenseignant", "Get",
+                "retourne un JSON avec la liste de tout les enseignant dans la base",
+                "/api/enseignant/getall",
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        responses = new ArrayList<>();
+        responses.add(new MessageResponse(messageSource.getMessage("error.introuvable.employer", null, Locale.FRENCH), 403));
+        info = new ApiInfo("/api/enseignant/getenseingant/{id}", "Get",
+                "retourne un JSON avec la liste des enseignant par leur id",
+                "/api/enseignant/getenseingant/7",
+                "JSON text Message", responses);
+        infos.add(info);
+        /////////////////////
+        return new ResponseEntity<>(infos, HttpStatus.OK);
+
     }
     @GetMapping("/getallenseignant")
     public ResponseEntity<?> getAll() {
