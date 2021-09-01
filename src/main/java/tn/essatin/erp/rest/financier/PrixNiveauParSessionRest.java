@@ -10,9 +10,12 @@ import tn.essatin.erp.dao.scolarite.NiveauDao;
 import tn.essatin.erp.model.Scolarite.Niveau;
 import tn.essatin.erp.model.Session;
 import tn.essatin.erp.model.financier.PrixNiveauParSession;
+import tn.essatin.erp.payload.request.financier.PrixNiveauRequest;
+import tn.essatin.erp.payload.request.financier.PrixNiveauUpdateRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.ApiInfo;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -105,6 +108,55 @@ public class PrixNiveauParSessionRest {
                     new MessageResponse("prixNiveauParSessions Introuvable!", 403), HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(prixNiveauParSessions, HttpStatus.OK);
+    }
+    @PostMapping("/addprixniveauxparsession")
+    public ResponseEntity<?> addContrat(@Valid @RequestBody PrixNiveauRequest prixNiveauRequest ){
+        Optional<Niveau> niveau =niveauDao.findById(prixNiveauRequest.getIdNiveau());
+        if (niveau.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Niveau Introuvable!", 403), HttpStatus.FORBIDDEN);
+        }
+        Optional<Session> session = sessionDao.findById(prixNiveauRequest.getIdSession());
+        if (session.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Session Introuvable!", 403), HttpStatus.FORBIDDEN);
+        }
+        PrixNiveauParSession prixNiveauParSession = new PrixNiveauParSession(niveau.get(), session.get(),
+                prixNiveauRequest.getMontant(), prixNiveauRequest.getDate());
+        prixNiveauParSessionDao.save(prixNiveauParSession);
+        return new ResponseEntity<>(
+                new MessageResponse("Le Prix de "
+                        + niveau.get()+ session.get()
+                        + " Ajouter avec Success",
+                        200), HttpStatus.OK);
+
+    }
+    @PostMapping("/modifierprixniveauxparsession")
+    public ResponseEntity<?> updateContrat(@Valid @RequestBody PrixNiveauUpdateRequest updatePrixNiveauRequest ){
+        Optional<PrixNiveauParSession> optPrixNiveauParSession = prixNiveauParSessionDao.findById(updatePrixNiveauRequest.getId());
+        if (optPrixNiveauParSession.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Niveau Introuvable!", 403), HttpStatus.FORBIDDEN);
+        }
+        Optional<Niveau> niveau =niveauDao.findById(updatePrixNiveauRequest.getIdNiveau());
+        if (niveau.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Niveau Introuvable!", 403), HttpStatus.FORBIDDEN);
+        }
+        Optional<Session> session = sessionDao.findById(updatePrixNiveauRequest.getIdSession());
+        if (session.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Session Introuvable!", 403), HttpStatus.FORBIDDEN);
+        }
+        PrixNiveauParSession prixNiveauParSession = new PrixNiveauParSession(niveau.get(), session.get(),
+                updatePrixNiveauRequest.getMontant(), updatePrixNiveauRequest.getDate());
+        prixNiveauParSessionDao.save(prixNiveauParSession);
+        return new ResponseEntity<>(
+                new MessageResponse("Le Prix de "
+                        + niveau.get()+ session.get()
+                        + " Ajouter avec Success",
+                        200), HttpStatus.OK);
+
     }
 
 }

@@ -14,4 +14,5 @@ public interface PrixNiveauParSessionDao extends JpaRepository<PrixNiveauParSess
     Collection<PrixNiveauParSession> findAllBySession(Session session);
 
     Optional<PrixNiveauParSession> findBySessionAndNiveau(Session session, Niveau niveau);
+    Optional<PrixNiveauParSession> findTopBySessionAndNiveauOrderByDateDesc(Session session, Niveau niveau);
 }
