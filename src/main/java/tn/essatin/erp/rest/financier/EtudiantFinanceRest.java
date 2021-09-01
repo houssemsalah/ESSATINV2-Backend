@@ -24,6 +24,7 @@ import tn.essatin.erp.util.ApiInfo;
 import tn.essatin.erp.util.StudentDebt;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -335,5 +336,26 @@ public class EtudiantFinanceRest {
             modaliteTransactionList.add(new TransactionAvecModalite(transaction, modaliteTransactionList1));
         }
         return new ResponseEntity<>(modaliteTransactionList, HttpStatus.OK);
+    }
+
+    @GetMapping("/activationtemp/{idEnregistrement}")
+    ResponseEntity<?> activationTemporaire(@PathVariable int idEnregistrement){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
+
+        Optional<Enregistrement> enregistrement = enregistrementDao.findById(idEnregistrement);
+        if (enregistrement.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Enregistrement introuvable!", 403), HttpStatus.FORBIDDEN);
+        }
+        Inscription inscription = enregistrement.get().getIdInscription();
+        inscription.setIdEtatInscription(etatInscriptionDao.findByNom("Valide"));
+        enregistrement.get().setEtatFinanciere(1);
+        enregistrementDao.save(enregistrement.get());
+        inscriptionDao.save(inscription);
+        LocalDate minuit = LocalDate.now();
+        minuit=minuit.plusDays(1);
+        LocalDateTime ldt= minuit.atStartOfDay();
+        return new ResponseEntity<>(
+                new MessageResponse("Etudiant activé jusqu'au "+ldt.format(formatter), 200), HttpStatus.OK);
     }
 }
