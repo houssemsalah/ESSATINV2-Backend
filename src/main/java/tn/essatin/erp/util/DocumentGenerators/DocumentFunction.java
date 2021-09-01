@@ -27,6 +27,8 @@ public class DocumentFunction {
     public static final Font FONT_OBLIQUE = FontFactory.getFont(FontFactory.TIMES_ITALIC, 14, BaseColor.BLACK);
     public static final Chunk ligneHorizentale = new Chunk(new LineSeparator());
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
+    public static BaseColor essat = new BaseColor(33, 140, 185);
+
 
     public static Chunk exposant(String text) {
         Font f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
@@ -315,7 +317,6 @@ public class DocumentFunction {
         entete.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         entete.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
         entete.getDefaultCell().setFixedHeight(100);
-        BaseColor essat = new BaseColor(33, 140, 185);
         entete.addCell(text(
                 textNormal("République Tunisienne\n".toUpperCase(Locale.ROOT), true, 8, essat),
                 textNormal("Ministère de l'Enseignament Supérieure\n", false, 8, essat),
