@@ -43,7 +43,7 @@ public class StudentDebt {
             Personne personne = etudiants.getIdPersonne();
             Session session = enregistrement.getIdSession();
             Collection<Transaction> transactions = transactionDao.findAllByClientAndSession(personne, session);
-            Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(session, enregistrement.getIdNiveau());
+            Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findTopBySessionAndNiveauOrderByDateDesc(session, enregistrement.getIdNiveau());
             List<ModaliteTransaction> modaliteTransactionList;
             double sum = 0;
             if (!transactions.isEmpty()) {
@@ -68,7 +68,7 @@ public class StudentDebt {
 
     public double PayerEnPourcent(Enregistrement enregistrement) {
         double rest = debt(enregistrement);
-        Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findBySessionAndNiveau(enregistrement.getIdSession(), enregistrement.getIdNiveau());
+        Optional<PrixNiveauParSession> prixNiveauParSession = prixNiveauParSessionDao.findTopBySessionAndNiveauOrderByDateDesc(enregistrement.getIdSession(), enregistrement.getIdNiveau());
         if (prixNiveauParSession.isEmpty())
             return 100.0;
         double payer = prixNiveauParSession.get().getMontantNiveau() - rest;
