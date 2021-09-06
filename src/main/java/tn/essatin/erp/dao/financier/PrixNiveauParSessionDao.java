@@ -7,12 +7,13 @@ import tn.essatin.erp.model.financier.PrixNiveauParSession;
 import tn.essatin.erp.model.Session;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface PrixNiveauParSessionDao extends JpaRepository<PrixNiveauParSession, Integer> {
     Collection<PrixNiveauParSession> findAllBySession(Session session);
-
-    Optional<PrixNiveauParSession> findBySessionAndNiveau(Session session, Niveau niveau);
+    List<PrixNiveauParSession> findBySessionAndNiveau(Session session, Niveau niveau);
     Optional<PrixNiveauParSession> findTopBySessionAndNiveauOrderByDateDesc(Session session, Niveau niveau);
+    List<PrixNiveauParSession> findByNiveau(Niveau niveau);
 }
