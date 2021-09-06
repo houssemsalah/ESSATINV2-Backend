@@ -14,7 +14,7 @@ public class InscriptionEmployerByIdPersonneRequest {
     @Pattern(regexp = "([0-9]{10})", message = "Numero de Securité sociale doit contenir 10 chiffres")
     private String numeroCNSS;
     private String observationEmployer;
-    @NotBlank(message = "la situation mariétale ne peut etre vide")
+    @NotNull(message = "la situation mariétale ne peut etre vide")
     private ESituationMaritale situationMaritale;
     @NotNull(message = "Le nombre d'enfants ne peut etre null")
     private int nbEnfant;
@@ -25,12 +25,12 @@ public class InscriptionEmployerByIdPersonneRequest {
     private String ripIBAN;
     @NotBlank(message = "le poste ne peut etre vide")
     private String poste;
-    @NotBlank(message = "le type employer ne peut etre vide")
+    @NotNull(message = "le type employer ne peut etre vide")
     private ETypeEmployer typeEmployer;
 
-    @NotBlank(message = "Ennumeration de type 'ETypeContrat'")
+    @NotNull(message = "Ennumeration de type 'ETypeContrat'")
     private ETypeContrat typeContrat;
-    @NotBlank(message = "Ennumeration de type 'EUniteSalaire'")
+    @NotNull(message = "Ennumeration de type 'EUniteSalaire'")
     private EUniteSalaire uniteSalaire;
     @NotNull(message = "prixUnite ne peut etre null")
     private  Double prixUnite;
