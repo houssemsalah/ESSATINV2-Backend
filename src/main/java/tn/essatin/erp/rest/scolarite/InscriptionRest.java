@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -75,50 +76,66 @@ public class InscriptionRest {
         Session session;
         Role studentRole;
         Personne p;
-        if (
-                typeIdentificateurDao.findById(inscriptionRequest.getIdTypeIdentificateur()).isPresent() &&
-                        nationaliteDao.findById(inscriptionRequest.getIdNationalite()).isPresent() &&
-                        etatInscriptionDao.findById(2).isPresent() &&
-                        niveauDao.findById(inscriptionRequest.getNiveauxInscrit()).isPresent() &&
-                        roleDao.findById(5).isPresent()
-        ) {
-            studentRole = roleDao.findById(5).get();
-            session = sessionDao.findTopByOrderByIdSessionDesc();
-            String nom = inscriptionRequest.getNom();
-            String prenom = inscriptionRequest.getPrenom();
-            String mail = inscriptionRequest.getMail();
-            String adresse = inscriptionRequest.getAdresse();
-            String telephonne = inscriptionRequest.getTelephonne();
-            LocalDate dateNaissance = inscriptionRequest.getDateNaissance();
-            String lieuNaissance = inscriptionRequest.getLieuNaissance();
-            TypeIdentificateur idTypeIdentificateur = typeIdentificateurDao.findById(inscriptionRequest
-                    .getIdTypeIdentificateur()).get();
-            String ididentif = inscriptionRequest.getIdidentif();
-            String sexe = inscriptionRequest.getSexe();
-            Nationalite idNationalite = nationaliteDao.findById(inscriptionRequest.getIdNationalite()).get();
-            List<ContactEtudiant> contacts = inscriptionRequest.getContactEtudiantList();
-            List<DiplomeEtudiant> diplomes = inscriptionRequest.getDiplomeEtudiantList();
-            p = new Personne(nom, prenom, mail, adresse, telephonne, dateNaissance,
-                    lieuNaissance, idTypeIdentificateur, ididentif, sexe, idNationalite);
-            personneDao.save(p);
-            e = new Etudiants(p);
-            etudiantsDao.save(e);
-            for (ContactEtudiant ce : contacts) {
-                ce.setIdEtudiant(e);
-                contactEtudiantDao.save(ce);
-            }
-            for (DiplomeEtudiant de : diplomes) {
-                de.setIdEtudiant(e);
-                diplomeEtudiantDao.save(de);
-            }
-            inscriptionCompteEtEnregistrement(
-                    e, session, niveauDao.findById(inscriptionRequest.getNiveauxInscrit()).get(), p,
-                    studentRole, etatInscriptionDao.findById(2).get());
-            return new ResponseEntity<>(new MessageResponse("votre compte est crée avec succée!!"), HttpStatus.OK);
-        } else {
+        if (typeIdentificateurDao.findById(inscriptionRequest.getIdTypeIdentificateur()).isEmpty()) {
             return new ResponseEntity<>(
                     new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
         }
+        if (nationaliteDao.findById(inscriptionRequest.getIdNationalite()).isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+        }
+        if (etatInscriptionDao.findById(2).isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+        }
+        if (niveauDao.findById(inscriptionRequest.getNiveauxInscrit()).isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+        }
+        if (roleDao.findById(5).isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+        }
+        Optional<Personne>personne=personneDao.findByNumeroIdentificateur(inscriptionRequest.getIdidentif());
+        if(personne.isPresent()){
+            return new ResponseEntity<>(
+                    new MessageResponse("etudiant deja inscrit", 403), HttpStatus.FORBIDDEN);
+        }
+
+        studentRole = roleDao.findById(5).get();
+        session = sessionDao.findTopByOrderByIdSessionDesc();
+        String nom = inscriptionRequest.getNom();
+        String prenom = inscriptionRequest.getPrenom();
+        String mail = inscriptionRequest.getMail();
+        String adresse = inscriptionRequest.getAdresse();
+        String telephonne = inscriptionRequest.getTelephonne();
+        LocalDate dateNaissance = inscriptionRequest.getDateNaissance();
+        String lieuNaissance = inscriptionRequest.getLieuNaissance();
+        TypeIdentificateur idTypeIdentificateur = typeIdentificateurDao.findById(inscriptionRequest
+                .getIdTypeIdentificateur()).get();
+        String ididentif = inscriptionRequest.getIdidentif();
+        String sexe = inscriptionRequest.getSexe();
+        Nationalite idNationalite = nationaliteDao.findById(inscriptionRequest.getIdNationalite()).get();
+        List<ContactEtudiant> contacts = inscriptionRequest.getContactEtudiantList();
+        List<DiplomeEtudiant> diplomes = inscriptionRequest.getDiplomeEtudiantList();
+        p = new Personne(nom, prenom, mail, adresse, telephonne, dateNaissance,
+                lieuNaissance, idTypeIdentificateur, ididentif, sexe, idNationalite);
+        personneDao.save(p);
+        e = new Etudiants(p);
+        etudiantsDao.save(e);
+        for (ContactEtudiant ce : contacts) {
+            ce.setIdEtudiant(e);
+            contactEtudiantDao.save(ce);
+        }
+        for (DiplomeEtudiant de : diplomes) {
+            de.setIdEtudiant(e);
+            diplomeEtudiantDao.save(de);
+        }
+        inscriptionCompteEtEnregistrement(
+                e, session, niveauDao.findById(inscriptionRequest.getNiveauxInscrit()).get(), p,
+                studentRole, etatInscriptionDao.findById(2).get());
+        return new ResponseEntity<>(new MessageResponse("votre compte est crée avec succée!!"), HttpStatus.OK);
+
     }
 
     @PostMapping("/nouveauetudiantwithidp")
@@ -223,10 +240,10 @@ public class InscriptionRest {
             } else if (len.size() == 0) {
                 return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403),
                         HttpStatus.FORBIDDEN);
-            } else if(!len.get(0).getIdSession().getIdSession().equals(sessionDao.findTopByOrderByIdSessionDesc().getIdSession())){
+            } else if (!len.get(0).getIdSession().getIdSession().equals(sessionDao.findTopByOrderByIdSessionDesc().getIdSession())) {
                 return new ResponseEntity<>(new MessageResponse("l'inscrit ne date pas de cette session, il ne peut plus etre modifier!", 403),
                         HttpStatus.FORBIDDEN);
-            }else{
+            } else {
                 Enregistrement e = len.get(0);
                 e.setIdNiveau(niv);
                 enregistrementDao.save(e);
@@ -247,9 +264,9 @@ public class InscriptionRest {
             //récuperer les personnes
             Personne oldPersonne = personneDao.findById(fusionnerRequest.getIdOldPersonne()).get();
             Personne newPersonne = personneDao.findById(fusionnerRequest.getIdNewPersonne()).get();
-            if(
-            etudiantsDao.findByIdPersonne(newPersonne).isPresent()
-           && etudiantsDao.findByIdPersonne(oldPersonne).isPresent()
+            if (
+                    etudiantsDao.findByIdPersonne(newPersonne).isPresent()
+                            && etudiantsDao.findByIdPersonne(oldPersonne).isPresent()
             ) {
                 //récupérer les étudiants
                 Etudiants newEtudiant = etudiantsDao.findByIdPersonne(newPersonne).get();
@@ -264,14 +281,14 @@ public class InscriptionRest {
 
                 // modifier les nouveaux contacte étudiant au nom de l'ancien étudiant
                 List<ContactEtudiant> ce = contactEtudiantDao.findByIdEtudiant(newEtudiant);
-                for (ContactEtudiant c :ce) {
+                for (ContactEtudiant c : ce) {
                     c.setIdEtudiant(oldEtudiant);
                     contactEtudiantDao.save(c);
                 }
 
                 // modifier les nouveaux Diplomes étudiant au nom de l'ancien étudiant
                 List<DiplomeEtudiant> de = diplomeEtudiantDao.findByIdEtudiant(newEtudiant);
-                for (DiplomeEtudiant d :de) {
+                for (DiplomeEtudiant d : de) {
                     d.setIdEtudiant(oldEtudiant);
                     diplomeEtudiantDao.save(d);
                 }
@@ -283,12 +300,12 @@ public class InscriptionRest {
                 personneDao.delete(newPersonne);
                 return new ResponseEntity<>(
                         new MessageResponse("Fusion effectué avec succée!!"), HttpStatus.OK);
-            }else{
+            } else {
                 //pas d'étudiants
                 return new ResponseEntity<>(
                         new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
             }
-        }else{
+        } else {
             //pas de personne
             return new ResponseEntity<>(
                     new MessageResponse("Ressource Indisponible", 403), HttpStatus.FORBIDDEN);
