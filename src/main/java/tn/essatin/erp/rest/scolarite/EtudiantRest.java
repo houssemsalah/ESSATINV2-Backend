@@ -88,11 +88,19 @@ public class EtudiantRest {
                     cinE.add(E);
             }
         }
-        if (cinE.size() > 0) {
+        if(cinE.isEmpty()) {
+            Optional<Personne> personne = personneDao.findByNumeroIdentificateur(identificateurRequest.getNumidentificateur());
+            Etudiants e = new Etudiants();
+            e.setIdPersonne(personne.get());
+            cinE.add(e);
+            if (personne.isPresent()) {
+                return new ResponseEntity<>(cinE, HttpStatus.OK);
+            } else
+                return new ResponseEntity<>(new MessageResponse("Personne introuvable", 204),
+                        HttpStatus.NO_CONTENT);
+        }else{
             return new ResponseEntity<>(cinE, HttpStatus.OK);
-        } else
-            return new ResponseEntity<>(new MessageResponse("Personne introuvable", 204),
-                    HttpStatus.NO_CONTENT);
+        }
     }
 
     @PostMapping("/getcertifpresence")
