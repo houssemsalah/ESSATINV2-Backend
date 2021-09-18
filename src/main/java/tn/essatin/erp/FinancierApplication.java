@@ -1,7 +1,9 @@
 package tn.essatin.erp;
 
+import org.springframework.boot.Bootstrapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.util.ResourceUtils;
 import tn.essatin.erp.dao.NationaliteDao;
 import tn.essatin.erp.dao.RoleDao;
 import tn.essatin.erp.dao.TypeIdentificateurDao;
@@ -13,6 +15,7 @@ import tn.essatin.erp.model.Scolarite.EtatInscription;
 import tn.essatin.erp.model.TypeIdentificateur;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +39,9 @@ public class FinancierApplication {
 
     @PostConstruct
     public void enregistrer() {
+
+
+
         String[] nationnalite = {"Tunisienne", "Congolaise", "Camerounaise", "Sud Africaine", "Nigériane", "Ivoirienne", "Française", "Canadienne", "Algérienne", "Libiènne", "Gabonaise", "Comorienne"};
         String[] indentificateurs = {"CIN", "Passport"};
         List<Nationalite> nationaliteList = nationaliteDao.findAll();

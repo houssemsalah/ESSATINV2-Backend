@@ -4,11 +4,13 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.model.Session;
 
-import java.io.ByteArrayOutputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -58,7 +60,11 @@ public class AttestationDeReussite {
             cell= new PdfPCell(new Paragraph(" "));
             cell.setBorder(Rectangle.NO_BORDER);
             table.addCell(cell);
-            img = Image.getInstance("logoEssat.png");
+            ByteArrayOutputStream ous = new ByteArrayOutputStream();
+            InputStream ios = new ClassPathResource("Images/logoEssat.png").getInputStream();
+            ous.write(ios.readAllBytes());
+            img = Image.getInstance(ous.toByteArray());
+
             img.scaleAbsoluteHeight(50);
             img.scaleAbsoluteWidth(50);
             cell=new PdfPCell(img);

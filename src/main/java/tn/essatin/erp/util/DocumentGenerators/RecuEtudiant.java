@@ -2,6 +2,8 @@ package tn.essatin.erp.util.DocumentGenerators;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 import tn.essatin.erp.model.Scolarite.Cycle;
 import tn.essatin.erp.model.Scolarite.Niveau;
 import tn.essatin.erp.model.Scolarite.Parcours;
@@ -12,6 +14,9 @@ import tn.essatin.erp.payload.response.TransactionAvecModalite;
 import tn.essatin.erp.util.ConvertierMontantEnLettre;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Collections;
 
@@ -108,13 +113,34 @@ public class RecuEtudiant {
         try {
             PdfWriter writer = PdfWriter.getInstance(document, response);
             document.open();
-            Image img = Image.getInstance("logoEssat.png");
+            Image img;
+
+            //File i = ResourceUtils.getFile("classpath:Images/logoEssat.png");
+            //FileInputStream ios = new FileInputStream(i);
+
+            ByteArrayOutputStream ous = new ByteArrayOutputStream();
+            InputStream ios = new ClassPathResource("Images/logoEssat.png").getInputStream();
+            ous.write(ios.readAllBytes());
+            img = Image.getInstance(ous.toByteArray());
             PdfContentByte canvas = writer.getDirectContentUnder();
-            Image image = Image.getInstance("src/main/resources/Images/arpRecu.png");
+
+            Image image;
+            ByteArrayOutputStream ous1 = new ByteArrayOutputStream();
+            InputStream ios1 = new ClassPathResource("Images/arpRecu.png").getInputStream();
+            ous1.write(ios1.readAllBytes());
+            image = Image.getInstance(ous1.toByteArray());
+
             image.scaleAbsolute(PageSize.A6.rotate());
             image.setAbsolutePosition(0, 0);
             canvas.addImage(image);
-            Image image2 = Image.getInstance("src/main/resources/Images/arpRecu.png");
+
+            Image image2;
+            //File i2 = ResourceUtils.getFile("classpath:Images/arpRecu.png");
+            ByteArrayOutputStream ous2 = new ByteArrayOutputStream();
+            InputStream ios2 = new ClassPathResource("Images/arpRecu.png").getInputStream();
+            ous2.write(ios2.readAllBytes());
+            image2 = Image.getInstance(ous2.toByteArray());
+
             image2.scaleAbsolute(PageSize.A6.rotate());
             image2.setAbsolutePosition(0, PageSize.A6.rotate().getHeight());
             canvas.addImage(image2);

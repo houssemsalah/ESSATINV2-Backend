@@ -318,5 +318,6 @@ public class ModaliteRest {
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
+    
 
 }

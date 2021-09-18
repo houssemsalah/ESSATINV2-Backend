@@ -175,7 +175,7 @@ public class CertificatDInscription {
             document.add(new Paragraph(Chunk.NEWLINE));
 
             // ajouter le texte finale de l'attestation
-            text = new Phrase();
+            //text = new Phrase();
             if (etudiant.getSexe().equalsIgnoreCase("Femme"))
                 textChunk = new Chunk("    Est inscrite, dans notre école pour l'année universitaire "
                         + session.getSession() + " sous le numéro " + inscription.getNumeroInscription()
@@ -221,7 +221,6 @@ public class CertificatDInscription {
 
             document.close();
         } catch (DocumentException  ex) {
-            // TODO Auto-generated catch block
             ex.printStackTrace();
         }
         return response;

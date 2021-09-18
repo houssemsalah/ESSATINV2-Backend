@@ -4,14 +4,15 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 import tn.essatin.erp.dao.SignataireDao;
 import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.model.Session;
 import tn.essatin.erp.model.Signataire;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 
 import static tn.essatin.erp.util.DocumentGenerators.DocumentFunction.*;
@@ -29,10 +30,19 @@ public class FeuilleDeDemandeDeStage {
         Image cheked1 = null;
 
         try {
-            uncheked1 = Image.getInstance("src/main/resources/uncheked.png");
+            ByteArrayOutputStream ous = new ByteArrayOutputStream();
+            InputStream ios = new ClassPathResource("Images/uncheked.png").getInputStream();
+            ous.write(ios.readAllBytes());
+            uncheked1 = Image.getInstance(ous.toByteArray());
+
             uncheked1.scaleAbsoluteHeight(15);
             uncheked1.scaleAbsoluteWidth(15);
-            cheked1 = Image.getInstance("src/main/resources/cheked.png");
+
+            ByteArrayOutputStream ous1 = new ByteArrayOutputStream();
+            InputStream ios1 = new ClassPathResource("Images/cheked.png").getInputStream();
+            ous1.write(ios1.readAllBytes());
+            cheked1 = Image.getInstance(ous1.toByteArray());
+
             cheked1.scaleAbsoluteHeight(15);
             cheked1.scaleAbsoluteWidth(15);
         } catch (IOException | BadElementException ioe) {
@@ -218,7 +228,6 @@ public class FeuilleDeDemandeDeStage {
 
             DocumentFunction.ajouterPiedDePage(document);
 
-            /***********/
             document.newPage();
             DocumentFunction.ajouterEnteteSpeciale(document, "LETTRE D'AFFECTATION AU STAGE", "GES-IMP-18", "02", "21/10/2019", 1, 1);
             document.add(new Phrase(" \n"));

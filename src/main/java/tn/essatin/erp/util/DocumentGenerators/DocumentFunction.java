@@ -3,13 +3,15 @@ package tn.essatin.erp.util.DocumentGenerators;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 import tn.essatin.erp.model.Scolarite.Cycle;
 import tn.essatin.erp.model.Scolarite.Niveau;
 import tn.essatin.erp.model.Scolarite.Parcours;
 import tn.essatin.erp.model.Scolarite.Specialite;
 import tn.essatin.erp.model.Session;
 
-import java.io.IOException;
+import java.io.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +82,10 @@ public class DocumentFunction {
         Image img;
         PdfPTable head;
         try {
-            img = Image.getInstance("logoEssat.png");
+            ByteArrayOutputStream ous = new ByteArrayOutputStream();
+            InputStream ios = new ClassPathResource("Images/logoEssat.png").getInputStream();
+            ous.write(ios.readAllBytes());
+            img = Image.getInstance(ous.toByteArray());
             img.scaleAbsoluteHeight(50);
             img.scaleAbsoluteWidth(50);
             head = new PdfPTable(7);
@@ -136,7 +141,10 @@ public class DocumentFunction {
         Image img;
         PdfPTable head;
         try {
-            img = Image.getInstance("logoEssat.png");
+            ByteArrayOutputStream ous = new ByteArrayOutputStream();
+            InputStream ios = new ClassPathResource("Images/logoEssat.png").getInputStream();
+            ous.write(ios.readAllBytes());
+            img = Image.getInstance(ous.toByteArray());
             img.scaleAbsoluteHeight(50);
             img.scaleAbsoluteWidth(50);
             head = new PdfPTable(7);
@@ -279,14 +287,14 @@ public class DocumentFunction {
         return new Chunk(text, supFont);
     }
 
-    public static Chunk textNormalArialUni(String text, boolean isGras, int size, BaseColor baseColor) {
-        FontFactory.register("src/main/resources/font/Traditional-Arabic_font.ttf");
+    public static Chunk textNormalArialUni(String text, boolean isGras, int size, BaseColor baseColor) throws FileNotFoundException {
+        FontFactory.register(ResourceUtils.getFile("classpath:font/Traditional-Arabic_font.ttf").getAbsolutePath());
         Font f;
         if (isGras)
-            f = FontFactory.getFont("src/main/resources/font/Traditional-Arabic_font.ttf", BaseFont.IDENTITY_H,
+            f = FontFactory.getFont(ResourceUtils.getFile("classpath:font/Traditional-Arabic_font.ttf").getAbsolutePath(), BaseFont.IDENTITY_H,
                     true, size, Font.FontStyle.BOLD.ordinal(), baseColor);
         else
-            f = FontFactory.getFont("src/main/resources/font/arialuni_font.ttf", BaseFont.IDENTITY_H,
+            f = FontFactory.getFont(ResourceUtils.getFile("classpath:font/arialuni_font.ttf").getAbsolutePath(), BaseFont.IDENTITY_H,
                     true, size, Font.FontStyle.NORMAL.ordinal(), baseColor);
         return new Chunk(text, f);
     }
@@ -309,7 +317,11 @@ public class DocumentFunction {
 
     public static void addPapierEntete(PdfWriter writer) throws DocumentException, IOException {
         PdfContentByte canvas = writer.getDirectContentUnder();
-        Image img = Image.getInstance("logoEssat.png");
+        Image img ;
+        ByteArrayOutputStream ous = new ByteArrayOutputStream();
+        InputStream ios = new ClassPathResource("Images/logoEssat.png").getInputStream();
+        ous.write(ios.readAllBytes());
+        img = Image.getInstance(ous.toByteArray());
         float[] ts = {4f, 6f, 4f};
         PdfPTable entete = new PdfPTable(ts);
         entete.setTotalWidth(PageSize.A4.getWidth()-40);
@@ -392,7 +404,7 @@ public class DocumentFunction {
         piedDePage.addCell(p);
 
         piedDePage.addCell("");
-        Image trai = Image.getInstance("src/main/resources/Images/trai.png");
+        Image trai = Image.getInstance(ResourceUtils.getFile("classpath:Images/trai.png").getAbsolutePath());
         PdfPCell trai1 = new PdfPCell(trai, true);
         trai1.setBorder(0);
         trai1.setHorizontalAlignment(Element.ALIGN_RIGHT);
