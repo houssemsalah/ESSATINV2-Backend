@@ -21,12 +21,12 @@ import tn.essatin.erp.model.Scolarite.Enregistrement;
 import tn.essatin.erp.model.Scolarite.Etudiants;
 import tn.essatin.erp.model.Scolarite.Inscription;
 import tn.essatin.erp.model.Scolarite.Niveau;
+import tn.essatin.erp.model.financier.EStatus;
 import tn.essatin.erp.model.financier.ModaliteTransaction;
 import tn.essatin.erp.model.financier.Transaction;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.payload.response.TransactionAvecModalite;
 import tn.essatin.erp.util.ApiInfo;
-import tn.essatin.erp.util.DocumentGenerators.FeuilleDeDemandeDeStage;
 import tn.essatin.erp.util.DocumentGenerators.RecuEtudiant;
 
 import java.io.ByteArrayOutputStream;
@@ -52,7 +52,7 @@ public class RecuRest {
 
     public RecuRest(PersonneDao personneDao, EtudiantsDao etudiantsDao, InscriptionDao inscriptionDao,
                     EnregistrementDao enregistrementDao, NiveauDao niveauDao, SessionDao sessionDao,
-                    TransactionDao transactionDao,ModaliteTransactionDao modaliteTransactionDa, MessageSource messageSource) {
+                    TransactionDao transactionDao, ModaliteTransactionDao modaliteTransactionDa, MessageSource messageSource) {
         this.personneDao = personneDao;
         this.etudiantsDao = etudiantsDao;
         this.inscriptionDao = inscriptionDao;
@@ -85,20 +85,25 @@ public class RecuRest {
         return new ResponseEntity<>(infos, HttpStatus.OK);
     }
 
-        @GetMapping("/pdfbyidtransaction/{id}")
-    public ResponseEntity<?>pdfByIdTransaction(@PathVariable int id){
+    @GetMapping("/pdfbyidtransaction/{id}")
+    public ResponseEntity<?> pdfByIdTransaction(@PathVariable int id) {
         Optional<Transaction> transaction = transactionDao.findById(id);
-        if(transaction.isEmpty())
-            return  new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.transaction",null, Locale.FRENCH),403), HttpStatus.FORBIDDEN);
+        if (transaction.isEmpty())
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.transaction", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         Personne personne = transaction.get().getClient();
         Optional<Etudiants> etudiants = etudiantsDao.findByIdPersonne(personne);
-        if(etudiants.isEmpty())
-            return  new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.etudiant",null, Locale.FRENCH),403), HttpStatus.FORBIDDEN);
+        if (etudiants.isEmpty())
+            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.etudiant", null, Locale.FRENCH), 403), HttpStatus.FORBIDDEN);
         Inscription inscription = inscriptionDao.findTopByIdEtudiantOrderByDateDesc(etudiants.get());
         Enregistrement enregistrement = enregistrementDao.findTopByIdInscriptionOrderByIdEnregistrementDesc(inscription);
         Niveau niveau = enregistrement.getIdNiveau();
         List<ModaliteTransaction> modaliteTransactionList = modaliteTransactionDao.findModaliteTransactionByTransaction(transaction.get());
-        ByteArrayOutputStream os = RecuEtudiant.createDoc(new TransactionAvecModalite(transaction.get(),modaliteTransactionList),niveau);
+        List<ModaliteTransaction> modaliteTransactionList2 = new ArrayList<>();
+        for (ModaliteTransaction m : modaliteTransactionList) {
+            if (m.getStatus() != EStatus.CANCELED && m.getStatus() != EStatus.REJECTED)
+                modaliteTransactionList2.add(m);
+        }
+        ByteArrayOutputStream os = RecuEtudiant.createDoc(new TransactionAvecModalite(transaction.get(), modaliteTransactionList2), niveau);
         os = RecuEtudiant.createDoc(os);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
