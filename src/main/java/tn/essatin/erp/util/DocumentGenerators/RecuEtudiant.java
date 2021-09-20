@@ -262,26 +262,29 @@ public class RecuEtudiant {
                     }
                 }
                 document.add(listModalite);
+                float[] ts2 = {200f};
+                PdfPTable pied = new PdfPTable(1);
+                pied.setTotalWidth(ts2);
+                pied.getDefaultCell().setBorder(0);
+                pied.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+                pied.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+                pied.getDefaultCell().setFixedHeight(50);
+                pied.addCell("");
+                pied.addCell(text(
+                        textNormalMin("Reçu par "),
+                        textGrasMin(transaction.getFinancier().getPersonne().getPrenom() + " " + transaction.getFinancier().getPersonne().getNom()),
+                        textNormalMin("\nLe: "),
+                        textNormalMin(LocalDate.now().format(DocumentFunction.FORMATTER))
+                ));
+                pied.writeSelectedRows(0, -1, document.leftMargin() + 220, 30 + pied.getTotalHeight(), canvas);
+
+
             }else{
                 paragraph.add(text(
                         textNormal("Toutes les modalité ce cette transaction sont annulé ou regeté, aucun reçu ne peut être imprimé")
                 ));
+                document.add(paragraph);
             }
-            float[] ts2 = {200f};
-            PdfPTable pied = new PdfPTable(1);
-            pied.setTotalWidth(ts2);
-            pied.getDefaultCell().setBorder(0);
-            pied.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-            pied.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
-            pied.getDefaultCell().setFixedHeight(50);
-            pied.addCell("");
-            pied.addCell(text(
-                    textNormalMin("Reçu par "),
-                    textGrasMin(transaction.getFinancier().getPersonne().getPrenom() + " " + transaction.getFinancier().getPersonne().getNom()),
-                    textNormalMin("\nLe: "),
-                    textNormalMin(LocalDate.now().format(DocumentFunction.FORMATTER))
-            ));
-            pied.writeSelectedRows(0, -1, document.leftMargin() + 220, 30 + pied.getTotalHeight(), canvas);
 
 
             document.close();
