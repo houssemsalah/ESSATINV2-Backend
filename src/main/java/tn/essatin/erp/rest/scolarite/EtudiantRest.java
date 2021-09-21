@@ -88,7 +88,7 @@ public class EtudiantRest {
                     cinE.add(E);
             }
         }
-        if(cinE.isEmpty()) {
+        if (cinE.isEmpty()) {
             Optional<Personne> personne = personneDao.findByNumeroIdentificateur(identificateurRequest.getNumidentificateur());
             Etudiants e = new Etudiants();
             e.setIdPersonne(personne.get());
@@ -98,7 +98,7 @@ public class EtudiantRest {
             } else
                 return new ResponseEntity<>(new MessageResponse("Personne introuvable", 204),
                         HttpStatus.NO_CONTENT);
-        }else{
+        } else {
             return new ResponseEntity<>(cinE, HttpStatus.OK);
         }
     }
@@ -110,8 +110,13 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("Enregistrement introuvable", 403), HttpStatus.FORBIDDEN);
         }
-        ByteArrayOutputStream os = CertificateDePresence.createDoc(enregistrement.get(),
-                certificatRequest.isDirecteur());
+        Optional<Signataire> signataire = signataireDao.findById(certificatRequest.getIdSignataire());
+        if (signataire.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Signataire introuvable", 403), HttpStatus.FORBIDDEN);
+        }
+        ByteArrayOutputStream os = CertificateDePresence.createDoc(enregistrement.get(),signataire.get(),
+                certificatRequest.isEntete());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
@@ -125,9 +130,15 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("Enregistrement introuvable", 403), HttpStatus.FORBIDDEN);
         }
+        Optional<Signataire> signataire = signataireDao.findById(certificatRequest.getIdSignataire());
+        if (signataire.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Signataire introuvable", 403), HttpStatus.FORBIDDEN);
+        }
         ByteArrayOutputStream os = CertificatDInscription.createDoc(
                 enregistrement.get(),
-                certificatRequest.isDirecteur());
+                signataire.get(),
+                certificatRequest.isEntete());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
@@ -183,11 +194,11 @@ public class EtudiantRest {
                     new MessageResponse("Enregistrement introuvable", 403), HttpStatus.FORBIDDEN);
         }
         Optional<Signataire> signataire = signataireDao.findById(demandeDeStageRequest.getIdSignataire());
-        if(signataire.isEmpty()){
+        if (signataire.isEmpty()) {
             return new ResponseEntity<>(
                     new MessageResponse("Signataire introuvable", 403), HttpStatus.FORBIDDEN);
         }
-                ByteArrayOutputStream os = FeuilleDeDemandeDeStage.createDoc(
+        ByteArrayOutputStream os = FeuilleDeDemandeDeStage.createDoc(
                 etudiant.get(), demandeDeStageRequest.getNomSociete(), demandeDeStageRequest.getNumCase(),
                 demandeDeStageRequest.getDesignantionEntreprise(), signataire.get(), demandeDeStageRequest.getDate());
         HttpHeaders headers = new HttpHeaders();
@@ -198,20 +209,20 @@ public class EtudiantRest {
 
 
     @PostMapping("/depomemoirestage")
-    ResponseEntity<?> depoDeMemoireDeStage(@RequestBody DepoDeMemoireDeStageRequest depoDeMemoireDeStageRequest){
+    ResponseEntity<?> depoDeMemoireDeStage(@RequestBody DepoDeMemoireDeStageRequest depoDeMemoireDeStageRequest) {
 
         Optional<Enregistrement> enregistrement = enregistrementDao.findById(depoDeMemoireDeStageRequest.getIdEnregistrement());
-        if(enregistrement.isEmpty()){
+        if (enregistrement.isEmpty()) {
             return new ResponseEntity<>(
                     new MessageResponse("Enregistrement introuvable", 403), HttpStatus.FORBIDDEN);
         }
         Optional<Signataire> signataire = signataireDao.findById(depoDeMemoireDeStageRequest.getIdSignataire());
-        if(signataire.isEmpty()){
+        if (signataire.isEmpty()) {
             return new ResponseEntity<>(
                     new MessageResponse("Signataire introuvable", 403), HttpStatus.FORBIDDEN);
         }
 
-        ByteArrayOutputStream os = RecuDepoMemoireStage.createDoc(enregistrement.get(),depoDeMemoireDeStageRequest.getNomGroupe(),signataire.get());
+        ByteArrayOutputStream os = RecuDepoMemoireStage.createDoc(enregistrement.get(), depoDeMemoireDeStageRequest.getNomGroupe(), signataire.get());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());

@@ -1,35 +1,40 @@
 package tn.essatin.erp.util.DocumentGenerators;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import tn.essatin.erp.model.*;
+import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.model.Scolarite.*;
+import tn.essatin.erp.model.Session;
+import tn.essatin.erp.model.Signataire;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
+import static tn.essatin.erp.util.DocumentGenerators.DocumentFunction.*;
+
 public class CertificateDePresence {
 
 
-        public static ByteArrayOutputStream createDoc(Enregistrement enr, boolean directeur) {
-            ByteArrayOutputStream response=new ByteArrayOutputStream();
-            Personne etudiant=enr.getIdInscription().getIdEtudiant().getIdPersonne();
-            String identificateur=etudiant.getNumeroIdentificateur();
-            Session session=enr.getIdSession();
-            Inscription inscription = enr.getIdInscription();
-            Niveau niveau = enr.getIdNiveau();
-            Parcours parcour = niveau.getParcours();
-            Specialite specialite = parcour.getSpecialite();
-            Cycle cycle = specialite.getCycle();
+    public static ByteArrayOutputStream createDoc(Enregistrement enr, Signataire signataire, boolean entete) {
+        ByteArrayOutputStream response = new ByteArrayOutputStream();
+        Personne etudiant = enr.getIdInscription().getIdEtudiant().getIdPersonne();
+        String identificateur = etudiant.getIdIdentificateur().getTypeIdentificateur();
+        Session session = enr.getIdSession();
+        Inscription inscription = enr.getIdInscription();
+        Niveau niveau = enr.getIdNiveau();
+        Parcours parcour = niveau.getParcours();
+        Specialite specialite = parcour.getSpecialite();
+        Cycle cycle = specialite.getCycle();
 
         Font fontTitle = FontFactory.getFont(FontFactory.TIMES_BOLD, 20, BaseColor.BLACK);
         Font fontTitle2 = FontFactory.getFont(FontFactory.TIMES_BOLD, 14, BaseColor.BLACK);
-        // Font fontTabHed = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16,
-        // BaseColor.BLACK);
+
         Font fontAttrib = FontFactory.getFont(FontFactory.TIMES_BOLD, 14, BaseColor.BLACK);
         Font fontText = FontFactory.getFont(FontFactory.TIMES_ROMAN, 14, BaseColor.BLACK);
         Phrase attrib;
@@ -42,8 +47,9 @@ public class CertificateDePresence {
         Chunk title2Chunk;
         Document document = new Document();
         try {
-            PdfWriter.getInstance(document, response);
+            PdfWriter writer = PdfWriter.getInstance(document, response);
             document.open();
+            PdfContentByte canvas = writer.getDirectContentUnder();
 
             // ajouter un espace vide pour le papier entête
             PdfPTable head = new PdfPTable(1);
@@ -71,29 +77,18 @@ public class CertificateDePresence {
             document.add(t);
             document.add(new Paragraph(Chunk.NEWLINE));
 
-            // ajouter le texte initiale de l'attestation
-            //text = new Phrase();
-            if (directeur) {
-                if (etudiant.getSexe().equalsIgnoreCase("Femme"))
-                    textChunk = new Chunk(
-                            "    Le Directeur de l'École Supérieure des Sciences Appliquées et de la Téchnologie Privée de Gabès atteste que l'étudiante.",
-                            fontText);
-                else
-                    textChunk = new Chunk(
-                            "    Le Directeur de l'École Supérieure des Sciences Appliquées et de la Téchnologie Privée de Gabès atteste que l'étudiant.",
-                            fontText);
-            } else {
-                if (etudiant.getSexe().equalsIgnoreCase("Femme"))
-                    textChunk = new Chunk(
-                            "    Le Secrétaire Général de l'École Supérieure des Sciences Appliquées et de la Téchnologie Privée de Gabès atteste que l'étudiante.",
-                            fontText);
-                else
-                    textChunk = new Chunk(
-                            "    Le Secrétaire Général de l'École Supérieure des Sciences Appliquées et de la Téchnologie Privée de Gabès atteste que l'étudiant.",
-                            fontText);
+            Paragraph p = new Paragraph();
+            p.setFirstLineIndent(15);
+            p.add(text(
+                    textNormal("Le ", false),
+                    textNormal(signataire.getPoste(), false),
+                    etudiant.getSexe().equalsIgnoreCase("Femme") ?
+                            textNormal(" de l'École Supérieure des Sciences Appliquées et de la Téchnologie Privée de Gabès atteste que l'étudiante.", false) :
+                            textNormal(" de l'École Supérieure des Sciences Appliquées et de la Téchnologie Privée de Gabès atteste que l'étudiant.", false)
+            ));
 
-            }
-            document.add(textChunk);
+            document.add(p);
+
             document.add(new Paragraph(Chunk.NEWLINE));
             // ajouter les information de l'étudiant(e)
             PdfPTable tc = new PdfPTable(2);
@@ -119,7 +114,7 @@ public class CertificateDePresence {
             attrib.add(attribChunk);
             tc.addCell(attrib);
             text = new Phrase();
-            textChunk = new Chunk( etudiant.getDateDeNaissance().format(formatter) + " à " + etudiant.getLieuDeNaissance(),
+            textChunk = new Chunk(etudiant.getDateDeNaissance().format(formatter) + " à " + etudiant.getLieuDeNaissance(),
                     fontText);
             text.add(textChunk);
             tc.addCell(text);
@@ -181,9 +176,21 @@ public class CertificateDePresence {
             document.add(new Paragraph(Chunk.NEWLINE));
             document.add(new Paragraph(Chunk.NEWLINE));
 
-            // ajouter le texte finale de l'attestation
-            //text = new Phrase();
-            if (etudiant.getSexe().equalsIgnoreCase("Femme"))
+
+            Paragraph paragraph2 = new Paragraph();
+            paragraph2.setFirstLineIndent(15);
+            paragraph2.add(text(
+                    etudiant.getSexe().equalsIgnoreCase("Femme") ?
+                            textNormal("Suit régulièrement les cours dispensés dans notre école.\nCette attestation est delivrée a l'intéressée pour servir et valoir ce que de droit.", false) :
+                            textNormal("Suit régulièrement les cours dispensés dans notre école.\nCette attestation est delivrée a l'intéressé pour servir et valoir ce que de droit.", false)
+            ));
+            document.add(paragraph2);
+
+
+
+/*
+
+        if (etudiant.getSexe().equalsIgnoreCase("Femme"))
                 textChunk = new Chunk("    Suit régulièrement les cours dispensés dans notre école"
                         + ".\nCette attestation est delivrée a l'intéressée pour servir et valoir ce que de droit.",
                         fontText);
@@ -192,40 +199,36 @@ public class CertificateDePresence {
                         + ".\nCette attestation est delivrée a l'intéressé pour servir et valoir ce que de droit.",
                         fontText);
             document.add(textChunk);
+*/
+
+
             document.add(new Paragraph(Chunk.NEWLINE));
             document.add(new Paragraph(Chunk.NEWLINE));
             document.add(new Paragraph(Chunk.NEWLINE));
             document.add(new Paragraph(Chunk.NEWLINE));
 
-            // ajouter date et signature
-            PdfPTable tail = new PdfPTable(3);
-            tail.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-            tail.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
-            tail.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-            tail.getDefaultCell().setExtraParagraphSpace(10);
-            tail.setWidthPercentage(100);
-            tail.addCell("");
-            tail.addCell("");
-            tail.addCell("Gabès le " + simpleFormat.format(new Date()));
-            tail.addCell("");
-            tail.addCell("");
-            tail.addCell("");
-            tail.addCell("");
-            tail.addCell("");
-            text = new Phrase();
-            if (directeur) {
-                textChunk = new Chunk("Le Directeur\nZrelli Abdallah", fontText);
-                text.add(textChunk);
 
-            } else {
-                tail.addCell("Le Secrétaire Général\nFarhat Taoufik");
-                text.add(textChunk);
-            }
-            tail.addCell(text);
-            document.add(tail);
+            //signature:
+            String sigTitre = "Le " + signataire.getPoste();
+            String sigNom = signataire.getEmployer().getPersonne().getPrenom() + " " + signataire.getEmployer().getPersonne().getNom();
+            float[] ts2 = {200f};
+            PdfPTable pied = new PdfPTable(1);
+            pied.setTotalWidth(ts2);
+            pied.getDefaultCell().setBorder(0);
+            pied.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+            pied.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+            pied.getDefaultCell().setFixedHeight(20);
+            pied.addCell("");
+            pied.addCell(text(textNormal("Gabès le " + simpleFormat.format(new Date()), false)));
+            pied.addCell(text(textNormal(sigTitre, true)));
+            pied.addCell(text(textNormal(sigNom, false)));
+            pied.writeSelectedRows(0, -1, document.leftMargin() + 300, 150 + pied.getTotalHeight(), canvas);
 
+
+            if (entete)
+                addPapierEntete(writer);
             document.close();
-        } catch (DocumentException ex) {
+        } catch (DocumentException | IOException ex) {
             // TODO Auto-generated catch block
             ex.printStackTrace();
         }
