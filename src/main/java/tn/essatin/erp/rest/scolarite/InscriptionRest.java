@@ -10,10 +10,7 @@ import tn.essatin.erp.dao.scolarite.*;
 import tn.essatin.erp.model.*;
 import tn.essatin.erp.model.Scolarite.*;
 import tn.essatin.erp.payload.request.GetByIdRequest;
-import tn.essatin.erp.payload.request.scolarite.FusionnerRequest;
-import tn.essatin.erp.payload.request.scolarite.InscriptionRequest;
-import tn.essatin.erp.payload.request.scolarite.InscriptionWithIdPersonneRequest;
-import tn.essatin.erp.payload.request.scolarite.ModifierInscriptionRequest;
+import tn.essatin.erp.payload.request.scolarite.*;
 import tn.essatin.erp.payload.response.CombinedResponse;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.RandomStringGenerator;
@@ -68,6 +65,54 @@ public class InscriptionRest {
         this.roleDao = roleDao;
         this.niveauDao = niveauDao;
         this.cycleDao = cycleDao;
+    }
+
+    @PostMapping("/preinscription")
+    public ResponseEntity<?> nouveauEtudiantPreInscrit(@Valid @RequestBody PreInscriptionRequest preInscriptionRequest) {
+        Etudiants e;
+        Session session;
+        Role studentRole;
+        Personne p;
+        Optional<EtatInscription> etatInscrit = etatInscriptionDao.findById(2);
+        if (typeIdentificateurDao.findById(preInscriptionRequest.getIdTypeIdentificateur()).isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+        }
+        if (etatInscrit.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+        }
+        Optional<Niveau> niveau = niveauDao.findById(preInscriptionRequest.getNiveauxInscrit());
+        if (niveau.isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+        }
+        if (roleDao.findById(5).isEmpty()) {
+            return new ResponseEntity<>(
+                    new MessageResponse("Probleme de ressource", 403), HttpStatus.FORBIDDEN);
+        }
+        Optional<Personne>personne=personneDao.findByNumeroIdentificateur(preInscriptionRequest.getIdidentif());
+        if(personne.isPresent()){
+            return new ResponseEntity<>(
+                    new MessageResponse("etudiant deja inscrit", 403), HttpStatus.FORBIDDEN);
+        }
+        studentRole = roleDao.findById(5).get();
+        session = sessionDao.findTopByOrderByIdSessionDesc();
+        String nom = preInscriptionRequest.getNom();
+        String prenom = preInscriptionRequest.getPrenom();
+        TypeIdentificateur idTypeIdentificateur = typeIdentificateurDao.findById(preInscriptionRequest
+                .getIdTypeIdentificateur()).get();
+        String ididentif = preInscriptionRequest.getIdidentif();
+
+        p = new Personne(nom, prenom, null, null, null, null,
+                null, idTypeIdentificateur, ididentif, null, null);
+        personneDao.save(p);
+        e = new Etudiants(p);
+        etudiantsDao.save(e);
+        inscriptionCompteEtEnregistrement(
+                e, session, niveau.get(), p,
+                studentRole, etatInscrit.get());
+        return new ResponseEntity<>(new MessageResponse("Succée d'inscription!!"), HttpStatus.OK);
     }
 
     @PostMapping("/nouveauetudiant")
@@ -134,7 +179,7 @@ public class InscriptionRest {
         inscriptionCompteEtEnregistrement(
                 e, session, niveauDao.findById(inscriptionRequest.getNiveauxInscrit()).get(), p,
                 studentRole, etatInscriptionDao.findById(2).get());
-        return new ResponseEntity<>(new MessageResponse("votre compte est crée avec succée!!"), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResponse("Succée d'inscription!!"), HttpStatus.OK);
 
     }
 
