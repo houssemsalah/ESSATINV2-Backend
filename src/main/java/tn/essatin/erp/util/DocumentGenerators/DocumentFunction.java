@@ -3,6 +3,7 @@ package tn.essatin.erp.util.DocumentGenerators;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 import tn.essatin.erp.model.Scolarite.Cycle;
@@ -287,15 +288,22 @@ public class DocumentFunction {
         return new Chunk(text, supFont);
     }
 
-    public static Chunk textNormalArialUni(String text, boolean isGras, int size, BaseColor baseColor) throws FileNotFoundException {
-        FontFactory.register(ResourceUtils.getFile("classpath:font/Traditional-Arabic_font.ttf").getAbsolutePath());
-        Font f;
+    public static Chunk textNormalArialUni(String text, boolean isGras, int size, BaseColor baseColor) throws IOException, DocumentException {
+
+        InputStream ios = new ClassPathResource("font/Traditional-Arabic_font.ttf").getInputStream();
+        ByteArrayOutputStream ous = new ByteArrayOutputStream();
+        ous.write(ios.readAllBytes());
+        byte[] bytes = ous.toByteArray();
+        BaseFont bf = BaseFont.createFont(
+                "Traditional-Arabic_font.ttf", BaseFont.IDENTITY_H, false,
+                true, bytes, null);
+        //BaseFont.createFont("Traditional-Arabic_font.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED, true, bytes, null);
+        //FontFactory.register(ResourceUtils.getFile("classpath:font/Traditional-Arabic_font.ttf").getAbsolutePath());
+        Font f=new Font(bf,size,Font.FontStyle.BOLD.ordinal(), baseColor);
         if (isGras)
-            f = FontFactory.getFont(ResourceUtils.getFile("classpath:font/Traditional-Arabic_font.ttf").getAbsolutePath(), BaseFont.IDENTITY_H,
-                    true, size, Font.FontStyle.BOLD.ordinal(), baseColor);
+            f=new Font(bf,size,Font.FontStyle.BOLD.ordinal(), baseColor);
         else
-            f = FontFactory.getFont(ResourceUtils.getFile("classpath:font/arialuni_font.ttf").getAbsolutePath(), BaseFont.IDENTITY_H,
-                    true, size, Font.FontStyle.NORMAL.ordinal(), baseColor);
+            f=new Font(bf,size, Font.FontStyle.NORMAL.ordinal(), baseColor);
         return new Chunk(text, f);
     }
 
@@ -404,7 +412,15 @@ public class DocumentFunction {
         piedDePage.addCell(p);
 
         piedDePage.addCell("");
-        Image trai = Image.getInstance(ResourceUtils.getFile("classpath:Images/trai.png").getAbsolutePath());
+
+        Image trai ;
+        ByteArrayOutputStream ous11 = new ByteArrayOutputStream();
+        InputStream ios11 = new ClassPathResource("Images/trai.png").getInputStream();
+        ous11.write(ios11.readAllBytes());
+        trai = Image.getInstance(ous11.toByteArray());
+
+
+        //Image trai = Image.getInstance(ResourceUtils.getFile("classpath:Images/trai.png").getAbsolutePath());
         PdfPCell trai1 = new PdfPCell(trai, true);
         trai1.setBorder(0);
         trai1.setHorizontalAlignment(Element.ALIGN_RIGHT);

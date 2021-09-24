@@ -10,15 +10,18 @@ import tn.essatin.erp.model.Personne;
 import tn.essatin.erp.util.Global;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static tn.essatin.erp.util.DocumentGenerators.DocumentFunction.addPapierEntete;
+
 public class FicheRenseignement {
 
-    public static ByteArrayOutputStream createDoc(Etudiants etu, List<ContactEtudiant> ce, List<DiplomeEtudiant> de) {
+    public static ByteArrayOutputStream createDoc(Etudiants etu, List<ContactEtudiant> ce, List<DiplomeEtudiant> de, boolean entete ) {
         ByteArrayOutputStream response = new ByteArrayOutputStream();
         Personne etudiant = etu.getIdPersonne();
         String identificateur = etudiant.getIdIdentificateur().getTypeIdentificateur();
@@ -34,7 +37,7 @@ public class FicheRenseignement {
         Document document = new Document();
         try {
             //PdfWriter.getInstance(document, new FileOutputStream("PFADOC/" + n + ".pdf"));
-            PdfWriter.getInstance(document, response);
+            PdfWriter writer =PdfWriter.getInstance(document, response);
             document.open();
             Phrase title = new Phrase();
             Chunk titleChunk = new Chunk(Global.ficheDeRenseignementTitle, fontTitle);
@@ -220,9 +223,10 @@ public class FicheRenseignement {
                     "Je déclare sur l'honneur que toutes les informations que j'ai fournies sont correctes et complètes"));
             document.add(new Paragraph(Chunk.NEWLINE));
             document.add(tail);
-
+            if (entete)
+                addPapierEntete(writer);
             document.close();
-        } catch (DocumentException  ex) {
+        } catch (DocumentException | IOException ex) {
             // TODO Auto-generated catch block
             ex.printStackTrace();
         }

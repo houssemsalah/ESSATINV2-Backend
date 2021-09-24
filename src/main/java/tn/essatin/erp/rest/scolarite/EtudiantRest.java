@@ -155,7 +155,7 @@ public class EtudiantRest {
         }
         List<DiplomeEtudiant> de = diplomeEtudiantDao.findByIdEtudiant(enregistrement.get().getIdInscription().getIdEtudiant());
         List<ContactEtudiant> ce = contactEtudiantDao.findByIdEtudiant(enregistrement.get().getIdInscription().getIdEtudiant());
-        ByteArrayOutputStream os = FicheRenseignement.createDoc(enregistrement.get().getIdInscription().getIdEtudiant(), ce, de);
+        ByteArrayOutputStream os = FicheRenseignement.createDoc(enregistrement.get().getIdInscription().getIdEtudiant(), ce, de,infoRequest.isEntete());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
