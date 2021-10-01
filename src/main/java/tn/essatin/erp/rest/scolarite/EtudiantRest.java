@@ -90,14 +90,16 @@ public class EtudiantRest {
         }
         if (cinE.isEmpty()) {
             Optional<Personne> personne = personneDao.findByNumeroIdentificateur(identificateurRequest.getNumidentificateur());
-            Etudiants e = new Etudiants();
-            e.setIdPersonne(personne.get());
-            cinE.add(e);
             if (personne.isPresent()) {
+                Etudiants e = new Etudiants();
+                e.setIdPersonne(personne.get());
+                etudiantsDao.save(e);
+                cinE.add(e);
                 return new ResponseEntity<>(cinE, HttpStatus.OK);
-            } else
+            } else {
                 return new ResponseEntity<>(new MessageResponse("Personne introuvable", 204),
                         HttpStatus.NO_CONTENT);
+            }
         } else {
             return new ResponseEntity<>(cinE, HttpStatus.OK);
         }
@@ -115,7 +117,7 @@ public class EtudiantRest {
             return new ResponseEntity<>(
                     new MessageResponse("Signataire introuvable", 403), HttpStatus.FORBIDDEN);
         }
-        ByteArrayOutputStream os = CertificateDePresence.createDoc(enregistrement.get(),signataire.get(),
+        ByteArrayOutputStream os = CertificateDePresence.createDoc(enregistrement.get(), signataire.get(),
                 certificatRequest.isEntete());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
@@ -155,7 +157,7 @@ public class EtudiantRest {
         }
         List<DiplomeEtudiant> de = diplomeEtudiantDao.findByIdEtudiant(enregistrement.get().getIdInscription().getIdEtudiant());
         List<ContactEtudiant> ce = contactEtudiantDao.findByIdEtudiant(enregistrement.get().getIdInscription().getIdEtudiant());
-        ByteArrayOutputStream os = FicheRenseignement.createDoc(enregistrement.get().getIdInscription().getIdEtudiant(), ce, de,infoRequest.isEntete());
+        ByteArrayOutputStream os = FicheRenseignement.createDoc(enregistrement.get().getIdInscription().getIdEtudiant(), ce, de, infoRequest.isEntete());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
         ByteArrayResource resource = new ByteArrayResource(os.toByteArray());
