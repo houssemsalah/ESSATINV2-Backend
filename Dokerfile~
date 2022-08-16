@@ -1,0 +1,4 @@
+FROM openjdk:11
+EXPOSE 8080
+ADD ESSATIN/target/essatin-0.1.jar essatin-0.1.jar
+ENTRYPOINT ["java","-jar","essatin-0.1.jar"]

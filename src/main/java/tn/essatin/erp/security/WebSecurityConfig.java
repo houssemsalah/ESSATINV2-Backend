@@ -82,6 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/modalite/**").permitAll()
                 .antMatchers("/api/modalite/**").permitAll()
                 .antMatchers("/api/signatire/**").permitAll()
+                .antMatchers("/api/**").permitAll()
 
                 .anyRequest().authenticated();
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);

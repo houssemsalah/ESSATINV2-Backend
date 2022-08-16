@@ -2,6 +2,7 @@ package tn.essatin.erp.model;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -18,13 +19,17 @@ public class Compte {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+
+    public Compte(){}
     public Compte(String login, String password, Personne idPersonne) {
         this.login = login;
         this.password = password;
         this.idPersonne = idPersonne;
     }
 
-    public Compte() {
+    public Compte(String login, String password, Optional<Personne> personne, String r) {
+    }
+    public Compte(String login, String password, String idPersonne, String r) {
     }
 
     public Integer getId() {

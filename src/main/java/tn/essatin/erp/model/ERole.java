@@ -6,7 +6,10 @@ public enum ERole {
     ROLE_FINANCIER("Financier"),
     ROLE_EXAMEN("Examen"),
     ROLE_ETUDIANT("Etudiant"),
-    ROLE_DIRECTEUR("Directeur");
+    ROLE_DIRECTEUR("Directeur"),
+
+    ROLE_ENSEIGNANT("Enseignant");
+
 
     private final String value;
 

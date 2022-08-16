@@ -107,7 +107,7 @@ public class AuthRest {
                 signupRequest.getSexe(),
                 nationalite));
         Set<String> role = signupRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+       Set<Role> roles = new HashSet<>();
         role.forEach(s -> {
             switch (s) {
                 case "admin":
@@ -140,6 +140,19 @@ public class AuthRest {
                         .orElseThrow(() -> new RuntimeException("erreur role not found!"));
                     roles.add(role6);
                     break;
+
+
+
+                case "enseignant":
+                    Role role7 = roleDao.findByRole(ERole.ROLE_ENSEIGNANT)
+                            .orElseThrow(() -> new RuntimeException("erreur role not found!"));
+                    roles.add(role7);
+                    break;
+
+
+
+
+
                 default:
 
                     break;
@@ -149,6 +162,8 @@ public class AuthRest {
         return compteService.addCompte(compte);
         //return ResponseEntity.ok(new MessageResponse("votre compte est crée avec succée!!"));
     }
+
+
 
     @PostMapping("/addStudent")
     public void addStudent(@Valid @RequestBody StudentRequest studentRequest) {

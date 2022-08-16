@@ -113,7 +113,7 @@ public class PersonneRest {
                     new MessageResponse("Les informations on été modifier avec succée!!"), HttpStatus.OK);
         } else
             return new ResponseEntity<>(
-                    new MessageResponse("Ressources indisponbles", 403), HttpStatus.FORBIDDEN);
+                    new MessageResponse("Ressources indisponibles", 403), HttpStatus.FORBIDDEN);
     }
 }
 
