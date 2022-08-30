@@ -59,7 +59,7 @@ public class EnregistrementRest {
         return new ResponseEntity<>(enregistrementDao.findAll(), HttpStatus.OK);
     }
 
-    @PostMapping("/getbyidns")
+    @PostMapping("/getbyidnss")
     public ResponseEntity<?> getById(@Valid @RequestBody NivSessRequest nivSessRequest) {
         if (
                 niveauDao.findById(nivSessRequest.getIdNiveaux()).isPresent()
@@ -68,6 +68,21 @@ public class EnregistrementRest {
             return new ResponseEntity<>(enregistrementDao.findByIdNiveauAndIdSession(
                     niveauDao.findById(nivSessRequest.getIdNiveaux()).get(),
                     sessionDao.findById(nivSessRequest.getIdSession()).get())
+                    , HttpStatus.OK);
+        else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponible", 403), HttpStatus.FORBIDDEN);
+    }
+
+    @PostMapping("/getbyidns")
+    public ResponseEntity<?> getByIds(int idNiveau, int idSession) {
+        if (
+                niveauDao.findById(idNiveau).isPresent()
+                        && sessionDao.findById(idSession).isPresent()
+        )
+            return new ResponseEntity<>(enregistrementDao.findByIdNiveauAndIdSession(
+                    niveauDao.findById(idNiveau).get(),
+                    sessionDao.findById(idSession).get())
                     , HttpStatus.OK);
         else
             return new ResponseEntity<>(

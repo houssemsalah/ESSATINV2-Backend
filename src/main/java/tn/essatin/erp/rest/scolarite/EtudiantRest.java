@@ -76,6 +76,10 @@ public class EtudiantRest {
         return new ResponseEntity<>(etudiantsDao.findAll(), HttpStatus.OK);
     }
 
+
+
+
+
     @PostMapping("/getbynumid")
     public ResponseEntity<?> getByNumIdentificateur(@Valid @RequestBody IdentificateurRequest identificateurRequest) {
         List<Etudiants> cinE = new ArrayList<>();

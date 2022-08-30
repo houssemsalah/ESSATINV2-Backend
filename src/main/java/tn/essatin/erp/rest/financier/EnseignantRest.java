@@ -7,17 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.PersonneDao;
 import tn.essatin.erp.dao.financier.EnseignantDao;
-import tn.essatin.erp.model.financier.Enseignant;
-import tn.essatin.erp.payload.request.financier.SalarierRequest;
+import tn.essatin.erp.payload.request.scolarite.EnseignantRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
 import tn.essatin.erp.util.ApiInfo;
 
-import javax.management.openmbean.OpenType;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -28,11 +25,12 @@ public class EnseignantRest {
     final MessageSource messageSource;
 
     @Autowired
-    public EnseignantRest(EnseignantDao enseignantDao, PersonneDao personneDao,MessageSource messageSource) {
+    public EnseignantRest(EnseignantDao enseignantDao, PersonneDao personneDao, MessageSource messageSource) {
         this.enseignantDao = enseignantDao;
         this.personneDao = personneDao;
-        this.messageSource=messageSource;
+        this.messageSource = messageSource;
     }
+
     @GetMapping("/")
     public ResponseEntity<?> infoApi() {
         List<ApiInfo> infos = new ArrayList<>();
@@ -57,17 +55,22 @@ public class EnseignantRest {
         return new ResponseEntity<>(infos, HttpStatus.OK);
 
     }
+
     @GetMapping("/getallenseignant")
     public ResponseEntity<?> getAll() {
         return new ResponseEntity<>(enseignantDao.findAll(), HttpStatus.OK);
     }
-    @PostMapping("getenseingant/{id}")
-    public  ResponseEntity<?> getEnseingantById(@PathVariable int id){
-        Optional<Enseignant> enseignant = enseignantDao.findById(id);
-        if (enseignant.isEmpty()){
-            return new ResponseEntity<>(new MessageResponse(messageSource.getMessage("error.introuvable.enseignant", null, Locale.FRENCH)), HttpStatus.FORBIDDEN);
+
+    @PostMapping("/getenseingant")
+    public ResponseEntity<?> getEnseingantById(@Valid @RequestBody EnseignantRequest enseignantRequest) {
+        if (enseignantDao.findById(enseignantRequest.getId()).isPresent()) {
+            return new ResponseEntity<>(
+                    enseignantDao.findById(enseignantRequest.getId()).get()
+                    , HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403)
+                    , HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<>(enseignant.get(), HttpStatus.OK);
     }
 
 

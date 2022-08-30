@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.essatin.erp.dao.scolarite.NiveauDao;
 import tn.essatin.erp.dao.scolarite.ParcoursDao;
+import tn.essatin.erp.payload.request.scolarite.NiveauRequest;
 import tn.essatin.erp.payload.request.scolarite.ParcoursRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
 
@@ -36,6 +37,17 @@ public class NiveauxRest {
         if (parcoursDao.findById(parcoursRequest.getIdparcours()).isPresent()) {
             return new ResponseEntity<>(niveauDao.findByParcours(
                     parcoursDao.findById(parcoursRequest.getIdparcours()).get())
+                    , HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403)
+                    , HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @PostMapping("/getbyidniveau")
+    public ResponseEntity<?> getById(@Valid @RequestBody NiveauRequest niveauRequest) {
+        if (niveauDao.findById(niveauRequest.getIdNiveau()).isPresent()) {
+            return new ResponseEntity<>(niveauDao.findById(niveauRequest.getIdNiveau()).get()
                     , HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new MessageResponse("Ressource Indisponible", 403)

@@ -4,6 +4,9 @@ import tn.essatin.erp.model.Scolarite.Niveau;
 import tn.essatin.erp.model.financier.Enseignant;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Entity
@@ -11,27 +14,29 @@ public class Matiere {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idMatiere;
+    @NotBlank
     private String nomMatiere;
     private String description;
-    @OneToMany
+    @ManyToMany
+    @NotNull
     private Collection<Enseignant> enseignants;
     @OneToOne
+    @NotNull
     private Niveau niveau;
+    @Min(value = 0,message = "la coefficient ne peut pas etre inferieur a 0")
     private double coefficient;
-    @OneToMany
-    private Collection<Note> note;
+
 
     public Matiere() {
     }
 
-    public Matiere(Integer idMatiere, String nomMatiere, String description, Collection<Enseignant> enseignants, Niveau niveau, double coefficient, Collection<Note> note) {
+    public Matiere(Integer idMatiere, String nomMatiere, String description, Collection<Enseignant> enseignants, Niveau niveau, double coefficient) {
         this.idMatiere = idMatiere;
         this.nomMatiere = nomMatiere;
         this.description = description;
         this.enseignants = enseignants;
         this.niveau = niveau;
         this.coefficient = coefficient;
-        this.note = note;
     }
 
     @Override
@@ -43,7 +48,6 @@ public class Matiere {
                 ", enseignants=" + enseignants +
                 ", niveau=" + niveau +
                 ", coefficient=" + coefficient +
-                ", note=" + note +
                 '}';
     }
 
@@ -95,11 +99,5 @@ public class Matiere {
         this.coefficient = coefficient;
     }
 
-    public Collection<Note> getNote() {
-        return note;
-    }
 
-    public void setNote(Collection<Note> note) {
-        this.note = note;
-    }
 }
