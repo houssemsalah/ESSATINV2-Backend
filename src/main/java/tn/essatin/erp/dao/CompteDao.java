@@ -13,4 +13,5 @@ public interface CompteDao extends JpaRepository<Compte, Integer> {
     Optional<Compte> findByIdPersonne(Personne idPersonne);
     Boolean existsByLogin(String login);
 
+
 }

@@ -14,9 +14,9 @@ import java.util.Optional;
 @Repository
 public interface MatiereDao extends JpaRepository<Matiere, Integer> {
     Optional<Matiere> findByNomMatiere(String nomMatiere);
-    Optional<Matiere> findByIdMatiere(Matiere idMatiere);
+    Matiere findByIdMatiere(int idMatiere);
     Optional<Matiere> findMatiereByNomMatiere(String name);
-    Collection<Matiere> findMatieresByNiveau(Niveau idNiveau);
+    Collection<Matiere> findByNiveau(Niveau niveau);
 
 
 }

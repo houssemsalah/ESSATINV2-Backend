@@ -110,32 +110,32 @@ public class AuthRest {
        Set<Role> roles = new HashSet<>();
         role.forEach(s -> {
             switch (s) {
-                case "admin":
+                case "ROLE_ADMIN":
                     Role role1 = roleDao.findByRole(ERole.ROLE_ADMIN)
                         .orElseThrow(() -> new RuntimeException("erreur role not found!"));
                     roles.add(role1);
                     break;
-                case "scolarite":
+                case "ROLE_SCOLARITE":
                     Role role2 = roleDao.findByRole(ERole.ROLE_SCOLARITE)
                         .orElseThrow(() -> new RuntimeException("erreur role not found!"));
                     roles.add(role2);
                     break;
-                case "financier":
+                case "ROLE_FINANCIER":
                     Role role3 = roleDao.findByRole(ERole.ROLE_FINANCIER)
                         .orElseThrow(() -> new RuntimeException("erreur role not found!"));
                     roles.add(role3);
                     break;
-                case "examen":
+                case "ROLE_EXAMEN":
                     Role role4 = roleDao.findByRole(ERole.ROLE_EXAMEN)
                         .orElseThrow(() -> new RuntimeException("erreur role not found!"));
                     roles.add(role4);
                     break;
-                case "etudiant":
+                case "ROLE_ETUDIANT":
                     Role role5 = roleDao.findByRole(ERole.ROLE_ETUDIANT)
                         .orElseThrow(() -> new RuntimeException("erreur role not found!"));
                     roles.add(role5);
                     break;
-                case "directeur":
+                case "ROLE_DIRECTEUR":
                     Role role6 = roleDao.findByRole(ERole.ROLE_DIRECTEUR)
                         .orElseThrow(() -> new RuntimeException("erreur role not found!"));
                     roles.add(role6);
@@ -143,7 +143,7 @@ public class AuthRest {
 
 
 
-                case "enseignant":
+                case "ROLE_ENSEIGNANT":
                     Role role7 = roleDao.findByRole(ERole.ROLE_ENSEIGNANT)
                             .orElseThrow(() -> new RuntimeException("erreur role not found!"));
                     roles.add(role7);

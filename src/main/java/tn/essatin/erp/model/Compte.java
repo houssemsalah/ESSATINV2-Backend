@@ -21,6 +21,15 @@ public class Compte {
 
 
     public Compte(){}
+
+    public Compte(Integer id, String login, String password, Personne idPersonne, Set<Role> roles) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.idPersonne = idPersonne;
+        this.roles = roles;
+    }
+
     public Compte(String login, String password, Personne idPersonne) {
         this.login = login;
         this.password = password;

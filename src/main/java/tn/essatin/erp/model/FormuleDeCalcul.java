@@ -1,8 +1,10 @@
 package tn.essatin.erp.model;
 
 import tn.essatin.erp.model.Scolarite.Cycle;
-
+import tn.essatin.erp.model.TypeDeNote;
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class FormuleDeCalcul {
@@ -10,82 +12,26 @@ public class FormuleDeCalcul {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idFormule;
 
-    @OneToOne
-    private Cycle cycle ;
-    @OneToOne
-    private Matiere matiere;
-    private double coefExamen;
-    private  double coefDs;
-    private double coefTp;
-    private double coefOrale;
+    @ManyToOne
+    private Cycle cycle;
+    @ManyToOne
+    Session session;
 
+    //   @ManyToMany(cascade = CascadeType.ALL)
+    //   private Set<TypeDeNote> typeDeNote= new HashSet<>();
+
+
+    // private Double[] coeficients
 
     public FormuleDeCalcul() {
     }
 
-    public FormuleDeCalcul(Integer idFormule, Cycle cycle, Matiere matiere, double coefExamen, double coefDs, double coefTp, double coefOrale) {
-        this.idFormule = idFormule;
-        this.cycle = cycle;
-        this.matiere = matiere;
-        this.coefExamen = coefExamen;
-        this.coefDs = coefDs;
-        this.coefTp = coefTp;
-        this.coefOrale = coefOrale;
+  /*  public Set<TypeDeNote> getTypeDeNote() {
+        return typeDeNote;
     }
 
-    public Matiere getMatiere() {
-        return matiere;
+    public void setTypeDeNote(Set<TypeDeNote> typeDeNote) {
+        this.typeDeNote = typeDeNote;
     }
-
-    public void setMatiere(Matiere matiere) {
-        this.matiere = matiere;
-    }
-
-    public Integer getIdFormule() {
-        return idFormule;
-    }
-
-    public void setIdFormule(Integer idFormule) {
-        this.idFormule = idFormule;
-    }
-
-    public Cycle getCycle() {
-        return cycle;
-    }
-
-    public void setCycle(Cycle cycle) {
-        this.cycle = cycle;
-    }
-
-    public double getCoefExamen() {
-        return coefExamen;
-    }
-
-    public void setCoefExamen(double coefExamen) {
-        this.coefExamen = coefExamen;
-    }
-
-    public double getCoefDs() {
-        return coefDs;
-    }
-
-    public void setCoefDs(double coefDs) {
-        this.coefDs = coefDs;
-    }
-
-    public double getCoefTp() {
-        return coefTp;
-    }
-
-    public void setCoefTp(double coefTp) {
-        this.coefTp = coefTp;
-    }
-
-    public double getCoefOrale() {
-        return coefOrale;
-    }
-
-    public void setCoefOrale(double coefOrale) {
-        this.coefOrale = coefOrale;
-    }
+    */
 }

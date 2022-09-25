@@ -6,7 +6,7 @@ public class TypeDeNote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING )
     private ETypeDeNote typeDeNote;
 
     public TypeDeNote() {
@@ -31,5 +31,13 @@ public class TypeDeNote {
 
     public void setTypeDeNote(ETypeDeNote typeDeNote) {
         this.typeDeNote = typeDeNote;
+    }
+
+    @Override
+    public String toString() {
+        return "TypeDeNote{" +
+                "id=" + id +
+                ", typeDeNote=" + typeDeNote +
+                '}';
     }
 }

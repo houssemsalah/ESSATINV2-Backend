@@ -11,6 +11,7 @@ import tn.essatin.erp.dao.scolarite.NiveauDao;
 import tn.essatin.erp.model.Matiere;
 import tn.essatin.erp.model.Scolarite.Niveau;
 import tn.essatin.erp.model.financier.Enseignant;
+import tn.essatin.erp.payload.request.GetByIdRequest;
 import tn.essatin.erp.payload.response.MessageResponse;
 
 import javax.validation.Valid;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins ="*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/matiere/")
 public class MatiereRest {
@@ -37,16 +38,16 @@ public class MatiereRest {
     }
 
 
-    @GetMapping("/getallmatieres" +
-            "")
+    @GetMapping("/getallmatieres")
     public ResponseEntity<?> getAllMatieres() {
         return new ResponseEntity<>(matiereDao.findAll(), HttpStatus.OK);
 
     }
 
-    @GetMapping("/getmatieresbyniveau")
-    public ResponseEntity<?> getMatieresByNiveau(Niveau idNiveau) {
-        return new ResponseEntity<>(matiereDao.findMatieresByNiveau(idNiveau), HttpStatus.OK);
+    @PostMapping("/getmatieresbyniveau")
+    public ResponseEntity<?> getMatieresByNiveau( @Valid @RequestBody Niveau niveau) {
+
+        return new ResponseEntity<>(matiereDao.findByNiveau(niveau), HttpStatus.OK);
     }
 
     @PostMapping("/addmatiere")
@@ -75,7 +76,7 @@ public class MatiereRest {
     }
 
     @PutMapping("/modifiermatiere")
-    public ResponseEntity<?> modifierMatiere(@Valid Matiere matiere) {
+    public ResponseEntity<?> modifierMatiere(@Valid @RequestBody Matiere matiere) {
         if (!matiere.getNomMatiere().isEmpty()) {
             matiereDao.saveAndFlush(matiere);
 
@@ -86,18 +87,37 @@ public class MatiereRest {
                     new MessageResponse("Ressources indisponibles", 403), HttpStatus.FORBIDDEN);
 
     }
+    @PostMapping ("/getbyidm")
+    public Optional<Matiere> getMatiereById2(@RequestBody @Valid int id) {
+        //   Optional<Matiere> matiere = matiereDao.findById(getByIdRequest.getId());
 
-    @DeleteMapping("/supprimermatiere")
-    public ResponseEntity<?> supprimerMatiere(@Valid int idMatiere) {
-        Optional<Matiere> matiere = matiereDao.findById(idMatiere);
+        return matiereDao.findById(id);
+
+    }
+    @GetMapping("/getbyid")
+    public ResponseEntity<?> getMatiereById(@Valid @RequestBody GetByIdRequest getByIdRequest) {
+        Optional<Matiere> matiere = matiereDao.findById(getByIdRequest.getId());
         if (!matiere.isEmpty()) {
-            matiereDao.deleteById(idMatiere);
-
-            return new ResponseEntity<>(
-                    new MessageResponse("Matiere supprimée avec succée!!"), HttpStatus.OK);
+            return new ResponseEntity<>(matiereDao.findById(getByIdRequest.getId()), HttpStatus.OK);
         } else
             return new ResponseEntity<>(
                     new MessageResponse("Ressources indisponibles", 403), HttpStatus.FORBIDDEN);
+
+    }
+    @PostMapping("/supprimermatiere")
+    public ResponseEntity<?> supprimerMatiere(@Valid @RequestBody GetByIdRequest getByIdRequest) {
+        Optional<Matiere> matiere = matiereDao.findById(getByIdRequest.getId());
+        if (!matiere.isEmpty()) {
+
+            matiereDao.deleteById(getByIdRequest.getId());
+
+
+            return new ResponseEntity<>(
+                    new MessageResponse("Matiere supprimer avec succée!!"), HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(
+                    new MessageResponse("Ressources indisponibles", 403), HttpStatus.FORBIDDEN);
+
 
     }
 

@@ -14,12 +14,13 @@ public class Note {
     private Matiere matiere;
     @OneToOne
     private Etudiants etudiant;
-    private ETypeDeNote typeDeNote;
+    @OneToOne
+    private TypeDeNote typeDeNote;
 
     public Note() {
     }
 
-    public Note(Integer idNote, Float note, Matiere matiere, Etudiants etudiant, ETypeDeNote typeDeNote) {
+    public Note(Integer idNote, Float note, Matiere matiere, Etudiants etudiant, TypeDeNote typeDeNote) {
         this.idNote = idNote;
         this.note = note;
         this.matiere = matiere;
@@ -59,11 +60,11 @@ public class Note {
         this.etudiant = etudiant;
     }
 
-    public ETypeDeNote getTypeDeNote() {
+    public TypeDeNote getTypeDeNote() {
         return typeDeNote;
     }
 
-    public void setTypeDeNote(ETypeDeNote typeDeNote) {
+    public void setTypeDeNote(TypeDeNote typeDeNote) {
         this.typeDeNote = typeDeNote;
     }
 

@@ -1,12 +1,6 @@
 package tn.essatin.erp.util;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
-import java.util.regex.Pattern;
-
 import com.ibm.icu.text.RuleBasedNumberFormat;
 
 public class ConvertierMontantEnLettre {
